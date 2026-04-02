@@ -1,0 +1,25 @@
+# fly.web.toml — SEPARATE deploy: frontend only (nginx + static files)
+# Deploy with:  cd kashana2 && fly deploy -c deploy/fly.web.toml
+
+app = "kashana-web"
+primary_region = "jnb"
+
+[build]
+  dockerfile = "frontend/Dockerfile"
+
+[http_service]
+  internal_port = 80
+  force_https = true
+  auto_stop_machines = "stop"
+  auto_start_machines = true
+  min_machines_running = 0
+
+  [http_service.concurrency]
+    type = "requests"
+    hard_limit = 500
+    soft_limit = 400
+
+[[vm]]
+  memory = "256mb"
+  cpu_kind = "shared"
+  cpus = 1

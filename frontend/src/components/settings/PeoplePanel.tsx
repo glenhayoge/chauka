@@ -1,0 +1,246 @@
+import { useQuery, useQueryClient } from '@tanstack/react-query'
+import { useLogframeStore } from '../../store/logframe'
+import { getUsers } from '../../api/logframes'
+import { getMembers } from '../../api/organisations'
+import { apiClient } from '../../api/client'
+import type { UserSummary, Activity } from '../../api/types'
+import EditableSelect from '../ui/EditableSelect'
+import clsx from 'clsx'
+
+interface Props {
+  logframeId: number
+  canEdit: boolean
+}
+
+export default function PeoplePanel({ logframeId, canEdit }: Props) {
+  const data = useLogframeStore((s) => s.data)
+  const queryClient = useQueryClient()
+
+  const orgId = data?.orgContext?.organisation.id
+
+  // Fetch org members (scoped to this organisation)
+  const { data: members, isLoading: membersLoading } = useQuery({
+    queryKey: ['org-members', orgId],
+    queryFn: () => getMembers(orgId!),
+    enabled: !!orgId,
+  })
+
+  // Fetch user details for display names
+  const { data: allUsers } = useQuery({
+    queryKey: ['users'],
+    queryFn: getUsers,
+  })
+
+  const isLoading = membersLoading
+  if (isLoading) return <p className="text-gray-500">Loading…</p>
+  if (!data) return null
+
+  // If no org context, fall back to showing nothing meaningful
+  if (!orgId || !members) {
+    return <p className="text-sm text-gray-400 italic">No team members yet. Invite people from Settings.</p>
+  }
+
+  const activities = data.activities
+
+  // Only show users who are members of this organisation
+  const memberUserIds = new Set(members.map((m) => m.user_id))
+  const teamUsers: UserSummary[] = (allUsers ?? []).filter((u) => memberUserIds.has(u.id))
+
+  function getDisplayName(user: UserSummary): string {
+    if (user.first_name || user.last_name) {
+      return `${user.first_name} ${user.last_name}`.trim()
+    }
+    return user.username
+  }
+
+  function getUserActivities(userId: number): Activity[] {
+    return activities.filter((a) => a.lead_id === userId)
+  }
+
+  function getMemberRole(userId: number): string {
+    const membership = members?.find((m) => m.user_id === userId)
+    return membership?.role ?? 'member'
+  }
+
+  const unassignedActivities = activities.filter((a) => a.lead_id === null)
+
+  const userOptions = teamUsers.map((u) => ({
+    value: u.id,
+    label: getDisplayName(u),
+  }))
+
+  async function assignLead(activity: Activity, leadId: number | null) {
+    await apiClient.patch(
+      `/logframes/${logframeId}/results/${activity.result_id}/activities/${activity.id}`,
+      { lead_id: leadId },
+    )
+    queryClient.invalidateQueries({ queryKey: ['bootstrap', logframeId] })
+  }
+
+  if (teamUsers.length === 0) {
+    return (
+      <div className="text-center py-8">
+        <p className="text-gray-500 text-sm mb-2">No team members yet.</p>
+        <p className="text-gray-400 text-xs">
+          Invite people to your organisation from{' '}
+          <a href={`/logframes/${logframeId}/settings?tab=members`} className="text-blue-600 hover:underline">
+            Settings &rarr; Members
+          </a>
+        </p>
+      </div>
+    )
+  }
+
+  return (
+    <div>
+      {/* Team members table */}
+      <div className="overflow-x-auto">
+        <table className="text-sm border-collapse w-full">
+          <thead>
+            <tr className="bg-gray-50">
+              <th className="border border-gray-200 px-3 py-2 text-left font-medium text-gray-600">
+                Name
+              </th>
+              <th className="border border-gray-200 px-3 py-2 text-left font-medium text-gray-600">
+                Username
+              </th>
+              <th className="border border-gray-200 px-3 py-2 text-center font-medium text-gray-600">
+                Role
+              </th>
+              <th className="border border-gray-200 px-3 py-2 text-center font-medium text-gray-600">
+                Activities
+              </th>
+            </tr>
+          </thead>
+          <tbody>
+            {teamUsers.map((user) => {
+              const userActivities = getUserActivities(user.id)
+              const role = getMemberRole(user.id)
+              return (
+                <UserRow
+                  key={user.id}
+                  user={user}
+                  displayName={getDisplayName(user)}
+                  activityCount={userActivities.length}
+                  activities={userActivities}
+                  role={role}
+                />
+              )
+            })}
+          </tbody>
+        </table>
+      </div>
+
+      {/* Unassigned activities */}
+      {unassignedActivities.length > 0 && (
+        <div className="mt-6">
+          <h3 className="text-sm font-semibold text-gray-700 uppercase tracking-wide mb-2">
+            Unassigned Activities ({unassignedActivities.length})
+          </h3>
+          <div className="overflow-x-auto">
+            <table className="text-sm border-collapse w-full">
+              <thead>
+                <tr className="bg-gray-50">
+                  <th className="border border-gray-200 px-3 py-2 text-left font-medium text-gray-600">
+                    Activity
+                  </th>
+                  <th className="border border-gray-200 px-3 py-2 text-left font-medium text-gray-600 w-48">
+                    Assign Lead
+                  </th>
+                </tr>
+              </thead>
+              <tbody>
+                {unassignedActivities.map((activity) => (
+                  <tr key={activity.id} className="hover:bg-gray-50">
+                    <td className="border border-gray-200 px-3 py-2 text-gray-700">
+                      {activity.name || <span className="text-gray-400 italic">(unnamed)</span>}
+                    </td>
+                    <td className="border border-gray-200 px-3 py-2">
+                      <EditableSelect
+                        value={null}
+                        options={userOptions}
+                        onSave={(v) => assignLead(activity, v === null ? null : Number(v))}
+                        placeholder="Select lead"
+                        disabled={!canEdit}
+                      />
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      )}
+
+      {activities.length === 0 && (
+        <p className="text-gray-400 text-sm italic mt-4">
+          No activities in this logframe yet.
+        </p>
+      )}
+    </div>
+  )
+}
+
+const ROLE_BADGE_STYLES: Record<string, string> = {
+  admin: 'bg-purple-50 text-purple-700',
+  member: 'bg-blue-50 text-blue-700',
+}
+
+const ROLE_BADGE_LABELS: Record<string, string> = {
+  admin: 'Admin',
+  member: 'Member',
+}
+
+interface UserRowProps {
+  user: UserSummary
+  displayName: string
+  activityCount: number
+  activities: Activity[]
+  role: string
+}
+
+function UserRow({ user, displayName, activityCount, activities, role }: UserRowProps) {
+  const badgeStyle = ROLE_BADGE_STYLES[role] ?? ROLE_BADGE_STYLES.member
+  const badgeLabel = ROLE_BADGE_LABELS[role] ?? role
+
+  return (
+    <>
+      <tr className="hover:bg-gray-50">
+        <td className="border border-gray-200 px-3 py-2 font-medium text-gray-900">
+          {displayName}
+        </td>
+        <td className="border border-gray-200 px-3 py-2 text-gray-500">
+          {user.username}
+        </td>
+        <td className="border border-gray-200 px-3 py-2 text-center">
+          <span className={clsx('inline-block text-xs font-medium px-2 py-0.5 rounded', badgeStyle)}>
+            {badgeLabel}
+          </span>
+        </td>
+        <td className="border border-gray-200 px-3 py-2 text-center">
+          {activityCount > 0 ? (
+            <span className="text-blue-700 font-medium">{activityCount}</span>
+          ) : (
+            <span className="text-gray-400">0</span>
+          )}
+        </td>
+      </tr>
+      {activityCount > 0 && (
+        <tr>
+          <td colSpan={4} className="border border-gray-200 px-3 py-1 bg-gray-50">
+            <div className="flex flex-wrap gap-2 py-1">
+              {activities.map((a) => (
+                <span
+                  key={a.id}
+                  className="text-xs bg-white border border-gray-200 rounded px-2 py-1 text-gray-600"
+                >
+                  {a.name || '(unnamed)'}
+                </span>
+              ))}
+            </div>
+          </td>
+        </tr>
+      )}
+    </>
+  )
+}

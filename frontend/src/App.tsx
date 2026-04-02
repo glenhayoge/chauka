@@ -1,0 +1,90 @@
+import { lazy, Suspense } from 'react'
+import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom'
+import { useAuthStore } from './store/auth'
+import Layout from './components/layout/Layout'
+import ToastContainer from './components/ui/ToastContainer'
+
+const LoginPage = lazy(() => import('./pages/LoginPage'))
+const RegisterPage = lazy(() => import('./pages/RegisterPage'))
+const ForgotPasswordPage = lazy(() => import('./pages/ForgotPasswordPage'))
+const ResetPasswordPage = lazy(() => import('./pages/ResetPasswordPage'))
+const InviteAcceptPage = lazy(() => import('./pages/InviteAcceptPage'))
+const TermsPage = lazy(() => import('./pages/TermsPage'))
+const PrivacyPage = lazy(() => import('./pages/PrivacyPage'))
+const DocsPage = lazy(() => import('./pages/DocsPage'))
+const ProfilePage = lazy(() => import('./pages/ProfilePage'))
+const OrgSelectPage = lazy(() => import('./pages/OrgSelectPage'))
+const LogframeSelectPage = lazy(() => import('./pages/LogframeSelectPage'))
+const DashboardPage = lazy(() => import('./pages/DashboardPage'))
+const OverviewPage = lazy(() => import('./pages/OverviewPage'))
+const ResultDesignPage = lazy(() => import('./pages/ResultDesignPage'))
+const MonitorPage = lazy(() => import('./pages/MonitorPage'))
+const BudgetPage = lazy(() => import('./pages/BudgetPage'))
+const WorkloadPage = lazy(() => import('./pages/WorkloadPage'))
+const PeoplePage = lazy(() => import('./pages/PeoplePage'))
+const SettingsPage = lazy(() => import('./pages/SettingsPage'))
+const OrgSettingsPage = lazy(() => import('./pages/OrgSettingsPage'))
+const PrintLogframePage = lazy(() => import('./pages/PrintLogframePage'))
+const OrgDashboardPage = lazy(() => import('./pages/OrgDashboardPage'))
+const LandingPage = lazy(() => import('./pages/LandingPage'))
+
+function RequireAuth({ children }: { children: React.ReactNode }) {
+  const token = useAuthStore((s) => s.token)
+  if (!token) return <Navigate to="/" replace />
+  return <>{children}</>
+}
+
+function PageLoader() {
+  return <p className="text-gray-400 text-sm p-6">Loading…</p>
+}
+
+export default function App() {
+  return (
+    <BrowserRouter>
+      <Suspense fallback={<PageLoader />}>
+        <Routes>
+          {/* Public pages */}
+          <Route path="/" element={<LandingPage />} />
+          <Route path="/login" element={<LoginPage />} />
+          <Route path="/register" element={<RegisterPage />} />
+          <Route path="/forgot-password" element={<ForgotPasswordPage />} />
+          <Route path="/reset-password/:token" element={<ResetPasswordPage />} />
+          <Route path="/invite/:token" element={<InviteAcceptPage />} />
+          <Route path="/terms" element={<TermsPage />} />
+          <Route path="/privacy" element={<PrivacyPage />} />
+          <Route path="/docs" element={<DocsPage />} />
+
+          {/* Authenticated standalone pages */}
+          <Route path="/profile" element={<RequireAuth><Layout /></RequireAuth>}>
+            <Route index element={<ProfilePage />} />
+          </Route>
+          <Route path="/organisations/:orgId/settings" element={<RequireAuth><OrgSettingsPage /></RequireAuth>} />
+          <Route path="/organisations/:orgId/dashboard" element={<RequireAuth><OrgDashboardPage /></RequireAuth>} />
+          <Route path="/logframes/:logframeId/print" element={<RequireAuth><PrintLogframePage /></RequireAuth>} />
+
+          {/* Authenticated app */}
+          <Route
+            path="/app"
+            element={
+              <RequireAuth>
+                <Layout />
+              </RequireAuth>
+            }
+          >
+            <Route index element={<OrgSelectPage />} />
+            <Route path="logframes" element={<LogframeSelectPage />} />
+            <Route path="logframes/:logframeId" element={<DashboardPage />} />
+            <Route path="logframes/:logframeId/overview" element={<OverviewPage />} />
+            <Route path="logframes/:logframeId/design" element={<ResultDesignPage />} />
+            <Route path="logframes/:logframeId/monitor" element={<MonitorPage />} />
+            <Route path="logframes/:logframeId/budget" element={<BudgetPage />} />
+            <Route path="logframes/:logframeId/workload" element={<WorkloadPage />} />
+            <Route path="logframes/:logframeId/people" element={<PeoplePage />} />
+            <Route path="logframes/:logframeId/settings" element={<SettingsPage />} />
+          </Route>
+        </Routes>
+      </Suspense>
+      <ToastContainer />
+    </BrowserRouter>
+  )
+}

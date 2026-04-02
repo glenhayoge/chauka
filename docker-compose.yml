@@ -1,0 +1,52 @@
+# Local development — run: docker compose up --build
+services:
+  db:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_USER: chauka
+      POSTGRES_PASSWORD: chauka
+      POSTGRES_DB: chauka
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U chauka"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "8000:8000"
+    environment:
+      CHAUKA_DATABASE_URL: postgresql+asyncpg://chauka:chauka@db:5432/chauka
+      CHAUKA_SECRET_KEY: local-dev-secret
+      CHAUKA_CORS_ORIGINS: '["http://localhost:5173"]'
+      CHAUKA_ENVIRONMENT: development
+    depends_on:
+      db:
+        condition: service_healthy
+    command: uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload
+    # Override the CMD so we get hot-reload in dev; source is baked into the image.
+    # For fast iteration without rebuilding, uncomment the volume below:
+    # volumes:
+    #   - ./backend:/app/backend
+
+  web:
+    image: node:22-slim
+    working_dir: /app
+    ports:
+      - "5173:5173"
+    volumes:
+      - ./frontend:/app
+      - /app/node_modules
+    command: sh -c "npm install && npm run dev -- --host 0.0.0.0"
+    environment:
+      VITE_API_URL: http://localhost:8000
+
+volumes:
+  pgdata:
