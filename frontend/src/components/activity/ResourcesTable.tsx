@@ -25,7 +25,7 @@ export default function ResourcesTable({ resources, activityId, logframeId, canE
   const partners = resources.filter((r) => r.resource_type === 'partner')
 
   async function deleteResource(id: number) {
-    await apiClient.delete(`/logframes/${logframeId}/resources/${id}`)
+    await apiClient.delete(`/app/logframes/${logframeId}/resources/${id}`)
     queryClient.invalidateQueries({ queryKey: ['bootstrap', logframeId] })
   }
 
@@ -203,7 +203,7 @@ function AddResourceForm({ activityId, logframeId }: { activityId: number; logfr
           role_in_activity: roleInActivity,
         })
       }
-      await apiClient.post(`/logframes/${logframeId}/resources/?activity_id=${activityId}`, body)
+      await apiClient.post(`/app/logframes/${logframeId}/resources/?activity_id=${activityId}`, body)
       queryClient.invalidateQueries({ queryKey: ['bootstrap', logframeId] })
       reset()
     } finally {

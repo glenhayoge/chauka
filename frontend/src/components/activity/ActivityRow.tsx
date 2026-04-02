@@ -19,7 +19,7 @@ export default function ActivityRow({ activity, logframeId }: Props) {
   const expanded = useUIStore((s) => s.expandedActivities.has(activity.id))
   const toggleActivity = useUIStore((s) => s.toggleActivity)
 
-  const activityBase = `/logframes/${logframeId}/results/${activity.result_id}/activities/${activity.id}`
+  const activityBase = `/app/logframes/${logframeId}/results/${activity.result_id}/activities/${activity.id}`
 
   async function saveField(field: string, value: unknown) {
     await apiClient.patch(activityBase, { [field]: value })

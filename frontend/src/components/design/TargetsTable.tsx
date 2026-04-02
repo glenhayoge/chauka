@@ -86,9 +86,9 @@ function TargetCell({ target, subindicatorId, indicatorId, periodId, logframeId,
     setSaving(true)
     try {
       if (target) {
-        await apiClient.patch(`/logframes/${logframeId}/targets/${target.id}`, { value: newValue })
+        await apiClient.patch(`/app/logframes/${logframeId}/targets/${target.id}`, { value: newValue })
       } else {
-        await apiClient.post(`/logframes/${logframeId}/targets/`, {
+        await apiClient.post(`/app/logframes/${logframeId}/targets/`, {
           indicator_id: indicatorId,
           subindicator_id: subindicatorId,
           milestone_id: periodId,
@@ -122,9 +122,8 @@ function TargetCell({ target, subindicatorId, indicatorId, periodId, logframeId,
   return (
     <td
       onClick={() => canEdit && setEditing(true)}
-      className={`border border-gray-200 px-2 py-1 text-center ${
-        canEdit ? 'cursor-pointer hover:bg-yellow-50' : ''
-      } ${saving ? 'text-gray-400' : ''}`}
+      className={`border border-gray-200 px-2 py-1 text-center ${canEdit ? 'cursor-pointer hover:bg-yellow-50' : ''
+        } ${saving ? 'text-gray-400' : ''}`}
     >
       {target?.value ?? ''}
     </td>

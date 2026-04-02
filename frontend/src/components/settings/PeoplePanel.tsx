@@ -43,7 +43,11 @@ export default function PeoplePanel({ logframeId, canEdit }: Props) {
   const activities = data.activities
 
   // Only show users who are members of this organisation
-  const memberUserIds = new Set(members.map((m) => m.user_id))
+  if (members && !Array.isArray(members)) {
+    console.warn('API returned non-array for members:', members)
+  }
+  const memberList = Array.isArray(members) ? members : []
+  const memberUserIds = new Set(memberList.map((m) => m.user_id))
   const teamUsers: UserSummary[] = (allUsers ?? []).filter((u) => memberUserIds.has(u.id))
 
   function getDisplayName(user: UserSummary): string {
@@ -58,7 +62,7 @@ export default function PeoplePanel({ logframeId, canEdit }: Props) {
   }
 
   function getMemberRole(userId: number): string {
-    const membership = members?.find((m) => m.user_id === userId)
+    const membership = memberList.find((m) => m.user_id === userId)
     return membership?.role ?? 'member'
   }
 

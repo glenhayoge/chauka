@@ -66,7 +66,7 @@ export async function updateLogframe(
   logframeId: number,
   body: { name: string },
 ): Promise<Logframe> {
-  const { data } = await apiClient.patch<Logframe>(`/logframes/${logframeId}`, body)
+  const { data } = await apiClient.patch<Logframe>(`/app/logframes/${logframeId}`, body)
   return data
 }
 

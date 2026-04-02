@@ -39,7 +39,7 @@ export default function TALinesTable({ taLines, activityId, logframeId, currency
   const totalDays = taLines.reduce((sum, t) => sum + (t.no_days || 0), 0)
   const totalAmount = taLines.reduce((sum, t) => sum + (t.amount || 0), 0)
 
-  const base = `/logframes/${logframeId}/talines`
+  const base = `/app/logframes/${logframeId}/talines`
 
   async function saveField(lineId: number, field: string, value: unknown) {
     await apiClient.patch(`${base}/${lineId}`, { [field]: value })

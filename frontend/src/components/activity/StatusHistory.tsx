@@ -23,7 +23,7 @@ export default function StatusHistory({ statusUpdates, statusCodes, activityId, 
   const displayed = expanded ? sorted : sorted.slice(0, 3)
   const hasMore = sorted.length > 3
 
-  const base = `/logframes/${logframeId}/statusupdates`
+  const base = `/app/logframes/${logframeId}/statusupdates`
 
   async function deleteUpdate(updateId: number) {
     await apiClient.delete(`${base}/${updateId}`)
@@ -127,7 +127,7 @@ function AddStatusForm({ activityId, logframeId, statusCodes, onDone }: AddFormP
     e.preventDefault()
     setSaving(true)
     try {
-      await apiClient.post(`/logframes/${logframeId}/statusupdates/`, {
+      await apiClient.post(`/app/logframes/${logframeId}/statusupdates/`, {
         activity_id: activityId,
         user_id: userId,
         code_id: codeId ? Number(codeId) : null,
