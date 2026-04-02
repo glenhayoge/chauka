@@ -29,7 +29,7 @@ export default function ActivityDetail({ activity, logframeId }: Props) {
   const totalBudget = budgetLines.reduce((sum, b) => sum + (b.amount || 0), 0)
   const currency = data.settings?.currency ?? ''
 
-  const activityBase = `/app/logframes/${logframeId}/results/${activity.result_id}/activities/${activity.id}`
+  const activityBase = `/logframes/${logframeId}/results/${activity.result_id}/activities/${activity.id}`
 
   async function saveBudgetLine(lineId: number, field: string, value: unknown) {
     await apiClient.patch(`${activityBase}/budget-lines/${lineId}`, { [field]: value })

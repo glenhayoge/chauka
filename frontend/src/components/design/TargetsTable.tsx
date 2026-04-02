@@ -86,9 +86,9 @@ function TargetCell({ target, subindicatorId, indicatorId, periodId, logframeId,
     setSaving(true)
     try {
       if (target) {
-        await apiClient.patch(`/app/logframes/${logframeId}/targets/${target.id}`, { value: newValue })
+        await apiClient.patch(`/logframes/${logframeId}/targets/${target.id}`, { value: newValue })
       } else {
-        await apiClient.post(`/app/logframes/${logframeId}/targets/`, {
+        await apiClient.post(`/logframes/${logframeId}/targets/`, {
           indicator_id: indicatorId,
           subindicator_id: subindicatorId,
           milestone_id: periodId,

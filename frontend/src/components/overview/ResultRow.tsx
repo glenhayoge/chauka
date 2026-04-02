@@ -68,7 +68,7 @@ export default function ResultRow({ result, allResults, logframeId, depth = 0, v
 
   async function saveField(field: string, value: string | number | null) {
     await apiClient.patch(
-      `/app/logframes/${logframeId}/results/${result.id}`,
+      `/logframes/${logframeId}/results/${result.id}`,
       { [field]: value }
     )
     queryClient.invalidateQueries({ queryKey: ['bootstrap', logframeId] })
@@ -76,7 +76,7 @@ export default function ResultRow({ result, allResults, logframeId, depth = 0, v
 
   async function addActivity() {
     await apiClient.post(
-      `/app/logframes/${logframeId}/results/${result.id}/activities/`,
+      `/logframes/${logframeId}/results/${result.id}/activities/`,
       { name: '' }
     )
     queryClient.invalidateQueries({ queryKey: ['bootstrap', logframeId] })

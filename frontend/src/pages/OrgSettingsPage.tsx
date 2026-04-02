@@ -37,7 +37,8 @@ export default function OrgSettingsPage() {
   })
 
   // Determine if the current user is an admin
-  const currentMembership = members?.find((m) => m.user_id === userId)
+  const memberList = Array.isArray(members) ? members : []
+  const currentMembership = memberList.find((m) => m.user_id === userId)
   const isAdmin = currentMembership?.role === 'admin' || org?.owner_id === userId
   const userRole = isAdmin ? 'admin' : (currentMembership?.role ?? null)
 

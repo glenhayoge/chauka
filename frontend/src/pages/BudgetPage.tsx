@@ -243,7 +243,7 @@ function ExpenseRow({ expense, currency, logframeId, canEdit }: { expense: Expen
   const queryClient = useQueryClient()
 
   async function handleDelete() {
-    await apiClient.delete(`/app/logframes/${logframeId}/expenses/${expense.id}`)
+    await apiClient.delete(`/logframes/${logframeId}/expenses/${expense.id}`)
     queryClient.invalidateQueries({ queryKey: ['bootstrap', logframeId] })
   }
 
@@ -273,7 +273,7 @@ function AddExpenseForm({ budgetLineId, logframeId, currency, onDone }: { budget
     if (!amount || !date) return
     setSaving(true)
     try {
-      await apiClient.post(`/app/logframes/${logframeId}/expenses/`, {
+      await apiClient.post(`/logframes/${logframeId}/expenses/`, {
         budget_line_id: budgetLineId,
         amount: parseFloat(amount),
         description,

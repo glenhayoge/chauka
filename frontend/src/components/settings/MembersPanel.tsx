@@ -97,7 +97,8 @@ export default function MembersPanel({ canEdit: _canEdit, userRole, orgId: orgId
     return users?.find((u) => u.id === userId)?.username ?? ''
   }
 
-  const memberUserIds = new Set(members?.map((m) => m.user_id) ?? [])
+  const memberList = Array.isArray(members) ? members : []
+  const memberUserIds = new Set(memberList.map((m) => m.user_id))
 
   async function handleRemove(membershipId: number) {
     if (!orgId) return
@@ -148,7 +149,7 @@ export default function MembersPanel({ canEdit: _canEdit, userRole, orgId: orgId
               </tr>
             </thead>
             <tbody>
-              {(members ?? []).map((m) => (
+              {memberList.map((m) => (
                 <tr key={m.id} className="hover:bg-gray-50">
                   <td className="border border-gray-200 px-3 py-2 font-medium text-gray-900">
                     {getDisplayName(m.user_id)}
@@ -182,7 +183,7 @@ export default function MembersPanel({ canEdit: _canEdit, userRole, orgId: orgId
                   )}
                 </tr>
               ))}
-              {(!members || members.length === 0) && (
+              {memberList.length === 0 && (
                 <tr>
                   <td
                     colSpan={isAdmin ? 4 : 3}

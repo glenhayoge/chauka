@@ -68,9 +68,9 @@ export default function ActualsGrid({
       (d) => d.subindicator_id === subId && d.column_id === colId
     )
     if (existing) {
-      await apiClient.patch(`/app/logframes/${logframeId}/data-entries/${existing.id}`, { data: value })
+      await apiClient.patch(`/logframes/${logframeId}/data-entries/${existing.id}`, { data: value })
     } else {
-      await apiClient.post(`/app/logframes/${logframeId}/data-entries/`, {
+      await apiClient.post(`/logframes/${logframeId}/data-entries/`, {
         data: value,
         subindicator_id: subId,
         column_id: colId,
@@ -80,13 +80,13 @@ export default function ActualsGrid({
   }
 
   async function saveColumnName(colId: number, name: string) {
-    await apiClient.patch(`/app/logframes/${logframeId}/columns/${colId}`, { name })
+    await apiClient.patch(`/logframes/${logframeId}/columns/${colId}`, { name })
     queryClient.invalidateQueries({ queryKey: ['bootstrap', logframeId] })
   }
 
   async function handleDeleteColumn() {
     if (deleteColumnId === null) return
-    await apiClient.delete(`/app/logframes/${logframeId}/columns/${deleteColumnId}`)
+    await apiClient.delete(`/logframes/${logframeId}/columns/${deleteColumnId}`)
     setDeleteColumnId(null)
     queryClient.invalidateQueries({ queryKey: ['bootstrap', logframeId] })
   }
@@ -94,7 +94,7 @@ export default function ActualsGrid({
   async function addColumn() {
     const today = new Date()
     const name = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, '0')}-${String(today.getDate()).padStart(2, '0')}`
-    await apiClient.post(`/app/logframes/${logframeId}/columns/`, { name })
+    await apiClient.post(`/logframes/${logframeId}/columns/`, { name })
     queryClient.invalidateQueries({ queryKey: ['bootstrap', logframeId] })
   }
 
@@ -103,9 +103,9 @@ export default function ActualsGrid({
       (r) => r.subindicator_id === subId && r.period_id === periodId
     )
     if (existing) {
-      await apiClient.patch(`/app/logframes/${logframeId}/reporting-periods/${existing.id}`, { status })
+      await apiClient.patch(`/logframes/${logframeId}/reporting-periods/${existing.id}`, { status })
     } else {
-      await apiClient.post(`/app/logframes/${logframeId}/reporting-periods/`, {
+      await apiClient.post(`/logframes/${logframeId}/reporting-periods/`, {
         subindicator_id: subId,
         period_id: periodId,
         status,

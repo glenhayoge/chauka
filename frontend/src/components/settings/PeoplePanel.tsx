@@ -75,7 +75,7 @@ export default function PeoplePanel({ logframeId, canEdit }: Props) {
 
   async function assignLead(activity: Activity, leadId: number | null) {
     await apiClient.patch(
-      `/app/logframes/${logframeId}/results/${activity.result_id}/activities/${activity.id}`,
+      `/logframes/${logframeId}/results/${activity.result_id}/activities/${activity.id}`,
       { lead_id: leadId },
     )
     queryClient.invalidateQueries({ queryKey: ['bootstrap', logframeId] })

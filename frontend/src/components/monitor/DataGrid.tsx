@@ -22,9 +22,9 @@ export default function DataGrid({ logframeId, subindicators }: Props) {
       (d) => d.subindicator_id === subId && d.column_id === colId
     )
     if (existing) {
-      await apiClient.patch(`/app/logframes/${logframeId}/data-entries/${existing.id}`, { data: value })
+      await apiClient.patch(`/logframes/${logframeId}/data-entries/${existing.id}`, { data: value })
     } else {
-      await apiClient.post(`/app/logframes/${logframeId}/data-entries/`, {
+      await apiClient.post(`/logframes/${logframeId}/data-entries/`, {
         data: value,
         subindicator_id: subId,
         column_id: colId,

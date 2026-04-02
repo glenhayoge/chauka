@@ -24,7 +24,7 @@ export default function ActivityContainer({ activity, logframeId }: Props) {
 
   async function saveName(value: string) {
     await apiClient.patch(
-      `/app/logframes/${logframeId}/results/${activity.result_id}/activities/${activity.id}`,
+      `/logframes/${logframeId}/results/${activity.result_id}/activities/${activity.id}`,
       { name: value }
     )
     queryClient.invalidateQueries({ queryKey: ['bootstrap', logframeId] })
@@ -32,7 +32,7 @@ export default function ActivityContainer({ activity, logframeId }: Props) {
 
   async function saveBudgetLine(lineId: number, amount: number | null) {
     await apiClient.patch(
-      `/app/logframes/${logframeId}/results/${activity.result_id}/activities/${activity.id}/budget-lines/${lineId}`,
+      `/logframes/${logframeId}/results/${activity.result_id}/activities/${activity.id}/budget-lines/${lineId}`,
       { amount }
     )
     queryClient.invalidateQueries({ queryKey: ['bootstrap', logframeId] })

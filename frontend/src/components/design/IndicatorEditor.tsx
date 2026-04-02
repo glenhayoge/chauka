@@ -26,7 +26,7 @@ export default function IndicatorEditor({ indicator, logframeId, periods, target
 
   const subindicators = data.subIndicators.filter((s) => s.indicator_id === indicator.id)
   const indicatorTargets = targets.filter((t) => t.indicator_id === indicator.id)
-  const base = `/app/logframes/${logframeId}/results/${indicator.result_id}/indicators/${indicator.id}`
+  const base = `/logframes/${logframeId}/results/${indicator.result_id}/indicators/${indicator.id}`
 
   async function saveField(field: string, value: unknown) {
     await apiClient.patch(base, { [field]: value })

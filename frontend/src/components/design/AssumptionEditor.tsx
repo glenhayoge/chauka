@@ -18,7 +18,7 @@ interface Props {
 
 export default function AssumptionEditor({ assumptions, riskRatings, resultId, logframeId, canEdit }: Props) {
   const queryClient = useQueryClient()
-  const base = `/app/logframes/${logframeId}/results/${resultId}/assumptions`
+  const base = `/logframes/${logframeId}/results/${resultId}/assumptions`
   const [deleteId, setDeleteId] = useState<number | null>(null)
 
   async function saveDescription(assumptionId: number, description: string) {

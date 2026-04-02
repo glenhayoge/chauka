@@ -107,13 +107,13 @@ function LogframeSettingsPanel({ logframeId, canEdit }: { logframeId: number; ca
 
   async function saveSetting(field: string, value: string | number) {
     if (!canEdit) return
-    await apiClient.patch(`/app/logframes/${logframeId}/settings/`, { [field]: value })
+    await apiClient.patch(`/logframes/${logframeId}/settings/`, { [field]: value })
     queryClient.invalidateQueries({ queryKey: ['bootstrap', logframeId] })
   }
 
   async function toggleComponents() {
     if (!canEdit) return
-    await apiClient.patch(`/app/logframes/${logframeId}/settings/`, {
+    await apiClient.patch(`/logframes/${logframeId}/settings/`, {
       use_components: !useComponents,
       max_result_level: !useComponents ? 4 : 3,
     })

@@ -41,7 +41,7 @@ export default function ResultDesignPage() {
     const resultId = result.id
     const indicators = data.indicators.filter((i) => i.result_id === resultId)
     const assumptions = data.assumptions.filter((a) => a.result_id === resultId)
-    const resultBase = `/app/logframes/${id}/results/${resultId}`
+    const resultBase = `/logframes/${id}/results/${resultId}`
 
     async function saveResultField(field: string, value: unknown) {
       await apiClient.patch(resultBase, { [field]: value })
