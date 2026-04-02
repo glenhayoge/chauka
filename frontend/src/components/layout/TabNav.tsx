@@ -12,7 +12,7 @@ const TABS = [
 export default function TabNav() {
   const { logframeId } = useParams<{ logframeId: string }>()
   const { pathname } = useLocation()
-  const base = `/logframes/${logframeId}`
+  const base = `/app/logframes/${logframeId}`
 
   return (
     <nav className="flex overflow-x-auto border-b border-gray-200 mb-4 sm:mb-6 -mx-3 px-3 sm:mx-0 sm:px-0">

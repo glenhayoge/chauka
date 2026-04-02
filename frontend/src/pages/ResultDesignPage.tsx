@@ -41,7 +41,7 @@ export default function ResultDesignPage() {
     const resultId = result.id
     const indicators = data.indicators.filter((i) => i.result_id === resultId)
     const assumptions = data.assumptions.filter((a) => a.result_id === resultId)
-    const resultBase = `/logframes/${id}/results/${resultId}`
+    const resultBase = `/app/logframes/${id}/results/${resultId}`
 
     async function saveResultField(field: string, value: unknown) {
       await apiClient.patch(resultBase, { [field]: value })
@@ -61,7 +61,7 @@ export default function ResultDesignPage() {
     async function deleteResult() {
       await apiClient.delete(resultBase)
       queryClient.invalidateQueries({ queryKey: ['bootstrap', id] })
-      navigate(`/logframes/${id}/design`)
+      navigate(`/app/logframes/${id}/design`)
     }
 
     const riskRatingOptions = data.riskRatings.map((r) => ({ value: r.id, label: r.name }))
@@ -74,7 +74,7 @@ export default function ResultDesignPage() {
         {/* Header */}
         <div className="flex items-center gap-3 mb-4">
           <Link
-            to={`/logframes/${id}/design`}
+            to={`/app/logframes/${id}/design`}
             className="text-sm text-blue-600 hover:text-blue-800"
           >
             &larr; All results
@@ -206,7 +206,7 @@ export default function ResultDesignPage() {
                 <span className="text-xs bg-gray-100 text-gray-600 rounded px-2 py-0.5 font-medium">{levelLabel}</span>
               )}
               <Link
-                to={`/logframes/${id}/design?result=${r.id}`}
+                to={`/app/logframes/${id}/design?result=${r.id}`}
                 className="font-medium text-blue-600 hover:text-blue-800"
               >
                 {r.name || '(unnamed result)'}

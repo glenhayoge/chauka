@@ -27,7 +27,7 @@ export default function Layout() {
 
   function handleLogframeChange(e: React.ChangeEvent<HTMLSelectElement>) {
     const newId = e.target.value
-    if (newId) navigate(`/logframes/${newId}`)
+    if (newId) navigate(`/app/logframes/${newId}`)
   }
 
   const currentLogframeId = logframeId ? Number(logframeId) : null
@@ -117,22 +117,22 @@ export default function Layout() {
             {currentLogframeId && (
               <div className="flex flex-col gap-1">
                 <MobileNavLink
-                  to={`/logframes/${currentLogframeId}`}
-                  active={pathname === `/logframes/${currentLogframeId}`}
+                  to={`/app/logframes/${currentLogframeId}`}
+                  active={pathname === `/app/logframes/${currentLogframeId}`}
                   onClick={() => setMobileMenuOpen(false)}
                 >
                   Dashboard
                 </MobileNavLink>
                 <MobileNavLink
-                  to={`/logframes/${currentLogframeId}/people`}
-                  active={pathname.startsWith(`/logframes/${currentLogframeId}/people`)}
+                  to={`/app/logframes/${currentLogframeId}/people`}
+                  active={pathname.startsWith(`/app/logframes/${currentLogframeId}/people`)}
                   onClick={() => setMobileMenuOpen(false)}
                 >
                   People
                 </MobileNavLink>
                 <MobileNavLink
-                  to={`/logframes/${currentLogframeId}/settings`}
-                  active={pathname.startsWith(`/logframes/${currentLogframeId}/settings`)}
+                  to={`/app/logframes/${currentLogframeId}/settings`}
+                  active={pathname.startsWith(`/app/logframes/${currentLogframeId}/settings`)}
                   onClick={() => setMobileMenuOpen(false)}
                 >
                   Settings
@@ -166,20 +166,20 @@ export default function Layout() {
         {currentLogframeId && (
           <nav className="hidden sm:flex px-6 gap-1 bg-gray-800">
             <NavButton
-              to={`/logframes/${currentLogframeId}`}
-              active={pathname === `/logframes/${currentLogframeId}`}
+              to={`/app/logframes/${currentLogframeId}`}
+              active={pathname === `/app/logframes/${currentLogframeId}`}
             >
               Dashboard
             </NavButton>
             <NavButton
-              to={`/logframes/${currentLogframeId}/people`}
-              active={pathname.startsWith(`/logframes/${currentLogframeId}/people`)}
+              to={`/app/logframes/${currentLogframeId}/people`}
+              active={pathname.startsWith(`/app/logframes/${currentLogframeId}/people`)}
             >
               People
             </NavButton>
             <NavButton
-              to={`/logframes/${currentLogframeId}/settings`}
-              active={pathname.startsWith(`/logframes/${currentLogframeId}/settings`)}
+              to={`/app/logframes/${currentLogframeId}/settings`}
+              active={pathname.startsWith(`/app/logframes/${currentLogframeId}/settings`)}
             >
               Settings
             </NavButton>

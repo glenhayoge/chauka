@@ -68,7 +68,7 @@ export default function ResultRow({ result, allResults, logframeId, depth = 0, v
 
   async function saveField(field: string, value: string | number | null) {
     await apiClient.patch(
-      `/logframes/${logframeId}/results/${result.id}`,
+      `/app/logframes/${logframeId}/results/${result.id}`,
       { [field]: value }
     )
     queryClient.invalidateQueries({ queryKey: ['bootstrap', logframeId] })
@@ -76,7 +76,7 @@ export default function ResultRow({ result, allResults, logframeId, depth = 0, v
 
   async function addActivity() {
     await apiClient.post(
-      `/logframes/${logframeId}/results/${result.id}/activities/`,
+      `/app/logframes/${logframeId}/results/${result.id}/activities/`,
       { name: '' }
     )
     queryClient.invalidateQueries({ queryKey: ['bootstrap', logframeId] })
@@ -109,13 +109,13 @@ export default function ResultRow({ result, allResults, logframeId, depth = 0, v
           {/* Edit / Monitor buttons — hidden on mobile, visible on desktop */}
           <div className="hidden sm:flex gap-1 flex-shrink-0">
             <Link
-              to={`/logframes/${logframeId}/design?result=${result.id}`}
+              to={`/app/logframes/${logframeId}/design?result=${result.id}`}
               className="text-xs px-2.5 py-0.5 rounded border border-gray-400 text-gray-700 bg-white hover:bg-gray-50 whitespace-nowrap"
             >
               Edit
             </Link>
             <Link
-              to={`/logframes/${logframeId}/monitor?result=${result.id}`}
+              to={`/app/logframes/${logframeId}/monitor?result=${result.id}`}
               className="text-xs px-2.5 py-0.5 rounded border border-gray-400 text-gray-700 bg-white hover:bg-gray-50 whitespace-nowrap"
             >
               Monitor
@@ -157,13 +157,13 @@ export default function ResultRow({ result, allResults, logframeId, depth = 0, v
             </span>
           )}
           <Link
-            to={`/logframes/${logframeId}/design?result=${result.id}`}
+            to={`/app/logframes/${logframeId}/design?result=${result.id}`}
             className="text-xs px-2.5 py-1 rounded border border-gray-400 text-gray-700 bg-white active:bg-gray-100 whitespace-nowrap"
           >
             Edit
           </Link>
           <Link
-            to={`/logframes/${logframeId}/monitor?result=${result.id}`}
+            to={`/app/logframes/${logframeId}/monitor?result=${result.id}`}
             className="text-xs px-2.5 py-1 rounded border border-gray-400 text-gray-700 bg-white active:bg-gray-100 whitespace-nowrap"
           >
             Monitor

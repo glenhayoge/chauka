@@ -60,7 +60,7 @@ export default function App() {
           </Route>
           <Route path="/organisations/:orgId/settings" element={<RequireAuth><OrgSettingsPage /></RequireAuth>} />
           <Route path="/organisations/:orgId/dashboard" element={<RequireAuth><OrgDashboardPage /></RequireAuth>} />
-          <Route path="/logframes/:logframeId/print" element={<RequireAuth><PrintLogframePage /></RequireAuth>} />
+          <Route path="/app/logframes/:logframeId/print" element={<RequireAuth><PrintLogframePage /></RequireAuth>} />
 
           {/* Authenticated app */}
           <Route

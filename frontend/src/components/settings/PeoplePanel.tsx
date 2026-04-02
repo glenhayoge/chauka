@@ -71,7 +71,7 @@ export default function PeoplePanel({ logframeId, canEdit }: Props) {
 
   async function assignLead(activity: Activity, leadId: number | null) {
     await apiClient.patch(
-      `/logframes/${logframeId}/results/${activity.result_id}/activities/${activity.id}`,
+      `/app/logframes/${logframeId}/results/${activity.result_id}/activities/${activity.id}`,
       { lead_id: leadId },
     )
     queryClient.invalidateQueries({ queryKey: ['bootstrap', logframeId] })
@@ -83,7 +83,7 @@ export default function PeoplePanel({ logframeId, canEdit }: Props) {
         <p className="text-gray-500 text-sm mb-2">No team members yet.</p>
         <p className="text-gray-400 text-xs">
           Invite people to your organisation from{' '}
-          <a href={`/logframes/${logframeId}/settings?tab=members`} className="text-blue-600 hover:underline">
+          <a href={`/app/logframes/${logframeId}/settings?tab=members`} className="text-blue-600 hover:underline">
             Settings &rarr; Members
           </a>
         </p>

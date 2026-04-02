@@ -260,9 +260,8 @@ function ProjectCard({ project, orgId, programId }: { project: Project; orgId: n
         <div className="flex-1 min-w-0">
           <EditableField label="" value={project.name} onSave={handleUpdateName} canEdit={true} />
         </div>
-        <span className={`text-[10px] px-1.5 py-0.5 rounded ${
-          project.status === 'active' ? 'bg-green-50 text-green-700' : 'bg-gray-100 text-gray-600'
-        }`}>{project.status}</span>
+        <span className={`text-[10px] px-1.5 py-0.5 rounded ${project.status === 'active' ? 'bg-green-50 text-green-700' : 'bg-gray-100 text-gray-600'
+          }`}>{project.status}</span>
         {!confirmDelete ? (
           <button onClick={() => setConfirmDelete(true)} className="text-[10px] text-red-400 hover:text-red-600">Delete</button>
         ) : (
@@ -339,7 +338,7 @@ function LogframeRow({ logframe, onDelete }: { logframe: Logframe; onDelete: () 
 
   return (
     <div className="flex items-center gap-2 bg-white border rounded px-2 py-1 ml-4">
-      <a href={`/logframes/${logframe.id}`} className="text-xs text-blue-600 hover:underline flex-1 truncate">
+      <a href={`/app/logframes/${logframe.id}`} className="text-xs text-blue-600 hover:underline flex-1 truncate">
         {logframe.name}
       </a>
       {!confirmDelete ? (

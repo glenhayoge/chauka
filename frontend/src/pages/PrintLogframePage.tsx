@@ -26,7 +26,7 @@ export default function PrintLogframePage() {
       {/* Screen-only toolbar */}
       <div className="print-toolbar print-hide">
         <Link
-          to={`/logframes/${id}`}
+          to={`/app/logframes/${id}`}
           className="text-sm text-blue-700 hover:text-blue-900 underline"
         >
           &larr; Back to Dashboard

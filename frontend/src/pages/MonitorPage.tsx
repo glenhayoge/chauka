@@ -28,7 +28,7 @@ export default function MonitorPage() {
         <h2 className="text-lg font-semibold">Monitor</h2>
         {filterResultId && (
           <Link
-            to={`/logframes/${id}/monitor`}
+            to={`/app/logframes/${id}/monitor`}
             className="text-sm text-blue-600 hover:text-blue-800"
           >
             &larr; Show all results

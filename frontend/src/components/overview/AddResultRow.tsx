@@ -23,7 +23,7 @@ export default function AddResultRow({ logframeId, parentId = null, depth = 0 }:
     }
     setSaving(true)
     try {
-      await apiClient.post(`/logframes/${logframeId}/results/`, {
+      await apiClient.post(`/app/logframes/${logframeId}/results/`, {
         name: trimmed,
         parent_id: parentId,
       })

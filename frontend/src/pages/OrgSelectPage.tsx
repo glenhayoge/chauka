@@ -75,7 +75,7 @@ export default function OrgSelectPage() {
     }
   }, [orgs, selectedOrgId])
 
-  if (orgsLoading) return <p className="text-gray-500">Loading...</p>
+  if (orgsLoading) return <p className="text-center text-gray-500 py-12">Loading...</p>
 
   const isNewUser = orgs && orgs.length === 0
 
@@ -102,7 +102,7 @@ export default function OrgSelectPage() {
   }
 
   return (
-    <div>
+    <div className="max-w-2xl mx-auto px-4 py-10">
       {/* Breadcrumb */}
       {crumbs.length > 0 && (
         <nav className="flex items-center gap-2 text-sm text-gray-500 mb-4">
@@ -121,10 +121,10 @@ export default function OrgSelectPage() {
 
       {/* Step 1: Select / Create Organisation */}
       {selectedOrgId === null && (
-        <div>
+        <div className='mx-auto'>
           {isNewUser ? (
             <>
-              <p className="text-sm font-medium text-gray-900 mb-4">Create your organisation to get started.</p>
+              <p className="text-sm font-medium text-gray-900 mb-4 text-center">Create your organisation to get started.</p>
               <NewOrgForm
                 onCreated={(orgId) => {
                   queryClient.invalidateQueries({ queryKey: ['organisations'] })
@@ -134,7 +134,7 @@ export default function OrgSelectPage() {
             </>
           ) : (
             <>
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2 mb-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2 mb-4 w-full">
                 {orgs?.map((org) => (
                   <div key={org.id} className="border border-gray-200 rounded-lg p-4 hover:bg-gray-50 transition-colors">
                     <button
@@ -233,7 +233,7 @@ export default function OrgSelectPage() {
           )}
 
           {/* Create actions */}
-          <div className="flex flex-wrap items-center gap-3 border-t border-gray-100 pt-4">
+          <div className="flex flex-wrap items-center justify-center gap-3 border-t border-gray-100 pt-4">
             <CreateForm
               label="program"
               fields={[
@@ -271,7 +271,7 @@ export default function OrgSelectPage() {
                     const prog = await createProgram(selectedOrgId, { name: 'Untitled Program' })
                     const proj = await createProject(selectedOrgId, prog.id, { name: 'Untitled Project' })
                     const lf = await createLogframe(selectedOrgId, prog.id, proj.id, { name: 'Untitled Logframe' })
-                    navigate(`/logframes/${lf.id}`)
+                    navigate(`/app/logframes/${lf.id}`)
                   } finally {
                     setSkipping(false)
                   }
@@ -288,21 +288,21 @@ export default function OrgSelectPage() {
 
       {/* Step 2b: Standalone project logframes */}
       {standaloneProjectId !== null && (
-        <div>
-          <h2 className="text-sm font-medium text-gray-900 mb-2">
+        <div className="flex flex-col items-center">
+          <h2 className="text-sm font-medium text-gray-900 mb-2 text-center">
             {standaloneLogframes && standaloneLogframes.length > 0 ? 'Select a Logframe' : 'Create a Logframe'}
           </h2>
-          <p className="text-sm text-gray-500 mb-4">
+          <p className="text-sm text-gray-500 mb-4 text-center">
             A logframe is where you define your results chain, indicators, and activities.
           </p>
           {standaloneLogframes && standaloneLogframes.length === 1 && (
-            <Navigate to={`/logframes/${standaloneLogframes[0].id}`} replace />
+            <Navigate to={`/app/logframes/${standaloneLogframes[0].id}`} replace />
           )}
           <div className="grid gap-3 max-w-md">
             {standaloneLogframes?.map((lf) => (
               <Link
                 key={lf.id}
-                to={`/logframes/${lf.id}`}
+                to={`/app/logframes/${lf.id}`}
                 className="block border rounded-lg p-4 hover:bg-gray-50 transition-colors"
               >
                 <span className="font-medium">{lf.name}</span>
@@ -314,7 +314,7 @@ export default function OrgSelectPage() {
             onSubmit={async (values) => {
               const lf = await createOrgProjectLogframe(selectedOrgId!, standaloneProjectId, { name: values.name })
               queryClient.invalidateQueries({ queryKey: ['standalone-project-logframes', selectedOrgId, standaloneProjectId] })
-              navigate(`/logframes/${lf.id}`)
+              navigate(`/app/logframes/${lf.id}`)
             }}
           />
         </div>
@@ -322,11 +322,11 @@ export default function OrgSelectPage() {
 
       {/* Step 3: Select / Create Project */}
       {selectedProgramId !== null && selectedProjectId === null && (
-        <div>
-          <h2 className="text-sm font-medium text-gray-900 mb-2">
+        <div className="flex flex-col items-center">
+          <h2 className="text-sm font-medium text-gray-900 mb-2 text-center">
             {projects && projects.length > 0 ? 'Select a Project' : 'Create a Project'}
           </h2>
-          <p className="text-sm text-gray-500 mb-4">
+          <p className="text-sm text-gray-500 mb-4 text-center">
             Projects contain the logframes where you plan and monitor your work.
           </p>
           <div className="grid gap-3 max-w-md">
@@ -338,17 +338,16 @@ export default function OrgSelectPage() {
               >
                 <div className="flex items-center justify-between">
                   <span className="font-medium">{proj.name}</span>
-                  <span className={`text-xs px-2 py-0.5 rounded-full ${
-                    proj.status === 'active' ? 'bg-green-100 text-green-700'
+                  <span className={`text-xs px-2 py-0.5 rounded-full ${proj.status === 'active' ? 'bg-green-100 text-green-700'
                     : proj.status === 'completed' ? 'bg-gray-200 text-gray-600'
-                    : 'bg-gray-100 text-gray-700'
-                  }`}>{proj.status}</span>
+                      : 'bg-gray-100 text-gray-700'
+                    }`}>{proj.status}</span>
                 </div>
                 {proj.description && <p className="text-sm text-gray-500 mt-1">{proj.description}</p>}
               </button>
             ))}
           </div>
-          <div className="flex items-center gap-4 mt-4">
+          <div className="flex items-center justify-center gap-4 mt-4">
             <CreateForm
               label="project"
               fields={[
@@ -369,7 +368,7 @@ export default function OrgSelectPage() {
                   try {
                     const proj = await createProject(selectedOrgId!, selectedProgramId!, { name: 'Untitled Project' })
                     const lf = await createLogframe(selectedOrgId!, selectedProgramId!, proj.id, { name: 'Untitled Logframe' })
-                    navigate(`/logframes/${lf.id}`)
+                    navigate(`/app/logframes/${lf.id}`)
                   } finally {
                     setSkipping(false)
                   }
@@ -386,23 +385,23 @@ export default function OrgSelectPage() {
 
       {/* Step 4: Select / Create Logframe */}
       {selectedProjectId !== null && (
-        <div>
-          <h2 className="text-sm font-medium text-gray-900 mb-2">
+        <div className="flex flex-col items-center">
+          <h2 className="text-sm font-medium text-gray-900 mb-2 text-center">
             {logframes && logframes.length > 0 ? 'Select a Logframe' : 'Set Up Your Logframe'}
           </h2>
-          <p className="text-sm text-gray-500 mb-4">
+          <p className="text-sm text-gray-500 mb-4 text-center">
             {logframes && logframes.length > 0
               ? 'A logframe is where you define your results chain, indicators, and activities.'
               : 'Configure the reporting periods and currency for your logframe. These can be adjusted later in Settings.'}
           </p>
           {logframes && logframes.length === 1 && (
-            <Navigate to={`/logframes/${logframes[0].id}`} replace />
+            <Navigate to={`/app/logframes/${logframes[0].id}`} replace />
           )}
           <div className="grid gap-3 max-w-md">
             {logframes?.map((lf) => (
               <Link
                 key={lf.id}
-                to={`/logframes/${lf.id}`}
+                to={`/app/logframes/${lf.id}`}
                 className="block border rounded-lg p-4 hover:bg-gray-50 transition-colors"
               >
                 <span className="font-medium">{lf.name}</span>
@@ -414,7 +413,7 @@ export default function OrgSelectPage() {
             onSubmit={async (values) => {
               const lf = await createLogframe(selectedOrgId!, selectedProgramId!, selectedProjectId!, values)
               queryClient.invalidateQueries({ queryKey: ['project-logframes', selectedOrgId, selectedProgramId, selectedProjectId] })
-              navigate(`/logframes/${lf.id}`)
+              navigate(`/app/logframes/${lf.id}`)
             }}
           />
         </div>
@@ -487,7 +486,7 @@ function LogframeSetupForm({ autoOpen, onSubmit }: {
   }
 
   return (
-    <form onSubmit={handleSubmit} className="mt-4 border border-gray-200 rounded-lg p-4 bg-white max-w-md space-y-3 ">
+    <form onSubmit={handleSubmit} className="mt-4 border border-gray-200 rounded-lg p-6 bg-white w-full max-w-md mx-auto space-y-3 shadow-sm">
       <div>
         <label className="block text-sm text-gray-600 mb-1">Logframe name</label>
         <input
@@ -616,7 +615,7 @@ function NewOrgForm({ onCreated }: { onCreated: (orgId: number) => void }) {
   }
 
   return (
-    <form onSubmit={handleSubmit} className="border border-gray-200 rounded-lg p-4 bg-white max-w-lg space-y-3 ">
+    <form onSubmit={handleSubmit} className="border border-gray-200 rounded-lg p-6 bg-white w-full max-w-lg mx-auto space-y-3 shadow-sm">
       <div>
         <label className="block text-sm text-gray-600 mb-1">Organisation name</label>
         <input
@@ -744,7 +743,7 @@ function CreateForm({ label, fields, onSubmit, autoOpen, isOpen, onToggle }: {
   }
 
   return (
-    <form onSubmit={handleSubmit} className="mt-4 border border-gray-200 rounded-lg p-4 bg-white max-w-md space-y-3">
+    <form onSubmit={handleSubmit} className="mt-4 border border-gray-200 rounded-lg p-6 bg-white w-full max-w-md mx-auto space-y-3 shadow-sm">
       <h3 className="text-sm font-medium text-gray-700">Create {label}</h3>
       {fields.map((field) => (
         <div key={field.name}>

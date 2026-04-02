@@ -10,5 +10,5 @@ export async function createExpense(
 }
 
 export async function deleteExpense(logframeId: number, expenseId: number): Promise<void> {
-  await apiClient.delete(`/logframes/${logframeId}/expenses/${expenseId}`)
+  await apiClient.delete(`/app/logframes/${logframeId}/expenses/${expenseId}`)
 }

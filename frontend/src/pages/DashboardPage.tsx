@@ -35,7 +35,7 @@ export default function DashboardPage() {
       <div className="flex items-center justify-between mb-4">
         <h2 className="text-lg font-semibold">{data.logframe.name}</h2>
         <Link
-          to={`/logframes/${id}/print`}
+          to={`/app/logframes/${id}/print`}
           target="_blank"
           rel="noopener noreferrer"
           className="inline-flex items-center gap-1.5 px-3 py-1.5 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50"
@@ -57,7 +57,7 @@ export default function DashboardPage() {
             </p>
           </div>
           <Link
-            to={`/logframes/${id}/settings?tab=organisation`}
+            to={`/app/logframes/${id}/settings?tab=organisation`}
             className="text-sm font-medium text-amber-700 hover:text-amber-900 underline whitespace-nowrap"
           >
             Update in Settings
