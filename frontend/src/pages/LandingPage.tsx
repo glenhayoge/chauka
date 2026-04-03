@@ -6,27 +6,27 @@ export default function LandingPage() {
   const isLoggedIn = !!useAuthStore((s) => s.token)
 
   return (
-    <div className="min-h-screen bg-white">
+    <div className="min-h-screen">
       {/* Nav */}
-      <nav className=" px-6 py-4 border-b border-gray-100 sticky top-0 bg-white z-10">
+      <nav className=" px-6 py-4 border-b border-gray-100 sticky top-0 bg-secondary z-10">
         <div className='mx-auto max-w-7xl flex items-center justify-between'>
           <div className="flex items-center gap-6">
-            <span className="text-lg font-medium text-gray-900">Chauka</span>
+            <span className="text-lg font-medium text-foreground">chauka.org</span>
 
           </div>
           <div className="flex items-center gap-4">
             <div className="hidden sm:flex items-center gap-4 mr-8">
-              <a href="#features" className="text-sm text-gray-500 hover:text-gray-900">Features</a>
-              <a href="#about" className="text-sm text-gray-500 hover:text-gray-900">About</a>
-              <Link to="/docs" className="text-sm text-gray-500 hover:text-gray-900">Docs</Link>
-              <a href="#contact" className="text-sm text-gray-500 hover:text-gray-900">Contact</a>
+              <a href="#features" className="text-sm text-foreground hover:text-primary">Features</a>
+              <a href="#about" className="text-sm text-foreground hover:text-primary">About</a>
+              <Link to="/docs" className="text-sm text-foreground hover:text-primary">Docs</Link>
+              <a href="#contact" className="text-sm text-foreground hover:text-primary">Contact</a>
             </div>
             {isLoggedIn ? (
               <Link to="/app" className="text-sm text-gray-700 hover:text-gray-900">Go to app</Link>
             ) : (
               <>
-                <Link to="/login" className="text-sm text-gray-600 hover:text-gray-900">Sign in</Link>
-                <Link to="/register" className="text-sm bg-gray-900 text-white px-3 py-1.5 rounded-md hover:bg-gray-800 transition-colors">
+                <Link to="/login" className="text-sm text-foreground hover:text-primary">Sign in</Link>
+                <Link to="/register" className="text-sm bg-foreground text-white px-3 py-1.5 rounded-md hover:bg-foreground/80 transition-colors">
                   Get started
                 </Link>
               </>
@@ -37,7 +37,7 @@ export default function LandingPage() {
 
       {/* Main */}
       <div className="max-w-4xl mx-auto px-6 pt-16 pb-24">
-        <p className="text-4xl text-gray-900 font-bold leading-snug mb-4">
+        <p className="text-4xl text-foreground font-bold leading-snug mb-4">
           Plan, monitor and report on development programs using logical frameworks.
         </p>
         <p className="text-lg text-gray-500 leading-relaxed mb-8 max-w-2xl">
@@ -47,7 +47,7 @@ export default function LandingPage() {
         </p>
         {!isLoggedIn && (
           <div className="flex gap-3 mb-16">
-            <Link to="/register" className="bg-gray-900 text-white text-sm px-4 py-2 rounded-md hover:bg-gray-800 transition-colors">
+            <Link to="/register" className="bg-foreground text-white text-sm px-4 py-2 rounded-md hover:bg-gray-800 transition-colors">
               Create an account
             </Link>
             <Link to="/login" className="border border-gray-300 text-gray-700 text-sm px-4 py-2 rounded-md hover:bg-gray-50 transition-colors">
@@ -94,10 +94,10 @@ export default function LandingPage() {
 
         {/* Built for */}
         <div className="border-t border-gray-100 mt-12 pt-10">
-          <p className="text-sm text-gray-900 mb-3">Built for</p>
+          <p className="text-lg text-foreground mb-3">Built for</p>
           <div className="flex flex-wrap gap-2">
-            {['NGOs', 'Government agencies', 'Donor-funded programmes', 'M&E teams', 'Project managers', 'Field organisations'].map((tag) => (
-              <span key={tag} className="text-xs text-gray-500 border border-gray-200 rounded-md px-2.5 py-1">{tag}</span>
+            {['NGOs', 'Government agencies', 'Donor-funded programs', 'M&E teams', 'Project managers', 'Field organisations', 'Agriculture Programs', 'Program Managers', 'M&E Specialists'].map((tag) => (
+              <span key={tag} className="text-xs text-gray-500 border border-gray-200 rounded-md px-6 py-3">{tag}</span>
             ))}
           </div>
         </div>
@@ -129,7 +129,7 @@ export default function LandingPage() {
               <img
                 src="https://upload.wikimedia.org/wikipedia/commons/thumb/f/fd/Philemon_albitorques.jpg/500px-Philemon_albitorques.jpg"
                 alt="The Chauka bird (Philemon albitorques) from Manus Island, Papua New Guinea"
-                className="w-full sm:w-48 rounded-lg object-cover"
+                className="w-full sm:w-56 rounded-lg object-cover"
               />
               <p className="text-xs text-gray-400 mt-1.5">
                 Picture: <a href="https://en.wikipedia.org/wiki/Manus_friarbird" target="_blank" rel="noopener noreferrer" className="underline hover:text-gray-500">Manus friarbird</a> via Wikimedia Commons
@@ -162,9 +162,9 @@ export default function LandingPage() {
         </div>
 
         {/* Contact */}
-        <div id="contact" className="border-t border-gray-100 mt-12 pt-10">
-          <p className="text-lg text-gray-900 mb-2">Get in touch</p>
-          <p className="text-sm text-gray-500 mb-4">
+        <div id="contact" className="border-t border-border mt-12 pt-10 bg-background p-6">
+          <p className="text-lg text-foreground mb-2">Get in touch</p>
+          <p className="text-sm text-foreground mb-4">
             Questions, feedback or partnership enquiries, we'd like to hear from you.
           </p>
           <ContactForm />
@@ -233,7 +233,7 @@ function ContactForm() {
         <label className="block text-sm text-gray-600 mb-1">Message</label>
         <textarea value={message} onChange={(e) => setMessage(e.target.value)} rows={4} className={inputClass} required />
       </div>
-      <button type="submit" className="bg-gray-900 text-white text-sm px-4 py-2 rounded-md hover:bg-gray-800 transition-colors">
+      <button type="submit" className="bg-foreground text-white text-sm px-4 py-2 rounded-md hover:bg-gray-800 transition-colors">
         Send message
       </button>
     </form>
