@@ -1,39 +1,15 @@
 import { useState } from 'react'
 import { Link } from 'react-router-dom'
 import { useAuthStore } from '../store/auth'
+import Navbar from '../components/layout/Navbar'
+import Footer from '../components/layout/Footer'
 
 export default function LandingPage() {
   const isLoggedIn = !!useAuthStore((s) => s.token)
 
   return (
     <div className="min-h-screen">
-      {/* Nav */}
-      <nav className=" px-6 py-4 border-b border-gray-100 sticky top-0 bg-secondary z-10">
-        <div className='mx-auto max-w-7xl flex items-center justify-between'>
-          <div className="flex items-center gap-6">
-            <span className="text-lg font-medium text-foreground">chauka.org</span>
-
-          </div>
-          <div className="flex items-center gap-4">
-            <div className="hidden sm:flex items-center gap-4 mr-8">
-              <a href="#features" className="text-sm text-foreground hover:text-primary">Features</a>
-              <a href="#about" className="text-sm text-foreground hover:text-primary">About</a>
-              <Link to="/docs" className="text-sm text-foreground hover:text-primary">Docs</Link>
-              <a href="#contact" className="text-sm text-foreground hover:text-primary">Contact</a>
-            </div>
-            {isLoggedIn ? (
-              <Link to="/app" className="text-sm text-gray-700 hover:text-gray-900">Go to app</Link>
-            ) : (
-              <>
-                <Link to="/login" className="text-sm text-foreground hover:text-primary">Sign in</Link>
-                <Link to="/register" className="text-sm bg-foreground text-white px-3 py-1.5 rounded-md hover:bg-foreground/80 transition-colors">
-                  Get started
-                </Link>
-              </>
-            )}
-          </div>
-        </div>
-      </nav>
+      <Navbar />
 
       {/* Main */}
       <div className="max-w-4xl mx-auto px-6 pt-16 pb-24">
@@ -171,21 +147,7 @@ export default function LandingPage() {
         </div>
       </div>
 
-      {/* Footer */}
-      <footer className="border-t border-gray-100 px-6 py-6">
-        <div className="max-w-4xl mx-auto flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
-          <span className="text-lg text-gray-400">Chauka</span>
-          <div className="flex flex-wrap gap-4">
-            <a href="#features" className="text-xs text-gray-400 hover:text-gray-500">Features</a>
-            <a href="#about" className="text-xs text-gray-400 hover:text-gray-500">About</a>
-            <Link to="/docs" className="text-xs text-gray-400 hover:text-gray-500">Docs</Link>
-            <a href="#contact" className="text-xs text-gray-400 hover:text-gray-500">Contact</a>
-            <Link to="/terms" className="text-xs text-gray-400 hover:text-gray-500">Terms</Link>
-            <Link to="/privacy" className="text-xs text-gray-400 hover:text-gray-500">Privacy</Link>
-            <a href="https://github.com/glenhayoge/chauka" target="_blank" rel="noopener noreferrer" className="text-xs text-gray-400 hover:text-gray-500">GitHub</a>
-          </div>
-        </div>
-      </footer>
+      <Footer />
     </div>
   )
 }

@@ -1,0 +1,36 @@
+import { Link } from 'react-router-dom'
+import { useAuthStore } from '../../store/auth'
+
+export default function Navbar() {
+  const isLoggedIn = !!useAuthStore((s) => s.token)
+
+  return (
+    <nav className="px-6 py-4 border-b border-border sticky top-0 bg-secondary z-10">
+      <div className="mx-auto max-w-7xl flex items-center justify-between">
+        <div className="flex items-center gap-6">
+          <Link to="/" className="text-lg font-medium text-foreground">
+            chauka.org
+          </Link>
+        </div>
+        <div className="flex items-center gap-4">
+          <div className="hidden sm:flex items-center gap-4 mr-8">
+            <Link to="/#features" className="text-sm text-foreground hover:text-primary">Features</Link>
+            <Link to="/#about" className="text-sm text-foreground hover:text-primary">About</Link>
+            <Link to="/docs" className="text-sm text-foreground hover:text-primary">Docs</Link>
+            <Link to="/#contact" className="text-sm text-foreground hover:text-primary">Contact</Link>
+          </div>
+          {isLoggedIn ? (
+            <Link to="/app" className="text-sm text-foreground hover:text-primary">Go to app</Link>
+          ) : (
+            <>
+              <Link to="/login" className="text-sm text-foreground hover:text-primary">Sign in</Link>
+              <Link to="/register" className="text-sm bg-foreground text-white px-3 py-1.5 rounded-md hover:bg-foreground/80 transition-colors">
+                Get started
+              </Link>
+            </>
+          )}
+        </div>
+      </div>
+    </nav>
+  )
+}
