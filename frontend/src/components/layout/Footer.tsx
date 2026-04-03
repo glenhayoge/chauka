@@ -5,7 +5,7 @@ export default function Footer() {
     <footer className="border-t border-border px-6 py-6">
       <div className="max-w-4xl mx-auto flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
         <Link to="/" className="text-lg text-muted-foreground">Chauka</Link>
-        <div className="flex flex-wrap gap-4">
+        <div className="flex flex-wrap gap-2">
           <Link to="/#features" className="text-xs text-muted-foreground hover:text-foreground">Features</Link>
           <Link to="/#about" className="text-xs text-muted-foreground hover:text-foreground">About</Link>
           <Link to="/docs" className="text-xs text-muted-foreground hover:text-foreground">Docs</Link>

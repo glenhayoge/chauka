@@ -138,7 +138,7 @@ export default function LandingPage() {
         </div>
 
         {/* Contact */}
-        <div id="contact" className="border-t border-border mt-12 pt-10 bg-background p-6">
+        <div id="contact" className="border-t border-border mt-12 pt-10 bg-background ">
           <p className="text-lg text-foreground mb-2">Get in touch</p>
           <p className="text-sm text-foreground mb-4">
             Questions, feedback or partnership enquiries, we'd like to hear from you.

@@ -54,7 +54,7 @@ export default function RegisterPage() {
       <Navbar />
       <div className="flex-1 flex items-center justify-center px-4 py-8">
         <div className="w-full max-w-lg">
-          <p className="text-sm font-medium text-gray-900 mb-6">Create an account</p>
+          <p className="text-lg font-medium text-gray-900 mb-6">Create an account</p>
           <form onSubmit={handleSubmit} className="space-y-3">
             <div className="grid grid-cols-2 gap-3">
               <div>

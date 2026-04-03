@@ -35,12 +35,12 @@ export default function Layout() {
     ?? logframes?.find((lf) => lf.id === currentLogframeId)?.name
 
   return (
-    <div className="min-h-screen flex flex-col">
+    <div className="min-h-screen flex flex-col bg-background text-foreground">
       {/* Top header bar */}
-      <header className="bg-gray-900 text-white">
+      <header className="bg-foreground text-background">
         <div className="px-4 sm:px-6 py-3 flex justify-between items-center">
           <div className="flex items-center gap-4 sm:gap-6 min-w-0">
-            <Link to="/app" className="text-lg sm:text-xl font-semibold hover:text-gray-300 flex-shrink-0">
+            <Link to="/app" className="text-lg sm:text-xl font-semibold hover:text-muted transition-colors flex-shrink-0">
               Chauka
             </Link>
 
@@ -49,7 +49,7 @@ export default function Layout() {
               <select
                 value={currentLogframeId ?? ''}
                 onChange={handleLogframeChange}
-                className="hidden sm:block bg-gray-700 text-white text-sm rounded px-2 py-1 border border-gray-600 focus:outline-none focus:ring-1 focus:ring-gray-500 min-w-0"
+                className="hidden sm:block bg-foreground/80 text-background text-sm rounded-md px-2 py-1 border border-border focus:outline-none focus:ring-1 focus:ring-ring min-w-0"
               >
                 <option value="" disabled>Select logframe</option>
                 {logframes.map((lf) => (
@@ -60,19 +60,19 @@ export default function Layout() {
 
             {/* Single logframe name display */}
             {currentLogframeId && logframes && logframes.length === 1 && logframeName && (
-              <span className="text-sm text-gray-400 truncate hidden sm:inline">{logframeName}</span>
+              <span className="text-sm text-muted truncate hidden sm:inline">{logframeName}</span>
             )}
           </div>
 
           {/* Desktop user controls */}
           <div className="hidden sm:flex items-center gap-4">
             <NotificationBell />
-            <Link to="/profile" className="text-sm text-gray-400 hover:text-white hover:underline">
+            <Link to="/profile" className="text-sm text-muted hover:text-background hover:underline transition-colors">
               {username}
             </Link>
             <button
               onClick={handleLogout}
-              className="text-sm text-gray-400 hover:text-white underline hover:no-underline"
+              className="text-sm text-muted hover:text-background underline hover:no-underline transition-colors"
             >
               Log out
             </button>
@@ -81,7 +81,7 @@ export default function Layout() {
           {/* Mobile hamburger button */}
           <button
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-            className="sm:hidden p-2 -mr-2 text-gray-400 hover:text-white"
+            className="sm:hidden p-2 -mr-2 text-muted hover:text-background transition-colors"
             aria-label="Toggle menu"
           >
             {mobileMenuOpen ? (
@@ -98,13 +98,13 @@ export default function Layout() {
 
         {/* Mobile menu drawer */}
         {mobileMenuOpen && (
-          <div className="sm:hidden border-t border-gray-700 px-4 py-3 space-y-3">
+          <div className="sm:hidden border-t border-border px-4 py-3 space-y-3">
             {/* Logframe switcher — only when inside a logframe context */}
             {currentLogframeId && logframes && logframes.length > 1 && (
               <select
                 value={currentLogframeId ?? ''}
                 onChange={(e) => { handleLogframeChange(e); setMobileMenuOpen(false) }}
-                className="w-full bg-gray-700 text-white text-sm rounded px-2 py-2 border border-gray-600 focus:outline-none"
+                className="w-full bg-foreground/80 text-background text-sm rounded-md px-2 py-2 border border-border focus:outline-none"
               >
                 <option value="" disabled>Select logframe</option>
                 {logframes.map((lf) => (
@@ -141,20 +141,20 @@ export default function Layout() {
             )}
 
             {/* User info + logout */}
-            <div className="border-t border-gray-700 pt-3 flex items-center justify-between">
+            <div className="border-t border-border pt-3 flex items-center justify-between">
               <div className="flex items-center gap-3">
                 <NotificationBell />
                 <Link
                   to="/profile"
                   onClick={() => setMobileMenuOpen(false)}
-                  className="text-sm text-gray-400 hover:text-white hover:underline"
+                  className="text-sm text-muted hover:text-background hover:underline transition-colors"
                 >
                   {username}
                 </Link>
               </div>
               <button
                 onClick={handleLogout}
-                className="text-sm text-gray-400 hover:text-white underline hover:no-underline"
+                className="text-sm text-muted hover:text-background underline hover:no-underline transition-colors"
               >
                 Log out
               </button>
@@ -164,7 +164,7 @@ export default function Layout() {
 
         {/* Desktop dashboard nav bar */}
         {currentLogframeId && (
-          <nav className="hidden sm:flex px-6 gap-1 bg-gray-800">
+          <nav className="hidden sm:flex px-6 gap-1 bg-foreground/90">
             <NavButton
               to={`/app/logframes/${currentLogframeId}`}
               active={pathname === `/app/logframes/${currentLogframeId}`}
@@ -201,8 +201,8 @@ function NavButton({ to, active, children }: { to: string; active: boolean; chil
       className={clsx(
         'px-4 py-2 text-sm font-medium rounded-t transition-colors',
         active
-          ? 'bg-white text-gray-900'
-          : 'text-gray-400 hover:text-white hover:bg-gray-800'
+          ? 'bg-background text-foreground'
+          : 'text-muted hover:text-background hover:bg-foreground/80'
       )}
     >
       {children}
@@ -216,10 +216,10 @@ function MobileNavLink({ to, active, onClick, children }: { to: string; active: 
       to={to}
       onClick={onClick}
       className={clsx(
-        'block px-3 py-2 rounded text-sm font-medium',
+        'block px-3 py-2 rounded-md text-sm font-medium transition-colors',
         active
-          ? 'bg-gray-700 text-white'
-          : 'text-gray-400 hover:bg-gray-700 hover:text-white'
+          ? 'bg-foreground/80 text-background'
+          : 'text-muted hover:bg-foreground/80 hover:text-background'
       )}
     >
       {children}

@@ -33,7 +33,7 @@ export default function LoginPage() {
       <Navbar />
       <div className="flex-1 flex items-center justify-center px-4 ">
         <div className="w-full max-w-sm">
-          <p className="text-sm font-medium text-gray-900 mb-6">Sign in to Chauka</p>
+          <p className="text-lg font-medium text-gray-900 mb-6">Sign in to Chauka</p>
           <form onSubmit={handleSubmit} className="space-y-3">
             <div>
               <label className="block text-sm text-gray-600 mb-1">Username</label>
@@ -62,7 +62,7 @@ export default function LoginPage() {
             <button
               type="submit"
               disabled={loading}
-              className="w-full bg-gray-900 text-white py-2 text-sm rounded-md hover:bg-gray-800 disabled:opacity-50 transition-colors"
+              className="w-full bg-foreground text-accent py-2 text-sm rounded-md hover:bg-foreground/80 disabled:opacity-50 transition-colors"
             >
               {loading ? 'Signing in\u2026' : 'Sign in'}
             </button>

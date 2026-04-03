@@ -40,7 +40,7 @@ function RequireAuth({ children }: { children: React.ReactNode }) {
 }
 
 function PageLoader() {
-  return <p className="text-gray-400 text-sm p-6">Loading…</p>
+  return <p className="text-foreground text-sm p-6">Loading…</p>
 }
 
 export default function App() {
