@@ -1,0 +1,148 @@
+# API Endpoints
+
+Complete list of Chauka API endpoints. All endpoints except `/api/auth/token` and `/health` require JWT authentication.
+
+> Interactive API documentation is available at `/docs` (Swagger UI) and `/redoc` when the backend is running.
+
+## Authentication
+
+| Method | Path | Description |
+|--------|------|-------------|
+| POST | `/api/auth/token` | Login (form-urlencoded) — returns JWT |
+
+## Users
+
+| Method | Path | Description |
+|--------|------|-------------|
+| GET | `/api/users` | List all users |
+
+## Organisations
+
+| Method | Path | Description |
+|--------|------|-------------|
+| GET | `/api/organisations` | List user's organisations |
+| POST | `/api/organisations` | Create organisation |
+| GET | `/api/organisations/{id}` | Get organisation |
+| PATCH | `/api/organisations/{id}` | Update organisation |
+
+## Programs
+
+| Method | Path | Description |
+|--------|------|-------------|
+| GET | `/api/organisations/{org_id}/programs` | List programs |
+| POST | `/api/organisations/{org_id}/programs` | Create program |
+
+## Projects
+
+| Method | Path | Description |
+|--------|------|-------------|
+| GET | `/api/organisations/{org_id}/projects` | List projects |
+| POST | `/api/organisations/{org_id}/projects` | Create project |
+
+## Memberships
+
+| Method | Path | Description |
+|--------|------|-------------|
+| GET | `/api/organisations/{org_id}/memberships` | List members |
+| POST | `/api/organisations/{org_id}/memberships` | Add member |
+| DELETE | `/api/organisations/{org_id}/memberships/{id}` | Remove member |
+
+## Project Roles
+
+| Method | Path | Description |
+|--------|------|-------------|
+| GET | `/api/organisations/{org_id}/project_roles` | List project roles |
+| POST | `/api/organisations/{org_id}/project_roles` | Assign role |
+
+## Invitations
+
+| Method | Path | Description |
+|--------|------|-------------|
+| GET | `/api/organisations/{org_id}/invitations` | List invitations |
+| POST | `/api/organisations/{org_id}/invitations` | Send invitation |
+| POST | `/api/invitations/{token}/accept` | Accept invitation |
+
+## Logframes
+
+| Method | Path | Description |
+|--------|------|-------------|
+| GET | `/api/logframes` | List user's logframes |
+| POST | `/api/logframes` | Create logframe |
+| GET | `/api/logframes/{id}` | Get logframe |
+| PATCH | `/api/logframes/{id}` | Update logframe |
+| GET | `/api/logframes/{id}/bootstrap` | Get full logframe data |
+
+## Logframe-scoped Resources
+
+All paths below are prefixed with `/api/logframes/{logframe_id}`.
+
+### Results
+
+| Method | Path | Description |
+|--------|------|-------------|
+| GET | `/results` | List results |
+| POST | `/results` | Create result |
+| PATCH | `/results/{id}` | Update result |
+| DELETE | `/results/{id}` | Delete result |
+
+### Indicators
+
+| Method | Path | Description |
+|--------|------|-------------|
+| GET | `/indicators` | List indicators |
+| POST | `/indicators` | Create indicator |
+| PATCH | `/indicators/{id}` | Update indicator |
+| DELETE | `/indicators/{id}` | Delete indicator |
+
+### SubIndicators
+
+| Method | Path | Description |
+|--------|------|-------------|
+| GET | `/subindicators` | List sub-indicators |
+| POST | `/subindicators` | Create sub-indicator |
+| PATCH | `/subindicators/{id}` | Update sub-indicator |
+| DELETE | `/subindicators/{id}` | Delete sub-indicator |
+
+### Activities
+
+| Method | Path | Description |
+|--------|------|-------------|
+| GET | `/results/{result_id}/activities` | List activities |
+| POST | `/results/{result_id}/activities` | Create activity |
+| PATCH | `/activities/{id}` | Update activity |
+| DELETE | `/activities/{id}` | Delete activity |
+
+### Budget, Targets, Periods
+
+| Method | Path | Description |
+|--------|------|-------------|
+| GET | `/budget` | List budget lines |
+| POST | `/budget` | Create budget line |
+| GET | `/targets` | List targets |
+| POST | `/targets` | Create target |
+| GET | `/periods` | List periods |
+| POST | `/periods` | Create period |
+
+### Additional Resources
+
+| Method | Path | Description |
+|--------|------|-------------|
+| GET/POST | `/assumptions` | Assumptions |
+| GET/POST | `/columns` | Columns |
+| GET/POST | `/dataentries` | Data entries |
+| GET/POST | `/ratings` | Ratings |
+| GET/POST | `/tags` | Tags |
+| GET/POST | `/talines` | TA lines |
+| GET/POST | `/statusupdates` | Status updates |
+| GET/POST | `/expenses` | Expenses |
+| GET/POST | `/resources` | Resources |
+| GET | `/export` | Excel export |
+
+## Other
+
+| Method | Path | Description |
+|--------|------|-------------|
+| GET | `/api/notifications` | List notifications |
+| GET | `/api/audit` | Audit log |
+| GET | `/api/settings` | App settings |
+| GET | `/health` | Health check |

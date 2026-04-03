@@ -1,0 +1,67 @@
+# CLI Commands
+
+Quick reference for commands used in Chauka development and deployment.
+
+## Frontend
+
+Run these from the `frontend/` directory:
+
+| Command | Description |
+|---------|-------------|
+| `npm install` | Install dependencies |
+| `npm run dev` | Start Vite dev server on `:5173` |
+| `npm run build` | TypeScript check + production build to `dist/` |
+| `npm run preview` | Serve production build locally |
+| `npm run type-check` | Run TypeScript compiler (no emit) |
+| `npm run lint` | Lint `.ts` and `.tsx` files with ESLint |
+
+## Backend
+
+Run these from the `backend/` directory:
+
+| Command | Description |
+|---------|-------------|
+| `pip install -e .` | Install backend in editable mode |
+| `uvicorn app.main:app --reload` | Start dev server on `:8000` |
+| `pytest tests/ -v` | Run all tests |
+| `pytest tests/test_foo.py -v` | Run a single test file |
+| `pytest tests/test_foo.py -k "test_bar"` | Run a single test by name |
+| `pytest tests/ --cov=app --cov-report=term-missing` | Run tests with coverage |
+
+## Alembic (migrations)
+
+Run from the `backend/` directory:
+
+| Command | Description |
+|---------|-------------|
+| `alembic upgrade head` | Apply all pending migrations |
+| `alembic revision --autogenerate -m "desc"` | Generate a new migration |
+| `alembic current` | Show current migration state |
+| `alembic downgrade -1` | Roll back one migration |
+| `alembic history` | Show migration history |
+
+## Docker
+
+Run from the project root:
+
+| Command | Description |
+|---------|-------------|
+| `docker compose up --build` | Start full stack (db + api + web) |
+| `docker compose down` | Stop all containers |
+| `docker compose down -v` | Stop and delete volumes (data loss) |
+| `docker compose logs -f api` | Follow API logs |
+| `docker build -t chauka .` | Build production image |
+
+## Fly.io
+
+Run from the project root:
+
+| Command | Description |
+|---------|-------------|
+| `fly deploy` | Build and deploy to Fly.io |
+| `fly ssh console -C "cd /app/backend && alembic upgrade head"` | Run migrations on Fly |
+| `fly logs --follow` | Stream production logs |
+| `fly secrets set KEY=value` | Set an environment variable |
+| `fly secrets list` | List secret names |
+| `fly status` | Check app status |
+| `fly releases` | List recent releases |

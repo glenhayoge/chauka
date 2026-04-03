@@ -1,0 +1,102 @@
+# Project Directory Structure
+
+Complete directory layout of the Chauka monorepo.
+
+## Top-level
+
+```
+chauka/
+├── backend/              # FastAPI application
+├── frontend/             # React application
+├── deploy/               # Separate Fly.io configs
+│   ├── fly.api.toml      # Backend-only deploy
+│   └── fly.web.toml      # Frontend-only deploy
+├── examples/             # Sample logframe data
+├── Dockerfile            # Multi-stage production build
+├── docker-compose.yml    # Local dev stack
+├── fly.toml              # Primary Fly.io config
+├── README.md             # Project README
+├── CLAUDE.md             # Claude Code project context
+└── test_api.py           # API smoke tests
+```
+
+## Backend
+
+```
+backend/
+├── app/
+│   ├── main.py           # App factory, lifespan, router registration
+│   ├── config.py         # Pydantic settings (CHAUKA_ prefix)
+│   ├── database.py       # Async engine and session factory
+│   ├── auth/
+│   │   ├── dependencies.py   # get_current_user, require_logframe_editor
+│   │   └── router.py         # POST /api/auth/token
+│   ├── models/
+│   │   ├── org.py            # Organisation, Program, Project, ProjectRole
+│   │   ├── contacts.py       # User
+│   │   ├── logframe.py       # Logframe + all nested models
+│   │   ├── notification.py   # Notification
+│   │   ├── audit.py          # AuditLog
+│   │   ├── kobo.py           # KoboToolbox integration
+│   │   └── appconf.py        # Settings
+│   ├── schemas/              # Pydantic schemas (Create, Update, Read)
+│   ├── routers/              # One file per resource
+│   ├── services/
+│   │   ├── rbac.py           # Role-based access control
+│   │   └── exports.py        # Excel export logic
+│   └── security/
+│       ├── ownership.py      # IDOR verification
+│       └── middleware.py      # Security headers, rate limiting
+├── alembic/
+│   ├── alembic.ini
+│   └── versions/             # Migration files
+├── tests/                    # pytest test suite
+└── pyproject.toml            # Package configuration (hatchling)
+```
+
+## Frontend
+
+```
+frontend/
+├── src/
+│   ├── api/              # Axios client modules
+│   │   └── client.ts     # Base client with JWT interceptor
+│   ├── components/
+│   │   ├── layout/       # Navbar, Footer, Layout, TabNav
+│   │   ├── ui/           # Reusable primitives
+│   │   ├── logframe/     # Logframe-specific components
+│   │   └── shared/       # Cross-cutting components
+│   ├── hooks/            # React Query hooks (useFoo.ts)
+│   ├── pages/            # Route-level page components
+│   ├── store/
+│   │   ├── auth.ts       # useAuthStore (persisted)
+│   │   ├── logframe.ts   # useLogframeStore
+│   │   └── ui.ts         # useUIStore
+│   ├── utils/            # Shared utilities
+│   ├── docs/             # MDX documentation files
+│   │   ├── tutorials/
+│   │   ├── how-to/
+│   │   ├── explanations/
+│   │   └── references/
+│   ├── docs-ui/          # Documentation UI components
+│   ├── App.tsx           # Route definitions
+│   ├── main.tsx          # Entry point
+│   └── index.css         # Tailwind theme and global styles
+├── index.html            # HTML template
+├── package.json
+├── tsconfig.json
+├── tsconfig.node.json
+└── vite.config.ts
+```
+
+## Naming conventions
+
+| Type | Convention | Example |
+|------|-----------|---------|
+| Models | Singular PascalCase | `Result`, `Indicator` |
+| Schemas | `ModelCreate`, `ModelRead` | `ResultCreate`, `ResultRead` |
+| Routers | Plural kebab-case file | `routers/results.py` |
+| Tests | `test_domain.py` | `tests/test_results.py` |
+| Pages | PascalCase + Page | `OverviewPage.tsx` |
+| Hooks | `use` + Domain | `useLogframe.ts` |
+| API modules | kebab-case | `api/logframes.ts` |

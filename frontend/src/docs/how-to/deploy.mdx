@@ -1,0 +1,82 @@
+# How to Deploy the Application
+
+Chauka deploys as a single Docker image to Fly.io. FastAPI serves both the API and the built React static files.
+
+## Prerequisites
+
+- [flyctl](https://fly.io/docs/hands-on/install-flyctl/) installed and authenticated
+- Access to the Chauka Fly.io app
+
+## Deploy
+
+```bash
+fly deploy
+```
+
+This builds the multi-stage Dockerfile and deploys to the `jnb` region.
+
+## Run migrations after deploy
+
+Migrations do not run automatically. After deploying:
+
+```bash
+fly ssh console -C "cd /app/backend && alembic upgrade head"
+```
+
+## Verify
+
+```bash
+curl https://chauka.fly.dev/health
+```
+
+Check logs:
+
+```bash
+fly logs --follow
+```
+
+## First-time setup
+
+### 1. Create the Fly app
+
+```bash
+fly apps create chauka
+```
+
+### 2. Provision PostgreSQL
+
+Create a Postgres cluster on Fly.io and note the connection string.
+
+### 3. Set secrets
+
+```bash
+fly secrets set \
+  CHAUKA_DATABASE_URL="postgresql+asyncpg://user:pass@host:5432/chauka" \
+  CHAUKA_SECRET_KEY="$(openssl rand -hex 32)" \
+  CHAUKA_CORS_ORIGINS='["https://chauka.fly.dev"]'
+```
+
+### 4. Deploy
+
+```bash
+fly deploy
+fly ssh console -C "cd /app/backend && alembic upgrade head"
+```
+
+## Rollback
+
+To deploy a previous release:
+
+```bash
+fly releases
+fly deploy --image registry.fly.io/chauka:v<N>
+```
+
+## Separate deploys (optional)
+
+The `deploy/` directory contains separate Fly configs for independent backend and frontend deploys:
+
+- `deploy/fly.api.toml` — Backend-only
+- `deploy/fly.web.toml` — Frontend-only
+
+For most cases, the unified deploy with `fly deploy` is sufficient.

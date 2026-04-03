@@ -1,0 +1,71 @@
+# Authentication Design
+
+Chauka uses stateless JWT authentication. This document explains the design and the reasoning behind it.
+
+## How authentication works
+
+### Login flow
+
+1. User submits email and password to `POST /api/auth/token` (form-urlencoded)
+2. Backend verifies credentials against bcrypt-hashed password in the database
+3. If valid, returns a JWT access token with an 8-hour TTL
+4. Frontend stores the token in Zustand (persisted to `localStorage` as `kashana-auth`)
+
+### Authenticated requests
+
+1. Axios request interceptor attaches `Authorization: Bearer <token>` to every API call
+2. FastAPI's `get_current_user` dependency decodes and validates the token
+3. If the token is expired or invalid, the endpoint returns 401
+4. The Axios response interceptor catches 401 and clears the auth store (automatic logout)
+
+## Token structure
+
+```json
+{
+  "sub": "user@example.com",
+  "user_id": 42,
+  "exp": 1700000000
+}
+```
+
+Signed with HS256 using `CHAUKA_SECRET_KEY`. No refresh token — when the token expires, the user must log in again.
+
+## Why JWT in localStorage?
+
+| Alternative | Why not |
+|-------------|---------|
+| HTTP-only cookies | Adds CSRF complexity; Chauka is a SPA calling its own API |
+| Session tokens | Requires server-side session storage; adds infrastructure |
+| Refresh tokens | Added complexity for an 8-hour tool; users accept daily login |
+
+JWT in `localStorage` is simple and stateless. It suits an internal M&E tool where:
+
+- Users access the app during work hours (8-hour TTL is natural)
+- The API and frontend share the same origin in production
+- XSS is mitigated by React's built-in escaping and CSP headers
+
+## Permission model
+
+After authentication, the RBAC system determines what the user can do.
+
+### Role hierarchy
+
+| Role | Scope | Permissions |
+|------|-------|-------------|
+| Superuser | Global | Full access to everything |
+| Org admin | Organisation | Full access to all logframes in the org |
+| Project lead | Project | Edit logframes within the project |
+| Data collector | Project | Enter actuals and expenses |
+| Viewer | Project | Read-only access |
+
+### Resolution logic
+
+```
+is_superuser? → full access
+is_org_admin? → full access to org's logframes
+has_project_role? → permissions based on role
+is_org_member? → view-only
+none of the above → 403
+```
+
+This is implemented in `services/rbac.py` via `can_edit_logframe()` and `can_view_logframe()`.

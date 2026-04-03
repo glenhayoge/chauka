@@ -1,0 +1,81 @@
+# How to Create a New React Page
+
+This guide explains how to add a new page to the Chauka React frontend.
+
+## 1. Create the page component
+
+Add a new file in `frontend/src/pages/`:
+
+```tsx
+// frontend/src/pages/ReportsPage.tsx
+export default function ReportsPage() {
+  return (
+    <div className="p-6">
+      <h1 className="text-lg font-semibold text-foreground mb-4">Reports</h1>
+      <p className="text-sm text-muted-foreground">
+        Generate and download logframe reports.
+      </p>
+    </div>
+  )
+}
+```
+
+## 2. Add a lazy import in App.tsx
+
+All pages use `React.lazy()` for code splitting:
+
+```tsx
+// frontend/src/App.tsx
+const ReportsPage = lazy(() => import('./pages/ReportsPage'))
+```
+
+## 3. Add the route
+
+Add the route inside the appropriate section of `App.tsx`:
+
+### For an authenticated page inside the app layout:
+
+```tsx
+<Route path="/app" element={<RequireAuth><Layout /></RequireAuth>}>
+  {/* existing routes */}
+  <Route path="logframes/:logframeId/reports" element={<ReportsPage />} />
+</Route>
+```
+
+### For a public page:
+
+```tsx
+<Route path="/reports" element={<ReportsPage />} />
+```
+
+## 3. Add navigation
+
+If the page appears in the logframe tabs, add it to the `TabNav` component:
+
+```tsx
+// frontend/src/components/layout/TabNav.tsx
+{ path: 'reports', label: 'Reports' }
+```
+
+## 4. Fetch data
+
+Use React Query hooks for data fetching:
+
+```tsx
+import { useQuery } from '@tanstack/react-query'
+import client from '../api/client'
+
+function useReports(logframeId: number) {
+  return useQuery({
+    queryKey: ['reports', logframeId],
+    queryFn: () => client.get(`/api/logframes/${logframeId}/reports`).then(r => r.data),
+  })
+}
+```
+
+## Conventions
+
+- Page filenames use PascalCase: `ReportsPage.tsx`
+- Pages are always lazy-loaded via `React.lazy()`
+- Authenticated pages are wrapped in `RequireAuth`
+- Pages inside the app layout use the `Layout` component with `Outlet`

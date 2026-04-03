@@ -1,0 +1,93 @@
+# How to Add Authentication to a Route
+
+Chauka uses JWT authentication. This guide covers protecting both backend endpoints and frontend routes.
+
+## Backend: Protect an API endpoint
+
+### Read-only (any logged-in user)
+
+```python
+from app.auth.dependencies import get_current_user
+
+@router.get("/", response_model=list[ThingRead])
+async def list_things(
+    db: AsyncSession = Depends(get_db),
+    current_user=Depends(get_current_user),
+):
+    # current_user is the authenticated User object
+    ...
+```
+
+### Write access (logframe editors only)
+
+```python
+from app.auth.dependencies import require_logframe_editor
+
+@router.post("/", response_model=ThingRead)
+async def create_thing(
+    logframe_id: int,
+    data: ThingCreate,
+    db: AsyncSession = Depends(get_db),
+    current_user=Depends(require_logframe_editor),
+):
+    ...
+```
+
+### Permission hierarchy
+
+The RBAC system in `services/rbac.py` resolves permissions in this order:
+
+1. **Superuser / is_staff** — global admin access
+2. **Organisation admin** — full access to org's logframes
+3. **ProjectRole** (lead / collector / viewer) — scoped to project's logframes
+4. **Organisation member** — view-only
+
+### IDOR protection
+
+For nested resources, always verify ownership:
+
+```python
+from app.security.ownership import verify_result_ownership
+
+await verify_result_ownership(db, logframe_id, result_id)
+```
+
+## Frontend: Protect a route
+
+### Using RequireAuth
+
+Wrap routes in the `RequireAuth` component in `App.tsx`:
+
+```tsx
+<Route
+  path="/app/settings"
+  element={
+    <RequireAuth>
+      <SettingsPage />
+    </RequireAuth>
+  }
+/>
+```
+
+`RequireAuth` checks `useAuthStore.token` and redirects to `/` if not authenticated.
+
+### Checking auth in components
+
+```tsx
+import { useAuthStore } from '../store/auth'
+
+function MyComponent() {
+  const isStaff = useAuthStore((s) => s.isStaff)
+  const currentRole = useAuthStore((s) => s.currentRole)
+
+  if (currentRole === 'viewer') {
+    return <p>Read-only access</p>
+  }
+
+  return <EditForm />
+}
+```
+
+### API client auto-logout
+
+The Axios client in `api/client.ts` intercepts 401 responses and automatically clears the auth store, logging the user out.

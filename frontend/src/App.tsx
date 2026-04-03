@@ -11,7 +11,12 @@ const ResetPasswordPage = lazy(() => import('./pages/ResetPasswordPage'))
 const InviteAcceptPage = lazy(() => import('./pages/InviteAcceptPage'))
 const TermsPage = lazy(() => import('./pages/TermsPage'))
 const PrivacyPage = lazy(() => import('./pages/PrivacyPage'))
-const DocsPage = lazy(() => import('./pages/DocsPage'))
+const DocsLayout = lazy(() => import('./docs-ui/DocsLayout'))
+const DocsIndex = lazy(() => import('./docs-ui/DocsIndex'))
+const DocPage = lazy(() => import('./docs-ui/DocPage'))
+const HelpLayout = lazy(() => import('./help-ui/HelpLayout'))
+const HelpIndex = lazy(() => import('./help-ui/HelpIndex'))
+const HelpPage = lazy(() => import('./help-ui/HelpPage'))
 const ProfilePage = lazy(() => import('./pages/ProfilePage'))
 const OrgSelectPage = lazy(() => import('./pages/OrgSelectPage'))
 const LogframeSelectPage = lazy(() => import('./pages/LogframeSelectPage'))
@@ -52,7 +57,14 @@ export default function App() {
           <Route path="/invite/:token" element={<InviteAcceptPage />} />
           <Route path="/terms" element={<TermsPage />} />
           <Route path="/privacy" element={<PrivacyPage />} />
-          <Route path="/docs" element={<DocsPage />} />
+          <Route path="/docs" element={<DocsLayout />}>
+            <Route index element={<DocsIndex />} />
+            <Route path="*" element={<DocPage />} />
+          </Route>
+          <Route path="/help" element={<HelpLayout />}>
+            <Route index element={<HelpIndex />} />
+            <Route path="*" element={<HelpPage />} />
+          </Route>
 
           {/* Authenticated standalone pages */}
           <Route path="/profile" element={<RequireAuth><Layout /></RequireAuth>}>

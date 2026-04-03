@@ -1,0 +1,122 @@
+# How to Add a New API Endpoint
+
+This guide walks through adding a new logframe-scoped REST endpoint to the FastAPI backend.
+
+## 1. Define the model
+
+Create or update a model in `backend/app/models/`:
+
+```python
+# backend/app/models/logframe.py
+class Note(Base):
+    __tablename__ = "notes"
+
+    id: Mapped[int] = mapped_column(primary_key=True)
+    content: Mapped[str] = mapped_column(Text)
+    logframe_id: Mapped[int] = mapped_column(ForeignKey("logframes.id"))
+    created_at: Mapped[datetime] = mapped_column(server_default=func.now())
+```
+
+## 2. Create Pydantic schemas
+
+Add schemas in `backend/app/schemas/`:
+
+```python
+# backend/app/schemas/notes.py
+from pydantic import BaseModel
+from datetime import datetime
+
+class NoteCreate(BaseModel):
+    content: str
+
+class NoteUpdate(BaseModel):
+    content: str | None = None
+
+class NoteRead(BaseModel):
+    id: int
+    content: str
+    logframe_id: int
+    created_at: datetime
+
+    model_config = {"from_attributes": True}
+```
+
+## 3. Create the router
+
+Add a router in `backend/app/routers/`:
+
+```python
+# backend/app/routers/notes.py
+from fastapi import APIRouter, Depends
+from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy import select
+from app.database import get_db
+from app.auth.dependencies import get_current_user, require_logframe_editor
+from app.models.logframe import Note
+from app.schemas.notes import NoteCreate, NoteRead
+
+router = APIRouter(
+    prefix="/api/logframes/{logframe_id}/notes",
+    tags=["notes"],
+)
+
+@router.get("/", response_model=list[NoteRead])
+async def list_notes(
+    logframe_id: int,
+    db: AsyncSession = Depends(get_db),
+    current_user=Depends(get_current_user),
+):
+    result = await db.execute(
+        select(Note).where(Note.logframe_id == logframe_id)
+    )
+    return result.scalars().all()
+
+@router.post("/", response_model=NoteRead)
+async def create_note(
+    logframe_id: int,
+    data: NoteCreate,
+    db: AsyncSession = Depends(get_db),
+    current_user=Depends(require_logframe_editor),
+):
+    note = Note(content=data.content, logframe_id=logframe_id)
+    db.add(note)
+    await db.commit()
+    await db.refresh(note)
+    return note
+```
+
+## 4. Register the router
+
+Add the import and registration in `backend/app/main.py`:
+
+```python
+from app.routers import notes
+app.include_router(notes.router)
+```
+
+## 5. Generate a migration
+
+```bash
+cd backend
+alembic revision --autogenerate -m "add notes table"
+alembic upgrade head
+```
+
+## 6. Add IDOR protection
+
+For logframe-scoped resources, verify ownership:
+
+```python
+from app.security.ownership import verify_result_ownership
+
+# In your write endpoints:
+await verify_result_ownership(db, logframe_id, result_id)
+```
+
+## 7. Test
+
+```bash
+pytest tests/test_notes.py -v
+```
+
+Verify the endpoint in the Swagger UI at `http://localhost:8000/docs`.

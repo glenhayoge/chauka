@@ -1,0 +1,147 @@
+# Database Schema
+
+Chauka uses PostgreSQL with SQLAlchemy 2.0 ORM. Models are defined in `backend/app/models/`.
+
+## Organisation models (`models/org.py`)
+
+### Organisation
+
+| Column | Type | Notes |
+|--------|------|-------|
+| `id` | int | Primary key |
+| `name` | str | Required |
+| `slug` | str | URL-friendly identifier |
+| `description` | text | Optional |
+| `logo_url` | str | Optional |
+| `country` | str | Optional |
+| `org_type` | str | Optional |
+| `sector` | str | Optional |
+| `owner_id` | int | FK → users.id |
+
+### Program
+
+| Column | Type | Notes |
+|--------|------|-------|
+| `id` | int | Primary key |
+| `name` | str | Required |
+| `description` | text | Optional |
+| `organisation_id` | int | FK → organisations.id |
+| `start_date` | date | Optional |
+| `end_date` | date | Optional |
+
+### Project
+
+| Column | Type | Notes |
+|--------|------|-------|
+| `id` | int | Primary key |
+| `name` | str | Required |
+| `description` | text | Optional |
+| `program_id` | int | FK → programs.id |
+| `organisation_id` | int | FK → organisations.id |
+| `start_date` | date | Optional |
+| `end_date` | date | Optional |
+| `status` | str | Optional |
+
+### OrganisationMembership
+
+| Column | Type | Notes |
+|--------|------|-------|
+| `id` | int | Primary key |
+| `user_id` | int | FK → users.id |
+| `organisation_id` | int | FK → organisations.id |
+| `role` | str | `admin` or `member` |
+
+### ProjectRole
+
+| Column | Type | Notes |
+|--------|------|-------|
+| `id` | int | Primary key |
+| `user_id` | int | FK → users.id |
+| `project_id` | int | FK → projects.id |
+| `role` | str | `lead`, `collector`, or `viewer` |
+
+## User model (`models/contacts.py`)
+
+### User
+
+| Column | Type | Notes |
+|--------|------|-------|
+| `id` | int | Primary key |
+| `email` | str | Unique, required |
+| `username` | str | Unique |
+| `hashed_password` | str | bcrypt hash |
+| `is_active` | bool | Default true |
+| `is_staff` | bool | Default false |
+| `is_superuser` | bool | Default false |
+
+## Logframe models (`models/logframe.py`)
+
+### Logframe
+
+| Column | Type | Notes |
+|--------|------|-------|
+| `id` | int | Primary key |
+| `name` | str | Required |
+| `project_id` | int | FK → projects.id (nullable) |
+| `program_id` | int | FK → programs.id (nullable) |
+
+### Result
+
+| Column | Type | Notes |
+|--------|------|-------|
+| `id` | int | Primary key |
+| `name` | str | Required |
+| `description` | text | Optional |
+| `order` | int | Sibling sort order |
+| `level` | int | Hierarchy depth (0 = Impact) |
+| `logframe_id` | int | FK → logframes.id |
+| `parent_id` | int | FK → results.id (self-referential) |
+| `rating_id` | int | FK → ratings.id |
+| `contribution_weighting` | float | Optional |
+
+### Indicator
+
+| Column | Type | Notes |
+|--------|------|-------|
+| `id` | int | Primary key |
+| `name` | str | Required |
+| `description` | text | Optional |
+| `order` | int | Sort order |
+| `result_id` | int | FK → results.id |
+| `source_of_verification` | str | Optional |
+| `needs_baseline` | bool | Default false |
+
+### Activity
+
+| Column | Type | Notes |
+|--------|------|-------|
+| `id` | int | Primary key |
+| `name` | str | Required |
+| `description` | text | Optional |
+| `order` | int | Sort order |
+| `result_id` | int | FK → results.id |
+| `start_date` | date | Optional |
+| `end_date` | date | Optional |
+| `lead_id` | int | FK → users.id |
+| `deliverables` | text | Optional |
+
+### Supporting tables
+
+| Table | Key columns | Purpose |
+|-------|-------------|---------|
+| `subindicators` | indicator_id, name, order | Indicator breakdown |
+| `data_entries` | subindicator_id, column_id, data | Actual values |
+| `targets` | subindicator_id, milestone_id, value | Target values |
+| `periods` | start_month, start_year, end_month, end_year | Reporting periods |
+| `budget_lines` | activity_id, name, amount, category | Budget items |
+| `ta_lines` | activity_id, type, name, band, amount | Technical assistance |
+| `milestones` | activity_id, period_id | Activity milestones |
+| `status_updates` | activity_id, user_id, code, date | Progress updates |
+| `expenses` | activity_id, name, amount | Expense tracking |
+| `resources` | activity_id, name, description | Resource allocation |
+| `assumptions` | result_id, description, risk_rating_id | Risk assumptions |
+| `ratings` | logframe_id, name, color | Status ratings |
+| `risk_ratings` | logframe_id, name | Risk assessment scale |
+| `tags` | logframe_id, name | Indicator tags |
+| `indicator_tags` | indicator_id, tag_id | Many-to-many join |
+| `columns` | logframe_id, name | Data entry columns |

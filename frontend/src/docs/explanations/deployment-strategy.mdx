@@ -1,0 +1,65 @@
+# Deployment Strategy
+
+Chauka deploys as a single Docker image to Fly.io. This document explains the deployment architecture and the reasoning behind it.
+
+## Single-image deploy
+
+The primary strategy is a unified Docker image where FastAPI serves both the API and the React static files.
+
+### How it works
+
+1. **Build stage 1**: Node.js builds the React app (`npm run build → dist/`)
+2. **Build stage 2**: Python runtime installs FastAPI and copies the built frontend
+3. **Runtime**: Uvicorn starts FastAPI, which serves:
+   - `/api/*` routes — API endpoints
+   - `/assets/*` — Static files from the React build
+   - Everything else — `index.html` (SPA fallback)
+
+### Why single-image?
+
+| Benefit | Detail |
+|---------|--------|
+| Simpler infrastructure | One Fly.io machine, one deploy command |
+| No CDN needed | Static files served from the same origin |
+| No CORS issues | API and frontend share the same domain |
+| Atomic deploys | Frontend and backend always match |
+
+### Trade-offs
+
+- Frontend changes require a full Docker rebuild (including backend)
+- No independent scaling of frontend vs backend
+- Larger image size than a separate static deploy
+
+For Chauka's scale (small team, moderate traffic), the simplicity outweighs these costs.
+
+## Fly.io hosting
+
+Chauka runs on Fly.io in the `jnb` (Johannesburg) region.
+
+- **App**: Single machine running the unified image
+- **Database**: PostgreSQL cluster on Fly.io
+- **Secrets**: Environment variables set via `fly secrets set`
+
+## Deployment workflow
+
+```bash
+# 1. Deploy the image
+fly deploy
+
+# 2. Run migrations (not automatic)
+fly ssh console -C "cd /app/backend && alembic upgrade head"
+
+# 3. Verify
+curl https://chauka.fly.dev/health
+```
+
+Migrations are deliberately manual. Database changes should be reviewed before applying, especially in production.
+
+## Alternative: Split deploys
+
+The `deploy/` directory contains separate Fly.io configs:
+
+- `fly.api.toml` — Backend-only deploy
+- `fly.web.toml` — Frontend-only deploy
+
+These exist for scenarios where independent scaling or deployment is needed, but the unified approach is the default.

@@ -9,6 +9,7 @@ export default function Footer() {
           <Link to="/#features" className="text-xs text-muted-foreground hover:text-foreground">Features</Link>
           <Link to="/#about" className="text-xs text-muted-foreground hover:text-foreground">About</Link>
           <Link to="/docs" className="text-xs text-muted-foreground hover:text-foreground">Docs</Link>
+          <Link to="/help" className="text-xs text-muted-foreground hover:text-foreground">Help</Link>
           <Link to="/#contact" className="text-xs text-muted-foreground hover:text-foreground">Contact</Link>
           <Link to="/terms" className="text-xs text-muted-foreground hover:text-foreground">Terms</Link>
           <Link to="/privacy" className="text-xs text-muted-foreground hover:text-foreground">Privacy</Link>

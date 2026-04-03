@@ -1,0 +1,95 @@
+# Setup Development Environment
+
+This tutorial walks you through setting up the Chauka development environment without Docker, running each service individually.
+
+## Install system dependencies
+
+### Node.js
+
+Install Node.js 22 via [nvm](https://github.com/nvm-sh/nvm):
+
+```bash
+nvm install 22
+nvm use 22
+```
+
+### Python
+
+Install Python 3.12. On macOS with pyenv:
+
+```bash
+pyenv install 3.12
+pyenv local 3.12
+```
+
+### PostgreSQL
+
+Install PostgreSQL 16. On macOS:
+
+```bash
+brew install postgresql@16
+brew services start postgresql@16
+```
+
+Create the development database:
+
+```bash
+createdb chauka
+```
+
+## Clone and explore
+
+```bash
+git clone https://github.com/glenhayoge/chauka.git
+cd chauka
+```
+
+The repository has two main directories:
+
+- `backend/` — FastAPI application (Python)
+- `frontend/` — React application (TypeScript)
+
+## Configure the backend
+
+```bash
+cd backend
+cp .env.local.example .env.local
+```
+
+Edit `.env.local` with your database credentials:
+
+```bash
+CHAUKA_DATABASE_URL=postgresql+asyncpg://postgres:postgres@localhost:5432/chauka
+CHAUKA_SECRET_KEY=dev-secret-key-change-in-production
+CHAUKA_CORS_ORIGINS=["http://localhost:5173"]
+CHAUKA_ENVIRONMENT=development
+```
+
+Install Python dependencies:
+
+```bash
+pip install -e .
+```
+
+## Configure the frontend
+
+```bash
+cd ../frontend
+npm install
+```
+
+No additional configuration is needed. The Vite dev server proxies `/api` requests to the backend on port 8000.
+
+## Verify the setup
+
+Start both services (in separate terminals) and visit [http://localhost:5173](http://localhost:5173):
+
+```bash
+# Terminal 1: backend
+cd backend && uvicorn app.main:app --reload
+
+# Terminal 2: frontend
+cd frontend && npm run dev
+```
+
+You should see the Chauka landing page. Continue to [Running the Frontend](/docs/tutorials/running-frontend) for more detail on the frontend dev workflow.

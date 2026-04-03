@@ -1,0 +1,75 @@
+# Running the React Frontend
+
+The Chauka frontend is a React 18 single-page application built with Vite, TypeScript, and Tailwind CSS.
+
+## Start the dev server
+
+```bash
+cd frontend
+npm install
+npm run dev
+```
+
+The dev server starts on [http://localhost:5173](http://localhost:5173) with hot module replacement.
+
+## API proxy
+
+The Vite config proxies all `/api` requests to the backend:
+
+```typescript
+// vite.config.ts
+server: {
+  port: 5173,
+  proxy: {
+    '/api': {
+      target: 'http://localhost:8000',
+      changeOrigin: true,
+    },
+  },
+}
+```
+
+This means you can make API calls to `/api/logframes` and Vite will forward them to `http://localhost:8000/api/logframes`.
+
+## Key scripts
+
+| Command | Description |
+|---------|-------------|
+| `npm run dev` | Start Vite dev server with HMR |
+| `npm run build` | TypeScript check then production build to `dist/` |
+| `npm run preview` | Serve the production build locally |
+| `npm run type-check` | Run TypeScript compiler without emitting |
+| `npm run lint` | Run ESLint on `.ts` and `.tsx` files |
+
+## Project layout
+
+```
+frontend/src/
+├── api/          # Axios API client modules
+├── components/   # Reusable UI components
+├── hooks/        # React Query hooks
+├── pages/        # Route-level page components
+├── store/        # Zustand global state
+├── utils/        # Shared utility functions
+├── docs/         # MDX documentation files
+├── docs-ui/      # Documentation UI components
+├── App.tsx       # Route definitions
+├── main.tsx      # App entry point
+└── index.css     # Tailwind theme and global styles
+```
+
+## TypeScript
+
+The project uses strict TypeScript. Run the type checker before committing:
+
+```bash
+npm run type-check
+```
+
+## Building for production
+
+```bash
+npm run build
+```
+
+Output goes to `frontend/dist/`. In production, FastAPI serves these files as static assets.

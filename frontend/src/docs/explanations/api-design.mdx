@@ -1,0 +1,77 @@
+# API Design Principles
+
+The Chauka API follows REST conventions with a few domain-specific patterns. This document explains the reasoning behind the API design.
+
+## URL structure
+
+### Logframe-scoped resources
+
+Most resources are nested under a logframe:
+
+```
+/api/logframes/{logframe_id}/results
+/api/logframes/{logframe_id}/indicators
+/api/logframes/{logframe_id}/activities
+```
+
+This makes the ownership hierarchy explicit in the URL and simplifies authorisation — if you can access the logframe, you can access its children (subject to role).
+
+### Organisation-scoped resources
+
+```
+/api/organisations/{organisation_id}/programs
+/api/organisations/{organisation_id}/memberships
+```
+
+### Top-level resources
+
+```
+/api/auth/token
+/api/users
+/api/notifications
+/api/logframes
+```
+
+## Read vs Write asymmetry
+
+- **GET endpoints** only check `get_current_user` (is the user logged in?)
+- **POST/PATCH/DELETE endpoints** check `require_logframe_editor` (does the user have write access?)
+
+This is intentional. Any authenticated user who can see a logframe should be able to read all its data. Write access is restricted based on the RBAC role hierarchy.
+
+## The Bootstrap pattern
+
+Instead of multiple API calls to load a logframe:
+
+```
+GET /api/logframes/{id}/bootstrap
+```
+
+Returns everything in one response. This is an intentional departure from pure REST in favour of performance. Logframes are complex objects with deeply nested data, and loading them piece by piece would create loading waterfalls.
+
+## Request/response conventions
+
+- **Create**: `POST` with a `*Create` Pydantic schema
+- **Update**: `PATCH` with a `*Update` schema (all fields optional)
+- **Read**: Response uses a `*Read` schema with `from_attributes = True`
+- **List**: Returns a plain array (no pagination wrapper for now)
+- **Delete**: Returns 204 No Content
+
+## Error responses
+
+FastAPI's default error handling:
+
+- `401` — Missing or invalid JWT token
+- `403` — Authenticated but insufficient permissions
+- `404` — Resource not found
+- `422` — Validation error (Pydantic)
+
+## IDOR protection
+
+Every write endpoint on a nested resource calls an ownership verification function:
+
+```python
+await verify_result_ownership(db, logframe_id, result_id)
+```
+
+This ensures a user cannot modify resources in a different logframe by manipulating IDs in the URL.

@@ -1,0 +1,89 @@
+# Running the Full Stack Locally
+
+This tutorial covers running all Chauka services together for local development.
+
+## Option 1: Docker Compose (recommended)
+
+The simplest approach — one command starts PostgreSQL, the API, and the frontend:
+
+```bash
+docker compose up --build
+```
+
+Services will be available at:
+
+- **Frontend**: [http://localhost:5173](http://localhost:5173)
+- **API**: [http://localhost:8000](http://localhost:8000)
+- **API Docs**: [http://localhost:8000/docs](http://localhost:8000/docs)
+- **PostgreSQL**: `localhost:5432`
+
+To rebuild after dependency changes:
+
+```bash
+docker compose up --build
+```
+
+To stop all services:
+
+```bash
+docker compose down
+```
+
+## Option 2: Manual (three terminals)
+
+### Terminal 1: PostgreSQL
+
+If you installed PostgreSQL locally:
+
+```bash
+brew services start postgresql@16
+```
+
+Or run it in Docker alone:
+
+```bash
+docker run -d --name chauka-db -p 5432:5432 \
+  -e POSTGRES_USER=chauka -e POSTGRES_PASSWORD=chauka -e POSTGRES_DB=chauka \
+  postgres:16-alpine
+```
+
+### Terminal 2: Backend
+
+```bash
+cd backend
+alembic upgrade head
+uvicorn app.main:app --reload
+```
+
+### Terminal 3: Frontend
+
+```bash
+cd frontend
+npm run dev
+```
+
+## Verify the stack
+
+1. Check the health endpoint: `curl http://localhost:8000/health`
+2. Open [http://localhost:5173](http://localhost:5173) in your browser
+3. Register a new account and create an organisation
+4. The API proxy should handle all `/api` calls transparently
+
+## Common issues
+
+### Port conflicts
+
+If port 5173 or 8000 is already in use, stop the conflicting process or change the port:
+
+```bash
+# Frontend: edit vite.config.ts server.port
+# Backend: uvicorn app.main:app --reload --port 8001
+```
+
+### Database connection errors
+
+Verify PostgreSQL is running and the connection string in `.env.local` matches your setup:
+
+```bash
+psql -U chauka -d chauka -c "SELECT 1"
+```

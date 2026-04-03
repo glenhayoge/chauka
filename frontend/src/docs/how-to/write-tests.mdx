@@ -1,0 +1,84 @@
+# How to Write Tests
+
+This guide covers testing patterns for both the backend and frontend.
+
+## Backend tests (pytest)
+
+### Setup
+
+Tests live in `backend/tests/`. Run them with:
+
+```bash
+cd backend
+pytest tests/ -v
+```
+
+### Writing a test
+
+```python
+# backend/tests/test_notes.py
+import pytest
+from httpx import AsyncClient
+
+@pytest.mark.asyncio
+async def test_create_note(client: AsyncClient, auth_headers: dict):
+    response = await client.post(
+        "/api/logframes/1/notes/",
+        json={"content": "Test note"},
+        headers=auth_headers,
+    )
+    assert response.status_code == 200
+    data = response.json()
+    assert data["content"] == "Test note"
+```
+
+### Test patterns
+
+- Use `@pytest.mark.asyncio` for async tests
+- The `client` fixture provides an `AsyncClient` connected to the test app
+- The `auth_headers` fixture provides JWT authorization headers
+- Each test runs in a transaction that rolls back after completion
+
+### Running specific tests
+
+```bash
+# Single file
+pytest tests/test_notes.py -v
+
+# Single test by name
+pytest tests/test_notes.py -k "test_create_note"
+
+# With coverage
+pytest tests/ --cov=app --cov-report=term-missing
+```
+
+## Frontend checks
+
+### Type checking
+
+```bash
+cd frontend
+npm run type-check
+```
+
+### Linting
+
+```bash
+npm run lint
+```
+
+### Manual testing
+
+The Vite dev server at `http://localhost:5173` provides fast feedback:
+
+1. Start the full stack (Docker Compose or manual)
+2. Navigate to the feature you're testing
+3. Check browser console for errors
+4. Verify API calls in the Network tab
+
+## Tips
+
+- Write tests for every new API endpoint
+- Test both success paths and error cases (401, 404, validation errors)
+- Use the Swagger UI at `/docs` to manually verify endpoints
+- Run `npm run type-check` before committing frontend changes

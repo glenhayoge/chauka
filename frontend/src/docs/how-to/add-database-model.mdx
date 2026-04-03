@@ -1,0 +1,89 @@
+# How to Add a New Database Model
+
+This guide covers adding a new SQLAlchemy model to the Chauka backend.
+
+## 1. Choose the right model file
+
+Models are grouped by domain in `backend/app/models/`:
+
+| File | Contains |
+|------|----------|
+| `org.py` | Organisation, Program, Project, ProjectRole |
+| `contacts.py` | User |
+| `logframe.py` | Logframe and all nested models (Result, Indicator, Activity, etc.) |
+| `notification.py` | Notification |
+| `audit.py` | AuditLog |
+| `kobo.py` | KoboConnection, KoboFieldMapping, KoboSyncLog |
+
+## 2. Define the model
+
+```python
+# backend/app/models/logframe.py
+class Comment(Base):
+    __tablename__ = "comments"
+
+    id: Mapped[int] = mapped_column(primary_key=True)
+    body: Mapped[str] = mapped_column(Text)
+    result_id: Mapped[int] = mapped_column(ForeignKey("results.id"))
+    user_id: Mapped[int] = mapped_column(ForeignKey("users.id"))
+    created_at: Mapped[datetime] = mapped_column(server_default=func.now())
+```
+
+### Key patterns
+
+- Use `Mapped[type]` annotations (SQLAlchemy 2.0 style)
+- Foreign keys reference table names, not class names
+- Use `server_default=func.now()` for timestamps
+- Self-referential trees use `parent_id` pointing to the same table
+
+## 3. Export the model
+
+Ensure the model is importable from the models package. If you added it to an existing file, it's already available. For a new file:
+
+```python
+# backend/app/models/__init__.py
+from .comments import Comment
+```
+
+## 4. Generate the migration
+
+```bash
+cd backend
+alembic revision --autogenerate -m "add comments table"
+```
+
+Review the generated file in `alembic/versions/`. Check that:
+
+- The table name is correct
+- All columns and foreign keys are present
+- Index and constraint names are reasonable
+
+## 5. Apply the migration
+
+```bash
+alembic upgrade head
+```
+
+## 6. Create schemas
+
+Add Pydantic schemas for the new model:
+
+```python
+# backend/app/schemas/comments.py
+class CommentCreate(BaseModel):
+    body: str
+    result_id: int
+
+class CommentRead(BaseModel):
+    id: int
+    body: str
+    result_id: int
+    user_id: int
+    created_at: datetime
+
+    model_config = {"from_attributes": True}
+```
+
+## 7. Add a router
+
+See [How to Add a New API Endpoint](/docs/how-to/add-api-endpoint) for the full router pattern.

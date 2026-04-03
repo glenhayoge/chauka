@@ -1,0 +1,73 @@
+# Backend Architecture
+
+The Chauka backend is a FastAPI application using SQLAlchemy 2.0 async with PostgreSQL.
+
+## Application structure
+
+The backend follows a layered architecture:
+
+```
+app/
+├── main.py        # App factory, lifespan, router registration
+├── config.py      # Pydantic settings with CHAUKA_ prefix
+├── database.py    # Async engine, session factory
+├── auth/          # JWT creation, verification, dependencies
+├── models/        # SQLAlchemy ORM models
+├── schemas/       # Pydantic request/response schemas
+├── routers/       # HTTP route handlers
+├── services/      # Business logic (RBAC, exports)
+└── security/      # Middleware, IDOR checks, rate limiting
+```
+
+## Request lifecycle
+
+1. **Middleware**: CORS headers, security headers
+2. **Dependency injection**: `get_db` provides an async session, `get_current_user` validates the JWT
+3. **Router handler**: Validates input via Pydantic schema, calls the database
+4. **Response**: Serialised via Pydantic `Read` schema with `from_attributes`
+
+## Database access
+
+All database access uses SQLAlchemy 2.0 async with the `asyncpg` driver:
+
+```python
+result = await db.execute(select(Thing).where(Thing.logframe_id == logframe_id))
+return result.scalars().all()
+```
+
+The async session is scoped per-request via FastAPI's dependency injection.
+
+## Authentication and authorisation
+
+- **JWT tokens** are issued by `POST /api/auth/token` (form-urlencoded)
+- Tokens use HS256 signing with an 8-hour TTL
+- `get_current_user` dependency decodes and validates the token
+- `require_logframe_editor` dependency checks write permissions
+
+The RBAC system resolves permissions hierarchically:
+
+1. Superuser → global access
+2. Org admin → full access to org's logframes
+3. Project role (lead/collector/viewer) → scoped access
+4. Org member → view-only
+
+## IDOR protection
+
+Nested resources (indicators, activities, etc.) verify ownership before mutations:
+
+```python
+await verify_result_ownership(db, logframe_id, result_id)
+```
+
+This prevents a user from modifying resources in logframes they don't have access to by manipulating IDs in the URL.
+
+## Router conventions
+
+- **Logframe-scoped** resources use prefix `/api/logframes/{logframe_id}/...`
+- **Org-scoped** resources use prefix `/api/organisations/{organisation_id}/...`
+- **Top-level** resources: `/api/auth`, `/api/users`, `/api/notifications`
+- Each resource has its own router file in `app/routers/`
+
+## Production serving
+
+In production, FastAPI mounts the React build directory at `/assets` and serves `index.html` as a fallback for all unmatched routes, enabling SPA client-side routing.

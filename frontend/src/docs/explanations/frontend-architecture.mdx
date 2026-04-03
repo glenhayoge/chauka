@@ -1,0 +1,65 @@
+# Frontend Architecture
+
+The Chauka frontend is a React 18 SPA built with Vite, TypeScript, Tailwind CSS, and several supporting libraries.
+
+## Technology choices
+
+| Library | Purpose |
+|---------|---------|
+| React 18 | UI rendering |
+| TypeScript 5 | Type safety |
+| Vite 5 | Build tooling with HMR |
+| React Router v6 | Client-side routing |
+| TanStack React Query v5 | Server state management and caching |
+| Zustand | Client state management |
+| Axios | HTTP client with JWT interceptor |
+| Tailwind CSS v4 | Utility-first styling |
+| Tiptap | Rich text editing |
+
+## State management
+
+Chauka uses two complementary state strategies:
+
+### Server state (React Query)
+
+API data is managed by TanStack React Query. It handles caching, background refetching, and cache invalidation. Mutations POST/PATCH to the API then invalidate the relevant query cache.
+
+### Client state (Zustand)
+
+Three Zustand stores manage UI and auth state:
+
+- **useAuthStore** — JWT token, user info, current role. Persisted to `localStorage`.
+- **useLogframeStore** — Bootstrap data for the active logframe.
+- **useUIStore** — Expanded/collapsed state, active tab, filters.
+
+## Routing
+
+All routes are defined in `App.tsx`. Pages are lazy-loaded with `React.lazy()` for code splitting.
+
+- **Public routes** (`/`, `/login`, `/register`, `/docs/*`) — no auth required.
+- **Authenticated routes** (`/app/*`) — wrapped in `RequireAuth`, use the `Layout` component.
+- **Standalone authenticated** (`/profile`, `/organisations/:orgId/*`) — auth required, custom layout.
+
+## Component organisation
+
+```
+components/
+├── layout/    # Navbar, Footer, Layout, TabNav
+├── ui/        # Reusable primitives (ToastContainer, etc.)
+├── logframe/  # Logframe-specific components
+└── shared/    # Cross-cutting components
+```
+
+## API layer
+
+The `api/client.ts` module configures Axios with:
+
+- Base URL from environment
+- JWT token injection via request interceptor
+- Automatic logout on 401 responses
+
+Domain-specific API modules (e.g., `api/logframes.ts`) build on this client.
+
+## Styling
+
+Tailwind CSS v4 with the Vite plugin. The theme uses CSS custom properties defined in `index.css` (Solar Dusk theme from tweakcn.com), supporting both light and dark modes.

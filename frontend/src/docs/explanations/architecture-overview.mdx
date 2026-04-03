@@ -1,0 +1,59 @@
+# Architecture Overview
+
+Chauka is a logframe management platform built as a React SPA backed by a FastAPI server. This document explains how the major pieces fit together and why.
+
+## High-level architecture
+
+```
+┌─────────────┐     ┌──────────────┐     ┌────────────┐
+│  React SPA  │────▶│  FastAPI API  │────▶│ PostgreSQL │
+│  (Vite)     │◀────│  (Uvicorn)   │◀────│            │
+└─────────────┘     └──────────────┘     └────────────┘
+    :5173               :8000                :5432
+```
+
+In development, the Vite dev server proxies `/api` requests to FastAPI. In production, a single Docker image serves both the static React build and the API from FastAPI on port 8000.
+
+## Why React + FastAPI?
+
+- **React** provides a rich, interactive SPA for complex logframe editing. M&E teams need inline editing, drag-and-drop hierarchies, and real-time data entry — all better served by a SPA than server-rendered pages.
+- **FastAPI** offers async Python with automatic OpenAPI docs, Pydantic validation, and excellent SQLAlchemy async support. Python is the natural choice given the data processing and Excel export requirements.
+- **Single-image deploy** simplifies infrastructure. One Fly.io machine serves everything.
+
+## The Bootstrap Pattern
+
+Instead of making dozens of API calls to load a logframe, the frontend calls a single endpoint:
+
+```
+GET /api/logframes/{id}/bootstrap
+```
+
+This returns the entire logframe state — results tree, indicators, activities, budget lines, periods, ratings, and configuration — in one response. The data populates a Zustand store, and all UI renders from that store.
+
+This pattern was chosen because logframes are read-heavy. Users spend most time viewing and navigating the results tree. A single bootstrap call eliminates loading waterfalls and keeps the UI snappy.
+
+## Data flow
+
+```
+Browser → GET /api/logframes/{id}/bootstrap
+       → useLogframeStore.setData(bootstrapData)
+       → Components render from store
+
+Browser → POST/PATCH /api/logframes/{id}/results
+       → Invalidate React Query cache
+       → Re-fetch bootstrap or patch store
+```
+
+## Authentication
+
+JWT tokens with 8-hour TTL. The frontend stores the token in Zustand (persisted to `localStorage`). An Axios interceptor attaches the token to every API request. A 401 response triggers automatic logout.
+
+## Key design decisions
+
+| Decision | Rationale |
+|----------|-----------|
+| Single bootstrap endpoint | Eliminates loading waterfalls for complex logframes |
+| Zustand over Redux | Simpler API, less boilerplate for medium-complexity state |
+| SQLAlchemy async | Non-blocking DB queries match FastAPI's async nature |
+| Single Docker image | One deploy target, no CDN configuration needed |
+| JWT in localStorage | Simple, stateless auth suitable for internal tools |

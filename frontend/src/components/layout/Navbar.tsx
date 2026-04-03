@@ -17,6 +17,7 @@ export default function Navbar() {
             <Link to="/#features" className="text-sm text-foreground hover:text-primary">Features</Link>
             <Link to="/#about" className="text-sm text-foreground hover:text-primary">About</Link>
             <Link to="/docs" className="text-sm text-foreground hover:text-primary">Docs</Link>
+            <Link to="/help" className="text-sm text-foreground hover:text-primary">Help</Link>
             <Link to="/#contact" className="text-sm text-foreground hover:text-primary">Contact</Link>
           </div>
           {isLoggedIn ? (

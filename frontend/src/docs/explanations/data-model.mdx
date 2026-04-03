@@ -1,0 +1,80 @@
+# Data Model
+
+The Chauka data model is a 5-level hierarchy rooted at Organisation. This document explains the domain model and the relationships between entities.
+
+## Entity hierarchy
+
+```
+Organisation
+  └── Program
+       └── Project
+            └── Logframe
+                 └── Result (self-referential tree)
+                      ├── Indicator → SubIndicator → DataEntry, Target
+                      ├── Activity → BudgetLine, TALine, Milestone, StatusUpdate, Resource, Expense
+                      └── Assumption
+```
+
+## Core entities
+
+### Organisation
+
+The top-level container. Each organisation has an owner (the creating user) and members with roles.
+
+### Program and Project
+
+Organisational groupings. A Program contains Projects, and a Project contains Logframes. Logframes can exist without a Project (legacy support) or link directly to a Program.
+
+### Logframe
+
+The central entity. A logframe is a results framework with a configured set of reporting periods, a currency, and levels (Impact, Outcome, Output, etc.).
+
+### Result
+
+Results form a self-referential tree via `parent_id`. Each result has a `level` (e.g., 0 = Impact, 1 = Outcome, 2 = Output) and an `order` for sibling sorting. Results contain indicators, activities, and assumptions.
+
+### Indicator and SubIndicator
+
+An Indicator belongs to a Result. SubIndicators break down the indicator (e.g., by gender, region). DataEntries and Targets are linked to SubIndicators.
+
+### Target
+
+Targets are two-dimensional: they link a SubIndicator to a Period (milestone). This creates a grid where each cell represents the target value for a specific sub-indicator in a specific time period.
+
+### Activity
+
+Activities belong to Results (typically Outputs). They track implementation with BudgetLines, TALines (technical assistance), Milestones, StatusUpdates, Resources, and Expenses.
+
+## Key relationships
+
+### Self-referential results tree
+
+```python
+class Result(Base):
+    parent_id = mapped_column(ForeignKey("results.id"), nullable=True)
+```
+
+The root result has `parent_id = None`. Deleting a parent cascades to all children.
+
+### Many-to-many: Indicator ↔ Tag
+
+```python
+class IndicatorTag(Base):
+    indicator_id = mapped_column(ForeignKey("indicators.id"))
+    tag_id = mapped_column(ForeignKey("tags.id"))
+```
+
+### Two rating systems
+
+- **Rating**: Status indicators (coloured dots) on Results — e.g., "On track", "At risk"
+- **RiskRating**: Risk assessments on Assumptions — e.g., "Low", "Medium", "High"
+
+## Bootstrap data
+
+The `GET /api/logframes/{id}/bootstrap` endpoint returns all of the above in a single response, including:
+
+- Nested results with indicators, activities, and assumptions
+- `levels` mapping (level number → label)
+- `conf` (max_result_level, open_result_level)
+- `canEdit` and `userRole` for the current user
+- `orgContext` with organisation details

@@ -1,0 +1,82 @@
+# How to Update Environment Variables
+
+All Chauka environment variables use the `CHAUKA_` prefix.
+
+## Local development
+
+Edit `backend/.env.local`:
+
+```bash
+CHAUKA_DATABASE_URL=postgresql+asyncpg://chauka:chauka@localhost:5432/chauka
+CHAUKA_SECRET_KEY=dev-secret-key-change-in-production
+CHAUKA_CORS_ORIGINS=["http://localhost:5173"]
+CHAUKA_ENVIRONMENT=development
+CHAUKA_ACCESS_TOKEN_EXPIRE_MINUTES=480
+```
+
+Restart the backend after changing environment variables.
+
+## Docker Compose
+
+Environment variables for Docker are set in `docker-compose.yml`:
+
+```yaml
+api:
+  environment:
+    CHAUKA_DATABASE_URL: postgresql+asyncpg://chauka:chauka@db:5432/chauka
+    CHAUKA_SECRET_KEY: local-dev-secret
+    CHAUKA_CORS_ORIGINS: '["http://localhost:5173"]'
+    CHAUKA_ENVIRONMENT: development
+```
+
+Restart with `docker compose up` after changes.
+
+## Production (Fly.io)
+
+Set secrets with `flyctl`:
+
+```bash
+# Set a single variable
+fly secrets set CHAUKA_SECRET_KEY="new-secret-value"
+
+# Set multiple variables
+fly secrets set \
+  CHAUKA_DATABASE_URL="postgresql+asyncpg://..." \
+  CHAUKA_CORS_ORIGINS='["https://chauka.fly.dev"]'
+```
+
+View current secrets (names only, values are hidden):
+
+```bash
+fly secrets list
+```
+
+Remove a secret:
+
+```bash
+fly secrets unset CHAUKA_SOME_VAR
+```
+
+Setting or unsetting secrets triggers a redeployment automatically.
+
+## Adding a new variable
+
+1. Add the field to `backend/app/config.py`:
+
+```python
+class Settings(BaseSettings):
+    model_config = SettingsConfigDict(env_prefix="CHAUKA_")
+
+    # existing fields...
+    new_setting: str = "default-value"
+```
+
+2. Reference it in your code:
+
+```python
+from app.config import settings
+value = settings.new_setting
+```
+
+3. Add it to `.env.local`, `docker-compose.yml`, and Fly.io secrets as needed.
+4. Document it in the [Environment Variables reference](/docs/references/environment-variables).

@@ -1,0 +1,102 @@
+# How to Add a New Feature Module
+
+A feature module in Chauka typically spans both the backend and frontend. This guide covers the full-stack workflow.
+
+## Plan the feature
+
+Before writing code, identify:
+
+- **Model**: What data does this feature manage?
+- **API**: What endpoints are needed (CRUD, custom actions)?
+- **UI**: Which page(s) or components display this data?
+- **Permissions**: Who can read/write this data?
+
+## Backend implementation
+
+### 1. Model
+
+Add the SQLAlchemy model to the appropriate file in `backend/app/models/`.
+
+### 2. Schema
+
+Create Pydantic schemas (`Create`, `Update`, `Read`) in `backend/app/schemas/`.
+
+### 3. Router
+
+Create a router in `backend/app/routers/` following the standard pattern:
+
+```python
+router = APIRouter(
+    prefix="/api/logframes/{logframe_id}/things",
+    tags=["things"],
+)
+```
+
+### 4. Register
+
+Add the router to `backend/app/main.py`.
+
+### 5. Migration
+
+```bash
+cd backend
+alembic revision --autogenerate -m "add things table"
+alembic upgrade head
+```
+
+### 6. Tests
+
+Add tests in `backend/tests/test_things.py`.
+
+## Frontend implementation
+
+### 1. API client
+
+Create `frontend/src/api/things.ts`:
+
+```typescript
+import client from './client'
+
+export const thingsApi = {
+  list: (logframeId: number) =>
+    client.get(`/api/logframes/${logframeId}/things`).then(r => r.data),
+  create: (logframeId: number, data: ThingCreate) =>
+    client.post(`/api/logframes/${logframeId}/things`, data).then(r => r.data),
+}
+```
+
+### 2. React Query hook
+
+Create `frontend/src/hooks/useThings.ts`:
+
+```typescript
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
+import { thingsApi } from '../api/things'
+
+export function useThings(logframeId: number) {
+  return useQuery({
+    queryKey: ['things', logframeId],
+    queryFn: () => thingsApi.list(logframeId),
+  })
+}
+```
+
+### 3. Page or component
+
+Create the UI component in `frontend/src/pages/` or `frontend/src/components/`.
+
+### 4. Route
+
+Add the route to `frontend/src/App.tsx` with lazy loading.
+
+## Checklist
+
+- [ ] Backend model with migration
+- [ ] Pydantic schemas (Create, Update, Read)
+- [ ] Router with ownership checks
+- [ ] Router registered in main.py
+- [ ] Backend tests
+- [ ] Frontend API client
+- [ ] React Query hook
+- [ ] Page component with route
+- [ ] Feature accessible from navigation

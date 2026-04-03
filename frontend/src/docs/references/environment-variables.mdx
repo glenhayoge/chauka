@@ -1,0 +1,51 @@
+# Environment Variables
+
+All Chauka environment variables use the `CHAUKA_` prefix. They are read by pydantic-settings in `backend/app/config.py`.
+
+## Backend variables
+
+| Variable | Type | Default | Description |
+|----------|------|---------|-------------|
+| `CHAUKA_DATABASE_URL` | string | `postgresql+asyncpg://postgres:postgres@localhost:5432/chauka` | PostgreSQL connection URL. Must use `asyncpg` driver. |
+| `CHAUKA_SECRET_KEY` | string | `dev-secret-key-change-in-production` | Secret used for JWT signing. Use a random 32+ character string in production. |
+| `CHAUKA_ALGORITHM` | string | `HS256` | JWT signing algorithm. |
+| `CHAUKA_ACCESS_TOKEN_EXPIRE_MINUTES` | int | `480` | JWT token TTL in minutes (default: 8 hours). |
+| `CHAUKA_CORS_ORIGINS` | JSON list | `["http://localhost:5173", "http://localhost:3000"]` | Allowed CORS origins as a JSON array. |
+| `CHAUKA_ENVIRONMENT` | string | `development` | `development` or `production`. Affects logging and error detail. |
+
+## Frontend variables
+
+| Variable | Type | Default | Description |
+|----------|------|---------|-------------|
+| `VITE_API_URL` | string | (none) | Used in Docker Compose to configure the API URL. The Vite proxy handles this in development. |
+
+## Where to set them
+
+### Local development
+
+```bash
+# backend/.env.local
+CHAUKA_DATABASE_URL=postgresql+asyncpg://chauka:chauka@localhost:5432/chauka
+CHAUKA_SECRET_KEY=dev-secret-key-change-in-production
+CHAUKA_CORS_ORIGINS=["http://localhost:5173"]
+CHAUKA_ENVIRONMENT=development
+```
+
+### Docker Compose
+
+Set in `docker-compose.yml` under the `api` service `environment` key.
+
+### Production (Fly.io)
+
+```bash
+fly secrets set CHAUKA_SECRET_KEY="$(openssl rand -hex 32)"
+fly secrets set CHAUKA_DATABASE_URL="postgresql+asyncpg://..."
+fly secrets set CHAUKA_CORS_ORIGINS='["https://chauka.fly.dev"]'
+```
+
+## Adding a new variable
+
+1. Add the field to `Settings` in `backend/app/config.py`
+2. Access it via `from app.config import settings; settings.new_field`
+3. Add it to `.env.local`, `docker-compose.yml`, and Fly.io secrets
+4. Update this reference page

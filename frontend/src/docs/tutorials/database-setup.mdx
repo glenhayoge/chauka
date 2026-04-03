@@ -1,0 +1,82 @@
+# Database Setup and Migrations
+
+Chauka uses PostgreSQL with SQLAlchemy 2.0 async and Alembic for migrations.
+
+## Create the database
+
+```bash
+createdb chauka
+```
+
+Or with Docker:
+
+```bash
+docker run -d --name chauka-db -p 5432:5432 \
+  -e POSTGRES_USER=chauka -e POSTGRES_PASSWORD=chauka -e POSTGRES_DB=chauka \
+  postgres:16-alpine
+```
+
+## Configure the connection
+
+Set `CHAUKA_DATABASE_URL` in `backend/.env.local`:
+
+```bash
+CHAUKA_DATABASE_URL=postgresql+asyncpg://chauka:chauka@localhost:5432/chauka
+```
+
+The URL must use the `asyncpg` driver prefix.
+
+## Run migrations
+
+Always run Alembic from the `backend/` directory:
+
+```bash
+cd backend
+alembic upgrade head
+```
+
+### Check migration status
+
+```bash
+alembic current
+```
+
+### Create a new migration
+
+After modifying SQLAlchemy models:
+
+```bash
+alembic revision --autogenerate -m "describe your change"
+```
+
+Review the generated file in `backend/alembic/versions/` before applying.
+
+### Apply migrations
+
+```bash
+alembic upgrade head
+```
+
+### Roll back one step
+
+```bash
+alembic downgrade -1
+```
+
+## Auto-create tables
+
+During development, the FastAPI app creates tables on startup via the `lifespan` hook in `main.py`. This is useful for quick iteration but should not replace proper migrations.
+
+## Production migrations
+
+After deploying to Fly.io, run migrations via SSH:
+
+```bash
+fly ssh console -C "cd /app/backend && alembic upgrade head"
+```
+
+## Tips
+
+- Always review auto-generated migrations before applying — Alembic may miss certain changes like column renames.
+- The `alembic.ini` `sqlalchemy.url` is overridden at runtime by `CHAUKA_DATABASE_URL`.
+- Run `alembic upgrade head` before starting the backend if you pulled new changes.

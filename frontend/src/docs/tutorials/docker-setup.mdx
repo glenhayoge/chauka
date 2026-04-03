@@ -1,0 +1,86 @@
+# Building and Running with Docker
+
+Chauka uses a multi-stage Dockerfile that builds both the frontend and backend into a single image.
+
+## Development with Docker Compose
+
+```bash
+docker compose up --build
+```
+
+This starts three services:
+
+| Service | Image | Port | Description |
+|---------|-------|------|-------------|
+| `db` | `postgres:16-alpine` | 5432 | PostgreSQL database |
+| `api` | Custom (Dockerfile) | 8000 | FastAPI with hot-reload |
+| `web` | `node:22-slim` | 5173 | Vite dev server |
+
+### Hot-reload for backend
+
+To enable backend hot-reload without rebuilding the image, uncomment the volume mount in `docker-compose.yml`:
+
+```yaml
+api:
+  volumes:
+    - ./backend:/app/backend
+```
+
+## Production Dockerfile
+
+The production build is a two-stage process:
+
+### Stage 1: Build frontend
+
+```dockerfile
+FROM node:22-slim AS frontend-build
+WORKDIR /app/frontend
+COPY frontend/package.json frontend/package-lock.json* ./
+RUN npm ci
+COPY frontend/ .
+RUN npm run build
+```
+
+### Stage 2: Python runtime
+
+```dockerfile
+FROM python:3.12-slim
+WORKDIR /app
+COPY backend/ ./backend/
+RUN pip install --no-cache-dir ./backend
+COPY --from=frontend-build /app/frontend/dist ./frontend/dist
+EXPOSE 8000
+CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000"]
+```
+
+The final image contains:
+
+- Python 3.12 with FastAPI and all backend dependencies
+- Pre-built React static files in `frontend/dist`
+- FastAPI serves both the API and the SPA
+
+## Build the image manually
+
+```bash
+docker build -t chauka .
+docker run -p 8000:8000 \
+  -e CHAUKA_DATABASE_URL="postgresql+asyncpg://user:pass@host:5432/chauka" \
+  -e CHAUKA_SECRET_KEY="your-secret" \
+  chauka
+```
+
+## Useful commands
+
+```bash
+# Rebuild after dependency changes
+docker compose up --build
+
+# View logs
+docker compose logs -f api
+
+# Stop and remove containers
+docker compose down
+
+# Remove volumes (deletes database data)
+docker compose down -v
+```

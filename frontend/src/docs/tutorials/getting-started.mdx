@@ -1,0 +1,47 @@
+# Getting Started with Chauka
+
+Chauka is a logframe management platform for monitoring and evaluation (M&E) teams. This tutorial walks you through cloning the repository and running the application for the first time.
+
+## Prerequisites
+
+Before you begin, install:
+
+- **Node.js 22** or later
+- **Python 3.12** or later
+- **Docker Desktop** (for the recommended setup)
+- **Git**
+
+## Clone the repository
+
+```bash
+git clone https://github.com/glenhayoge/chauka.git
+cd chauka
+```
+
+## Quick start with Docker
+
+The fastest way to get everything running:
+
+```bash
+docker compose up --build
+```
+
+This starts three services:
+
+| Service | URL | Description |
+|---------|-----|-------------|
+| `db` | `localhost:5432` | PostgreSQL 16 |
+| `api` | `http://localhost:8000` | FastAPI backend |
+| `web` | `http://localhost:5173` | Vite dev server |
+
+Open [http://localhost:5173](http://localhost:5173) once all services are healthy.
+
+> The FastAPI Swagger UI is available at [http://localhost:8000/docs](http://localhost:8000/docs).
+
+## What to do next
+
+1. Register an account and create an organisation
+2. Create a program or project, then a logframe
+3. Build a results hierarchy with indicators and activities
+
+For manual setup without Docker, continue to [Setup Development Environment](/docs/tutorials/setup-dev-environment).

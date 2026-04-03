@@ -1,0 +1,82 @@
+# Running the FastAPI Backend
+
+The Chauka backend is a FastAPI application using SQLAlchemy 2.0 async, PostgreSQL, and JWT authentication.
+
+## Install dependencies
+
+```bash
+cd backend
+pip install -e .
+```
+
+This installs the `chauka` package in editable mode with all dependencies.
+
+## Configure environment
+
+Copy the example env file and edit it:
+
+```bash
+cp .env.local.example .env.local
+```
+
+Required variables:
+
+```bash
+CHAUKA_DATABASE_URL=postgresql+asyncpg://postgres:postgres@localhost:5432/chauka
+CHAUKA_SECRET_KEY=dev-secret-key-change-in-production
+```
+
+## Run migrations
+
+Apply all database migrations before starting the server:
+
+```bash
+alembic upgrade head
+```
+
+## Start the server
+
+```bash
+uvicorn app.main:app --reload
+```
+
+The API server starts on [http://localhost:8000](http://localhost:8000) with auto-reload enabled.
+
+## Explore the API
+
+FastAPI auto-generates interactive API documentation:
+
+- **Swagger UI**: [http://localhost:8000/docs](http://localhost:8000/docs)
+- **ReDoc**: [http://localhost:8000/redoc](http://localhost:8000/redoc)
+- **Health check**: [http://localhost:8000/health](http://localhost:8000/health)
+
+## Run tests
+
+```bash
+pytest tests/ -v
+```
+
+For coverage:
+
+```bash
+pytest tests/ --cov=app --cov-report=term-missing
+```
+
+## Project layout
+
+```
+backend/
+├── app/
+│   ├── main.py        # App factory, router registration
+│   ├── config.py      # Settings (CHAUKA_ prefix)
+│   ├── database.py    # Async engine and session
+│   ├── auth/          # JWT authentication
+│   ├── models/        # SQLAlchemy ORM models
+│   ├── routers/       # API route handlers
+│   ├── schemas/       # Pydantic request/response schemas
+│   ├── security/      # Middleware, IDOR checks, rate limiting
+│   └── services/      # Business logic, exports
+├── alembic/           # Database migrations
+├── tests/             # pytest test suite
+└── pyproject.toml     # Package configuration
+```

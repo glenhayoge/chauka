@@ -1,0 +1,52 @@
+# Monorepo Structure
+
+Chauka is organised as a monorepo with the backend and frontend in the same Git repository.
+
+## Directory layout
+
+```
+chauka/
+├── backend/              # FastAPI application (Python)
+│   ├── app/              # Application source
+│   ├── alembic/          # Database migrations
+│   ├── tests/            # Backend test suite
+│   └── pyproject.toml    # Python package config
+├── frontend/             # React application (TypeScript)
+│   ├── src/              # Application source
+│   ├── package.json      # Node dependencies
+│   └── vite.config.ts    # Vite configuration
+├── deploy/               # Fly.io configs for split deploys
+├── Dockerfile            # Unified multi-stage build
+├── docker-compose.yml    # Local development stack
+├── fly.toml              # Primary Fly.io config
+└── README.md
+```
+
+## Why a monorepo?
+
+### Simpler coordination
+
+When a backend API change requires a frontend update, both changes live in the same commit. No cross-repo version pinning or coordination needed.
+
+### Unified Docker build
+
+The multi-stage Dockerfile builds the frontend, then copies the output into the Python runtime image. This is trivial in a monorepo but awkward with separate repositories.
+
+### Shared context
+
+New developers clone one repo and have the full stack. Documentation, issues, and CI configuration all live in one place.
+
+## What the monorepo is not
+
+This is not an npm/Python workspace monorepo with shared packages. The backend and frontend are independent projects that happen to live side by side. They have separate dependency management (`pyproject.toml` vs `package.json`), separate build tools (pip vs Vite), and separate test suites.
+
+## Trade-offs
+
+| Benefit | Cost |
+|---------|------|
+| Single clone, single PR for full-stack changes | Larger repo size over time |
+| Unified Docker build | CI must detect which part changed |
+| Shared documentation | Backend devs see frontend noise and vice versa |
+| One set of issues | No forced separation of concerns |
+
+For a small team working on a focused product, the monorepo keeps things simple without the overhead of a multi-repo setup.
