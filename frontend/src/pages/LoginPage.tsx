@@ -31,8 +31,8 @@ export default function LoginPage() {
   return (
     <div className="min-h-screen flex flex-col">
       <Navbar />
-      <div className="flex-1 flex items-center justify-center px-4">
-        <div className="w-full max-w-xl">
+      <div className="flex-1 flex items-center justify-center px-4 ">
+        <div className="w-full max-w-sm">
           <p className="text-sm font-medium text-gray-900 mb-6">Sign in to Chauka</p>
           <form onSubmit={handleSubmit} className="space-y-3">
             <div>

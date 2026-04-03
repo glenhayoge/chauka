@@ -52,8 +52,8 @@ export default function RegisterPage() {
   return (
     <div className="min-h-screen flex flex-col">
       <Navbar />
-      <div className="flex-1 flex items-center justify-center px-4">
-        <div className="w-full max-w-xl">
+      <div className="flex-1 flex items-center justify-center px-4 py-8">
+        <div className="w-full max-w-lg">
           <p className="text-sm font-medium text-gray-900 mb-6">Create an account</p>
           <form onSubmit={handleSubmit} className="space-y-3">
             <div className="grid grid-cols-2 gap-3">
@@ -129,7 +129,7 @@ export default function RegisterPage() {
             <button
               type="submit"
               disabled={loading || !agreedToTerms}
-              className="w-full bg-gray-900 text-white py-2 text-sm rounded-md hover:bg-gray-800 disabled:opacity-50 transition-colors"
+              className="w-full bg-foreground text-accent py-2 text-sm rounded-md hover:bg-foreground/80 disabled:opacity-50 transition-colors"
             >
               {loading ? 'Creating account\u2026' : 'Create account'}
             </button>

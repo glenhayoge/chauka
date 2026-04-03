@@ -23,10 +23,10 @@ export default function LandingPage() {
         </p>
         {!isLoggedIn && (
           <div className="flex gap-3 mb-16">
-            <Link to="/register" className="bg-foreground text-white text-sm px-4 py-2 rounded-md hover:bg-gray-800 transition-colors">
+            <Link to="/register" className="bg-foreground text-accent text-sm px-4 py-3 rounded-md hover:bg-gray-800 transition-colors">
               Create an account
             </Link>
-            <Link to="/login" className="border border-gray-300 text-gray-700 text-sm px-4 py-2 rounded-md hover:bg-gray-50 transition-colors">
+            <Link to="/login" className="border border-gray-300 text-gray-700 text-sm px-4 py-3 rounded-md hover:bg-gray-50 transition-colors">
               Sign in
             </Link>
           </div>
@@ -177,10 +177,10 @@ function ContactForm() {
     return <p className="text-sm text-gray-500">Thanks for reaching out. We'll get back to you.</p>
   }
 
-  const inputClass = "w-full border border-gray-300 rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-1 focus:ring-gray-400 focus:border-gray-400"
+  const inputClass = "w-full border border-gray-300 rounded-md px-2 py-2 text-sm focus:outline-none focus:ring-1 focus:ring-gray-400 focus:border-gray-400"
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-3 max-w-md">
+    <form onSubmit={handleSubmit} className="space-y-3 max-w-2xl">
       <div className="grid grid-cols-2 gap-3">
         <div>
           <label className="block text-sm text-gray-600 mb-1">Name</label>
@@ -195,7 +195,7 @@ function ContactForm() {
         <label className="block text-sm text-gray-600 mb-1">Message</label>
         <textarea value={message} onChange={(e) => setMessage(e.target.value)} rows={4} className={inputClass} required />
       </div>
-      <button type="submit" className="bg-foreground text-white text-sm px-4 py-2 rounded-md hover:bg-gray-800 transition-colors">
+      <button type="submit" className="bg-foreground text-accent text-sm px-4 py-2 rounded-md hover:bg-gray-800 transition-colors">
         Send message
       </button>
     </form>

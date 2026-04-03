@@ -1,8 +1,8 @@
-# Converting an Annual Operation Plan to a Kashana Logframe
+# Converting FPDA's Annual Operation Plan to a Chauka Logframe
 
 ## Example: Value Chain Innovation Program
 
-This guide shows how to convert a traditional Annual Operation Plan into a structured logframe using Kashana, using the FPDA Value Chain Innovation Program as a worked example.
+This guide shows how to convert a traditional Annual Operation Plan into a structured logframe using Chauka MEL information system, using the FPDA Value Chain Innovation Program as a worked example.
 
 ---
 
@@ -13,7 +13,7 @@ This guide shows how to convert a traditional Annual Operation Plan into a struc
 | **Program Goal** | Strengthen partnerships to enhance efficiency and competitiveness in the value chain |
 | **Program Objectives** | 1. Facilitate collaboration among stakeholders to reduce transaction costs. 2. Promote innovative practices that improve supply chain efficiency. |
 | **Division** | Production and Value Chain Innovation (PVCI) |
-| **Responsible Officer** | Mr. Rex Duma, Program Manager |
+| **Responsible Officer** | Mr. Paul Johnson, Program Manager |
 | **Program Budget** | K400,000 |
 | **Period** | 2024–2025 |
 
@@ -89,7 +89,7 @@ Under **Output 1: Improved Market-Oriented Extension Services**, add these activ
 | 1.6 | Conduct Value Chain study for potato, kaukau, bulb onion, and other crops | — |
 | 1.7 | Market Survey at Major Open Markets | — |
 
-### How to create in Kashana:
+### How to create in Chauka:
 1. In **Overview** tab, expand Output 1
 2. Click **"+ Click to add activity"**
 3. Enter the activity name
@@ -156,7 +156,7 @@ Go to **Result Design** tab → click **Edit** on Output 1 → add indicators.
 | No. of Surveys at Hagen Market | 0 | 6 |
 | No. of surveys at Kokopo Market | 0 | 6 |
 
-### How to enter in Kashana:
+### How to enter in Chauka:
 1. Go to **Result Design** tab
 2. Click **Edit** on Output 1
 3. Click **"Add indicator"** for each KPI
@@ -286,9 +286,9 @@ Go to the **Budget** tab for a financial overview.
 
 ---
 
-## What Kashana Adds Beyond the Original Plan
+## What Chauka Adds Beyond the Original Plan
 
-| Feature | Original Plan | Kashana |
+| Feature | Original Plan | Chauka |
 |---------|--------------|---------|
 | **Structure** | Flat table | Hierarchical: Goal → Outcome → Output → Activity |
 | **Tracking frequency** | Annual only | Quarterly (or monthly/semi-annual) |
@@ -306,7 +306,7 @@ Go to the **Budget** tab for a financial overview.
 ## Tips for Data Entry
 
 1. **Start with the hierarchy** — get the Goal, Outcomes, and Outputs right before adding activities
-2. **One indicator per KPI** — each row in the original plan becomes one indicator in Kashana
+2. **One indicator per KPI** — each row in the original plan becomes one indicator in Chauka
 3. **Set baselines first** — enter 2024 achieved values before setting 2025 targets
 4. **Add assumptions** — what must be true for each output to contribute to its outcome
 5. **Use budget categories** — makes it easier to track spending patterns across activities
