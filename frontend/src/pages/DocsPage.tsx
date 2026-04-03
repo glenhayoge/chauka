@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom'
 export default function DocsPage() {
   return (
     <div className="min-h-screen bg-white px-4 py-12">
-      <div className="max-w-xl mx-auto">
+      <div className="max-w-4xl mx-auto">
         <Link to="/" className="text-sm text-gray-400 hover:text-gray-600 mb-6 inline-block">&larr; Back to home</Link>
         <p className="text-sm font-medium text-gray-900 mt-4 mb-4">Documentation</p>
 
