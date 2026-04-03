@@ -289,10 +289,16 @@ class BudgetLineRead(BudgetLineBase):
 class MilestoneBase(BaseModel):
     activity_id: int
     period_id: int | None = None
+    description: str = ""
 
 
 class MilestoneCreate(MilestoneBase):
     pass
+
+
+class MilestoneUpdate(BaseModel):
+    period_id: int | None = None
+    description: str | None = None
 
 
 class MilestoneRead(MilestoneBase):

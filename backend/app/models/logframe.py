@@ -202,6 +202,7 @@ class Milestone(Base):
     period_id: Mapped[int | None] = mapped_column(
         Integer, ForeignKey("logframe_period.id"), nullable=True
     )
+    description: Mapped[str] = mapped_column(String(500), default="")
 
     activity: Mapped[Activity] = relationship("Activity", back_populates="milestones")
     period: Mapped[Period | None] = relationship("Period", back_populates="milestones")

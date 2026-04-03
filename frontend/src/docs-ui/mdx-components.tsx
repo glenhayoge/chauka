@@ -50,11 +50,12 @@ export const mdxComponents = {
   hr: () => <hr className="border-border my-8" />,
   code: (props: ComponentPropsWithoutRef<'code'>) => {
     const { className, children, ...rest } = props
-    // Fenced code blocks get className="language-*" from MDX
+    // Fenced code blocks get className="language-*" from MDX.
+    // When rendered inside <pre>, the pre component handles it.
     if (className) {
       return <CodeBlock className={className}>{children}</CodeBlock>
     }
-    // Inline code
+    // Inline code (not inside a <pre>)
     return (
       <code className="bg-muted text-sm px-1.5 py-0.5 rounded font-mono" {...rest}>
         {children}
@@ -62,8 +63,18 @@ export const mdxComponents = {
     )
   },
   pre: (props: ComponentPropsWithoutRef<'pre'>) => {
-    // MDX wraps fenced code blocks in <pre><code>. We handle highlighting
-    // in the code component, so just pass children through.
-    return <>{props.children}</>
+    // MDX wraps fenced code blocks in <pre><code>.
+    // If the inner <code> has a language class, CodeBlock handles highlighting
+    // and we just pass through. Otherwise (plain fences with no language),
+    // we need to render a proper <pre> block to preserve whitespace.
+    const child = props.children as React.ReactElement<{ className?: string }>
+    if (child?.props?.className) {
+      return <>{props.children}</>
+    }
+    return (
+      <pre className="bg-muted rounded-md p-4 overflow-x-auto text-sm font-mono whitespace-pre mb-4">
+        {props.children}
+      </pre>
+    )
   },
 }

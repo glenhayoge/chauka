@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import type { Activity, BudgetLine } from '../../api/types'
+import type { Activity, BudgetLine, Milestone } from '../../api/types'
 import { useLogframeStore } from '../../store/logframe'
 import EditableText from '../ui/EditableText'
 import EditableNumber from '../ui/EditableNumber'
@@ -11,6 +11,7 @@ import StatusHistory from './StatusHistory'
 import { apiClient } from '../../api/client'
 import { useQueryClient } from '@tanstack/react-query'
 import { BUDGET_CATEGORIES } from '../../utils/budgetCategories'
+import { displayDate } from '../../utils/format'
 
 interface Props {
   activity: Activity
@@ -26,6 +27,7 @@ export default function ActivityDetail({ activity, logframeId }: Props) {
   const taLines = (data.taLines ?? []).filter((t) => t.activity_id === activity.id)
   const resources = (data.resources ?? []).filter((r) => r.activity_id === activity.id)
   const statusUpdates = (data.statusUpdates ?? []).filter((s) => s.activity_id === activity.id)
+  const milestones = data.milestones.filter((m) => m.activity_id === activity.id)
   const totalBudget = budgetLines.reduce((sum, b) => sum + (b.amount || 0), 0)
   const currency = data.settings?.currency ?? ''
 
@@ -43,6 +45,21 @@ export default function ActivityDetail({ activity, logframeId }: Props) {
 
   async function deleteBudgetLine(lineId: number) {
     await apiClient.delete(`${activityBase}/budget-lines/${lineId}`)
+    queryClient.invalidateQueries({ queryKey: ['bootstrap', logframeId] })
+  }
+
+  async function addMilestone(periodId: number, description: string) {
+    await apiClient.post(`${activityBase}/milestones/`, { activity_id: activity.id, period_id: periodId, description })
+    queryClient.invalidateQueries({ queryKey: ['bootstrap', logframeId] })
+  }
+
+  async function saveMilestone(milestoneId: number, field: string, value: unknown) {
+    await apiClient.patch(`${activityBase}/milestones/${milestoneId}`, { [field]: value })
+    queryClient.invalidateQueries({ queryKey: ['bootstrap', logframeId] })
+  }
+
+  async function deleteMilestone(milestoneId: number) {
+    await apiClient.delete(`${activityBase}/milestones/${milestoneId}`)
     queryClient.invalidateQueries({ queryKey: ['bootstrap', logframeId] })
   }
 
@@ -67,6 +84,21 @@ export default function ActivityDetail({ activity, logframeId }: Props) {
           logframeId={logframeId}
           currency={currency}
           canEdit={canEdit}
+        />
+      </div>
+
+      {/* Milestones */}
+      <div>
+        <h4 className="text-xs font-bold text-gray-600 uppercase tracking-wider mb-1">
+          Milestones
+        </h4>
+        <MilestonesSection
+          milestones={milestones}
+          periods={data.periods}
+          canEdit={canEdit}
+          onAdd={addMilestone}
+          onSave={saveMilestone}
+          onDelete={deleteMilestone}
         />
       </div>
 
@@ -235,5 +267,143 @@ function AddBudgetLineForm({ currency, onAdd }: { currency: string; onAdd: (cate
         </button>
       </div>
     </form>
+  )
+}
+
+function MilestonesSection({
+  milestones,
+  periods,
+  canEdit,
+  onAdd,
+  onSave,
+  onDelete,
+}: {
+  milestones: Milestone[]
+  periods: { id: number; start_month: number; start_year: number; end_month: number; end_year: number }[]
+  canEdit: boolean
+  onAdd: (periodId: number, description: string) => Promise<void>
+  onSave: (milestoneId: number, field: string, value: unknown) => Promise<void>
+  onDelete: (milestoneId: number) => Promise<void>
+}) {
+  const [adding, setAdding] = useState(false)
+  const [selectedPeriod, setSelectedPeriod] = useState('')
+  const [description, setDescription] = useState('')
+  const [saving, setSaving] = useState(false)
+
+  const assignedPeriodIds = new Set(milestones.map((m) => m.period_id))
+  const availablePeriods = periods.filter((p) => !assignedPeriodIds.has(p.id))
+
+  async function handleAdd() {
+    if (!selectedPeriod) return
+    setSaving(true)
+    try {
+      await onAdd(parseInt(selectedPeriod), description.trim())
+      setSelectedPeriod('')
+      setDescription('')
+      setAdding(false)
+    } finally {
+      setSaving(false)
+    }
+  }
+
+  return (
+    <div>
+      {milestones.length === 0 && !adding && (
+        <p className="text-xs text-gray-400 italic mb-1">No milestones set.</p>
+      )}
+
+      {milestones.length > 0 && (
+        <div className="overflow-x-auto">
+          <table className="text-xs border-collapse w-full">
+            <thead>
+              <tr className="bg-gray-50">
+                <th className="border border-gray-200 px-2 py-1 text-left font-medium text-gray-600">Period</th>
+                <th className="border border-gray-200 px-2 py-1 text-left font-medium text-gray-600">Description</th>
+                {canEdit && <th className="border border-gray-200 px-1 py-1 w-6" />}
+              </tr>
+            </thead>
+            <tbody>
+              {milestones.map((m) => {
+                const period = periods.find((p) => p.id === m.period_id)
+                if (!period) return null
+                return (
+                  <tr key={m.id} className="hover:bg-gray-50">
+                    <td className="border border-gray-200 px-2 py-1 whitespace-nowrap">
+                      <span className="text-blue-700">
+                        {displayDate(period.start_month, period.start_year)}
+                        {' – '}
+                        {displayDate(period.end_month, period.end_year)}
+                      </span>
+                    </td>
+                    <td className="border border-gray-200 px-2 py-1">
+                      <EditableText
+                        value={m.description}
+                        onSave={(v) => onSave(m.id, 'description', v)}
+                        placeholder="e.g. Survey instrument finalised"
+                        className="text-xs"
+                        disabled={!canEdit}
+                      />
+                    </td>
+                    {canEdit && (
+                      <td className="border border-gray-200 px-1 py-1 text-center">
+                        <DeleteButton onClick={() => onDelete(m.id)} label="Remove" />
+                      </td>
+                    )}
+                  </tr>
+                )
+              })}
+            </tbody>
+          </table>
+        </div>
+      )}
+
+      {canEdit && !adding && availablePeriods.length > 0 && (
+        <div className="mt-1">
+          <AddButton onClick={() => setAdding(true)} label="Add milestone" />
+        </div>
+      )}
+
+      {adding && (
+        <div className="mt-2 border rounded p-3 bg-blue-50 space-y-2">
+          <div className="flex flex-wrap gap-2">
+            <select
+              value={selectedPeriod}
+              onChange={(e) => setSelectedPeriod(e.target.value)}
+              required
+              className="border rounded px-2 py-1 text-xs flex-1 min-w-[180px]"
+            >
+              <option value="">Select period</option>
+              {availablePeriods.map((p) => (
+                <option key={p.id} value={p.id}>
+                  {displayDate(p.start_month, p.start_year)} – {displayDate(p.end_month, p.end_year)}
+                </option>
+              ))}
+            </select>
+            <input
+              type="text"
+              value={description}
+              onChange={(e) => setDescription(e.target.value)}
+              placeholder="Description (e.g. Data collection complete)"
+              className="border rounded px-2 py-1 text-xs flex-1 min-w-[200px]"
+            />
+          </div>
+          <div className="flex gap-2">
+            <button
+              onClick={handleAdd}
+              disabled={saving || !selectedPeriod}
+              className="px-3 py-1 bg-blue-600 text-white text-xs rounded hover:bg-blue-700 disabled:opacity-50"
+            >
+              {saving ? 'Adding...' : 'Add'}
+            </button>
+            <button
+              onClick={() => { setAdding(false); setSelectedPeriod(''); setDescription('') }}
+              className="px-3 py-1 text-gray-500 text-xs rounded border hover:bg-gray-50"
+            >
+              Cancel
+            </button>
+          </div>
+        </div>
+      )}
+    </div>
   )
 }

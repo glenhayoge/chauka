@@ -1,6 +1,6 @@
 """backfill admin memberships for org owners
 
-Revision ID: c4d5e6f7a8b9
+Revision ID: h2b3c4d5e6f7
 Revises: f9e8d7c6b5a4
 Create Date: 2026-04-03 12:00:00.000000
 
@@ -11,7 +11,7 @@ from alembic import op
 import sqlalchemy as sa
 
 # revision identifiers, used by Alembic.
-revision: str = "c4d5e6f7a8b9"
+revision: str = "h2b3c4d5e6f7"
 down_revision: Union[str, Sequence[str], None] = "f9e8d7c6b5a4"
 branch_labels: Union[str, Sequence[str], None] = None
 depends_on: Union[str, Sequence[str], None] = None

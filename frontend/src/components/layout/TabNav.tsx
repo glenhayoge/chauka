@@ -6,6 +6,7 @@ const TABS = [
   { label: 'Result Design', path: '/design' },
   { label: 'Monitor', path: '/monitor' },
   { label: 'Budget', path: '/budget' },
+  { label: 'Timeline', path: '/timeline' },
   { label: 'Workload', path: '/workload' },
 ]
 

@@ -37,7 +37,7 @@ export default function Layout() {
   return (
     <div className="min-h-screen flex flex-col bg-background text-foreground">
       {/* Top header bar */}
-      <header className="bg-foreground text-background">
+      <header className="bg-foreground text-background px-6">
         <div className="px-4 sm:px-6 py-3 flex justify-between items-center">
           <div className="flex items-center gap-4 sm:gap-6 min-w-0">
             <Link to="/app" className="text-lg sm:text-xl font-semibold hover:text-muted transition-colors flex-shrink-0">
@@ -186,10 +186,10 @@ export default function Layout() {
           </nav>
         )}
       </header>
-
-      <main className="flex-1 p-3 sm:p-6">
+      <main className="flex-1 p-3 sm:p-8 ">
         <Outlet />
       </main>
+
     </div>
   )
 }

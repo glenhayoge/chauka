@@ -4,6 +4,7 @@ import { useBootstrap } from '../hooks/useBootstrap'
 import { useLogframeStore } from '../store/logframe'
 import TabNav from '../components/layout/TabNav'
 import clsx from 'clsx'
+import { type MonthKey, getMonthsBetween, activityOverlapsMonth, getBarPosition } from '../utils/timeline'
 
 type ViewMode = 'table' | 'timeline' | 'roles'
 
@@ -16,33 +17,6 @@ interface StaffAllocation {
   endDate: string
   days: number
   allocationPct: number
-}
-
-interface MonthKey {
-  year: number
-  month: number
-  label: string
-}
-
-function getMonthsBetween(startDate: string, endDate: string): MonthKey[] {
-  const months: MonthKey[] = []
-  const MONTH_NAMES = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec']
-  const [sy, sm] = startDate.split('-').map(Number)
-  const [ey, em] = endDate.split('-').map(Number)
-  let y = sy, m = sm
-  while (y < ey || (y === ey && m <= em)) {
-    months.push({ year: y, month: m, label: `${MONTH_NAMES[m - 1]} ${y}` })
-    m++
-    if (m > 12) { m = 1; y++ }
-  }
-  return months
-}
-
-function activityOverlapsMonth(start: string, end: string, year: number, month: number): boolean {
-  const mStart = `${year}-${String(month).padStart(2, '0')}-01`
-  const lastDay = new Date(year, month, 0).getDate()
-  const mEnd = `${year}-${String(month).padStart(2, '0')}-${lastDay}`
-  return start <= mEnd && end >= mStart
 }
 
 export default function WorkloadPage() {
@@ -246,16 +220,9 @@ function TimelineView({ allocations, months }: {
             </div>
             <div className="flex-1 relative" style={{ minHeight: `${Math.max(allocs.length, 1) * 24 + 8}px` }}>
               {allocs.map((alloc, idx) => {
-                // Calculate position
-                const startMonth = months.findIndex((m) =>
-                  activityOverlapsMonth(alloc.startDate, alloc.endDate, m.year, m.month)
-                )
-                const endMonth = months.length - 1 - [...months].reverse().findIndex((m) =>
-                  activityOverlapsMonth(alloc.startDate, alloc.endDate, m.year, m.month)
-                )
-                if (startMonth < 0) return null
-                const left = (startMonth / months.length) * 100
-                const width = ((endMonth - startMonth + 1) / months.length) * 100
+                const pos = getBarPosition(alloc.startDate, alloc.endDate, months)
+                if (!pos) return null
+                const { left, width } = pos
                 const color = COLORS[(personIdx + idx) % COLORS.length]
                 return (
                   <div

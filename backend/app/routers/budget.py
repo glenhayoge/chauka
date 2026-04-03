@@ -8,7 +8,7 @@ from app.models.contacts import User
 from app.models.logframe import BudgetLine, Milestone
 from app.schemas.logframe import (
     BudgetLineCreate, BudgetLineRead, BudgetLineUpdate,
-    MilestoneCreate, MilestoneRead,
+    MilestoneCreate, MilestoneRead, MilestoneUpdate,
 )
 
 router = APIRouter(
@@ -96,6 +96,26 @@ async def create_milestone(
 ):
     obj = Milestone(**body.model_dump(exclude={"activity_id"}), activity_id=activity_id)
     db.add(obj)
+    await db.commit()
+    await db.refresh(obj)
+    return obj
+
+
+@router.patch("/milestones/{milestone_id}", response_model=MilestoneRead)
+async def update_milestone(
+    logframe_id: int, result_id: int, activity_id: int, milestone_id: int,
+    body: MilestoneUpdate,
+    db: AsyncSession = Depends(get_db),
+    current_user: User = Depends(require_logframe_editor),
+):
+    result = await db.execute(
+        select(Milestone).where(Milestone.id == milestone_id, Milestone.activity_id == activity_id)
+    )
+    obj = result.scalar_one_or_none()
+    if not obj:
+        raise HTTPException(status_code=404, detail="Milestone not found")
+    for field, value in body.model_dump(exclude_unset=True).items():
+        setattr(obj, field, value)
     await db.commit()
     await db.refresh(obj)
     return obj

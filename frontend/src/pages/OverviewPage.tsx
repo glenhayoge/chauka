@@ -127,8 +127,8 @@ export default function OverviewPage() {
     )
   }, [data, filters.dateFrom, filters.dateTo, filters.leadId, hasActiveFilters])
 
-  if (isLoading) return <p className="text-gray-500">Loading&hellip;</p>
-  if (error) return <p className="text-red-600">Failed to load data.</p>
+  if (isLoading) return <p className="text-muted-foreground">Loading&hellip;</p>
+  if (error) return <p className="text-destructive">Failed to load data.</p>
   if (!data) return null
 
   const topLevelResults = data.results
@@ -141,7 +141,7 @@ export default function OverviewPage() {
       <TabNav />
       <h2 className="text-lg font-semibold mb-4">{data.logframe.name}</h2>
       <FilterBar />
-      <div className="border border-gray-200 rounded-lg overflow-hidden">
+      <div className="border border-border rounded-lg overflow-hidden">
         {topLevelResults.map((result) => (
           <ResultRow
             key={result.id}
@@ -153,7 +153,7 @@ export default function OverviewPage() {
         ))}
 
         {hasActiveFilters && topLevelResults.length === 0 && (
-          <div className="px-3 py-6 text-center text-gray-500 text-sm">
+          <div className="px-3 py-6 text-center text-muted-foreground text-sm">
             No results match the current filters.
           </div>
         )}

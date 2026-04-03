@@ -12,7 +12,7 @@ export default function HelpLayout() {
       {/* Top bar */}
       <header className="sticky top-0 z-30 border-b border-border bg-background/95 backdrop-blur">
         <div className="max-w-7xl mx-auto">
-          <div className="px-3 py-3">
+          <div className="px-3 py-2">
             {/* Title row */}
             <div className="flex items-center gap-3">
               <Link to="/help" className="text-sm font-semibold text-foreground whitespace-nowrap py-3">

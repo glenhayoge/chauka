@@ -177,6 +177,7 @@ export interface Milestone {
   id: number
   activity_id: number
   period_id: number | null
+  description: string
 }
 
 export interface TALine {

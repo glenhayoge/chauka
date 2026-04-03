@@ -25,6 +25,7 @@ const OverviewPage = lazy(() => import('./pages/OverviewPage'))
 const ResultDesignPage = lazy(() => import('./pages/ResultDesignPage'))
 const MonitorPage = lazy(() => import('./pages/MonitorPage'))
 const BudgetPage = lazy(() => import('./pages/BudgetPage'))
+const GanttPage = lazy(() => import('./pages/GanttPage'))
 const WorkloadPage = lazy(() => import('./pages/WorkloadPage'))
 const PeoplePage = lazy(() => import('./pages/PeoplePage'))
 const SettingsPage = lazy(() => import('./pages/SettingsPage'))
@@ -90,6 +91,7 @@ export default function App() {
             <Route path="logframes/:logframeId/design" element={<ResultDesignPage />} />
             <Route path="logframes/:logframeId/monitor" element={<MonitorPage />} />
             <Route path="logframes/:logframeId/budget" element={<BudgetPage />} />
+            <Route path="logframes/:logframeId/timeline" element={<GanttPage />} />
             <Route path="logframes/:logframeId/workload" element={<WorkloadPage />} />
             <Route path="logframes/:logframeId/people" element={<PeoplePage />} />
             <Route path="logframes/:logframeId/settings" element={<SettingsPage />} />

@@ -3,6 +3,8 @@ import type { Resource } from '../../api/types'
 import { apiClient } from '../../api/client'
 import { useQueryClient } from '@tanstack/react-query'
 import DeleteButton from '../ui/DeleteButton'
+import EditableText from '../ui/EditableText'
+import EditableNumber from '../ui/EditableNumber'
 
 interface Props {
   resources: Resource[]
@@ -23,6 +25,11 @@ export default function ResourcesTable({ resources, activityId, logframeId, canE
   const humanResources = resources.filter((r) => r.resource_type === 'human')
   const equipment = resources.filter((r) => r.resource_type === 'equipment')
   const partners = resources.filter((r) => r.resource_type === 'partner')
+
+  async function saveResource(id: number, field: string, value: unknown) {
+    await apiClient.patch(`/logframes/${logframeId}/resources/${id}`, { [field]: value })
+    queryClient.invalidateQueries({ queryKey: ['bootstrap', logframeId] })
+  }
 
   async function deleteResource(id: number) {
     await apiClient.delete(`/logframes/${logframeId}/resources/${id}`)
@@ -50,11 +57,45 @@ export default function ResourcesTable({ resources, activityId, logframeId, canE
               <tbody>
                 {humanResources.map((r) => (
                   <tr key={r.id} className="hover:bg-gray-50">
-                    <td className="border border-gray-200 px-2 py-1">{r.role}</td>
-                    <td className="border border-gray-200 px-2 py-1 text-gray-500">{r.person || '—'}</td>
-                    <td className="border border-gray-200 px-2 py-1 text-center">{r.quantity}</td>
-                    <td className="border border-gray-200 px-2 py-1 text-center">{r.days_required}</td>
-                    <td className="border border-gray-200 px-2 py-1 text-center">{r.allocation_pct != null ? `${r.allocation_pct}%` : '—'}</td>
+                    <td className="border border-gray-200 px-2 py-1">
+                      <EditableText
+                        value={r.role}
+                        onSave={(v) => saveResource(r.id, 'role', v)}
+                        placeholder="Role"
+                        className="text-xs"
+                        disabled={!canEdit}
+                      />
+                    </td>
+                    <td className="border border-gray-200 px-2 py-1">
+                      <EditableText
+                        value={r.person}
+                        onSave={(v) => saveResource(r.id, 'person', v)}
+                        placeholder="—"
+                        className="text-xs text-gray-500"
+                        disabled={!canEdit}
+                      />
+                    </td>
+                    <td className="border border-gray-200 px-2 py-1 text-center">
+                      <EditableNumber
+                        value={r.quantity}
+                        onSave={(v) => saveResource(r.id, 'quantity', v)}
+                        disabled={!canEdit}
+                      />
+                    </td>
+                    <td className="border border-gray-200 px-2 py-1 text-center">
+                      <EditableNumber
+                        value={r.days_required}
+                        onSave={(v) => saveResource(r.id, 'days_required', v)}
+                        disabled={!canEdit}
+                      />
+                    </td>
+                    <td className="border border-gray-200 px-2 py-1 text-center">
+                      <EditableNumber
+                        value={r.allocation_pct}
+                        onSave={(v) => saveResource(r.id, 'allocation_pct', v)}
+                        disabled={!canEdit}
+                      />
+                    </td>
                     {canEdit && (
                       <td className="border border-gray-200 px-1 py-1 text-center">
                         <DeleteButton onClick={() => deleteResource(r.id)} label="Remove" />
@@ -85,9 +126,29 @@ export default function ResourcesTable({ resources, activityId, logframeId, canE
               <tbody>
                 {equipment.map((r) => (
                   <tr key={r.id} className="hover:bg-gray-50">
-                    <td className="border border-gray-200 px-2 py-1">{r.resource_name}</td>
-                    <td className="border border-gray-200 px-2 py-1 text-center">{r.quantity}</td>
-                    <td className="border border-gray-200 px-2 py-1 text-center">{r.days_required}</td>
+                    <td className="border border-gray-200 px-2 py-1">
+                      <EditableText
+                        value={r.resource_name}
+                        onSave={(v) => saveResource(r.id, 'resource_name', v)}
+                        placeholder="Resource name"
+                        className="text-xs"
+                        disabled={!canEdit}
+                      />
+                    </td>
+                    <td className="border border-gray-200 px-2 py-1 text-center">
+                      <EditableNumber
+                        value={r.quantity}
+                        onSave={(v) => saveResource(r.id, 'quantity', v)}
+                        disabled={!canEdit}
+                      />
+                    </td>
+                    <td className="border border-gray-200 px-2 py-1 text-center">
+                      <EditableNumber
+                        value={r.days_required}
+                        onSave={(v) => saveResource(r.id, 'days_required', v)}
+                        disabled={!canEdit}
+                      />
+                    </td>
                     {canEdit && (
                       <td className="border border-gray-200 px-1 py-1 text-center">
                         <DeleteButton onClick={() => deleteResource(r.id)} label="Remove" />
@@ -117,8 +178,24 @@ export default function ResourcesTable({ resources, activityId, logframeId, canE
               <tbody>
                 {partners.map((r) => (
                   <tr key={r.id} className="hover:bg-gray-50">
-                    <td className="border border-gray-200 px-2 py-1">{r.organisation_name}</td>
-                    <td className="border border-gray-200 px-2 py-1 text-gray-500">{r.role_in_activity}</td>
+                    <td className="border border-gray-200 px-2 py-1">
+                      <EditableText
+                        value={r.organisation_name}
+                        onSave={(v) => saveResource(r.id, 'organisation_name', v)}
+                        placeholder="Organisation"
+                        className="text-xs"
+                        disabled={!canEdit}
+                      />
+                    </td>
+                    <td className="border border-gray-200 px-2 py-1">
+                      <EditableText
+                        value={r.role_in_activity}
+                        onSave={(v) => saveResource(r.id, 'role_in_activity', v)}
+                        placeholder="Role"
+                        className="text-xs text-gray-500"
+                        disabled={!canEdit}
+                      />
+                    </td>
                     {canEdit && (
                       <td className="border border-gray-200 px-1 py-1 text-center">
                         <DeleteButton onClick={() => deleteResource(r.id)} label="Remove" />

@@ -39,7 +39,7 @@ export default function ActivityContainer({ activity, logframeId }: Props) {
   }
 
   return (
-    <div className="ml-4 mt-2 border-l-2 border-gray-200 pl-3">
+    <div className="ml-4 mt-2 border-l-2 border-border pl-3">
       <div className="flex items-center justify-between">
         <EditableText
           value={activity.name}
@@ -48,7 +48,7 @@ export default function ActivityContainer({ activity, logframeId }: Props) {
           className="text-sm"
           disabled={!canEdit}
         />
-        <span className="text-xs text-gray-500 ml-2">
+        <span className="text-xs text-muted-foreground ml-2">
           {currency} {totalBudget.toLocaleString()}
         </span>
       </div>
@@ -58,8 +58,9 @@ export default function ActivityContainer({ activity, logframeId }: Props) {
           {milestones.map((m) => {
             const period = data.periods.find((p) => p.id === m.period_id)
             return period ? (
-              <span key={m.id} className="text-xs bg-blue-50 text-blue-700 px-2 py-0.5 rounded">
+              <span key={m.id} className="text-xs bg-accent text-accent-foreground px-2 py-0.5 rounded">
                 {displayDate(period.start_month, period.start_year)}
+                {m.description ? `: ${m.description}` : ''}
               </span>
             ) : null
           })}
@@ -70,7 +71,7 @@ export default function ActivityContainer({ activity, logframeId }: Props) {
         <div className="mt-1">
           {budgetLines.map((line) => (
             <div key={line.id} className="flex items-center gap-2 text-sm">
-              <span className="text-gray-600">{line.name}:</span>
+              <span className="text-muted-foreground">{line.name}:</span>
               <EditableNumber
                 value={line.amount}
                 onSave={(v) => saveBudgetLine(line.id, v)}
