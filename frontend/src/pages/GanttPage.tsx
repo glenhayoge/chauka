@@ -8,6 +8,7 @@ import clsx from 'clsx'
 import type { Activity, Result, Milestone, Period } from '../api/types'
 import { getMonthsBetween, getBarPosition, getTodayPosition, getQuarterGroups, type MonthKey } from '../utils/timeline'
 import { formatDateDisplay } from '../utils/format'
+import { buildResultCodeMap } from '../utils/resultCodes'
 
 // Bar colors by result level
 const LEVEL_BAR_COLORS: Record<number, string> = {
@@ -132,6 +133,11 @@ export default function GanttPage() {
     return resolveMilestones(data.milestones, data.periods, months)
   }, [data, months])
 
+  const resultCodes = useMemo(() => {
+    if (!data) return new Map<number, string>()
+    return buildResultCodeMap(data.results)
+  }, [data])
+
   if (isLoading) return <p className="text-gray-500">Loading...</p>
   if (error) return <p className="text-red-600">Failed to load data.</p>
   if (!data) return null
@@ -190,6 +196,7 @@ export default function GanttPage() {
                 months={months}
                 milestoneMap={milestoneMap}
                 levels={data.levels}
+                resultCodes={resultCodes}
                 depth={0}
               />
             ))}
@@ -231,7 +238,7 @@ function GanttHeader({ months, quarters }: { months: MonthKey[]; quarters: { lab
     <div className="border-b border-gray-200 bg-gray-50 sticky top-0 z-20">
       {/* Quarter row */}
       <div className="flex">
-        <div className="w-48 flex-shrink-0" />
+        <div className="w-96 flex-shrink-0" />
         {quarters.map((q, i) => (
           <div
             key={`${q.label}-${i}`}
@@ -244,13 +251,13 @@ function GanttHeader({ months, quarters }: { months: MonthKey[]; quarters: { lab
       </div>
       {/* Month row */}
       <div className="flex border-t border-gray-100">
-        <div className="w-48 flex-shrink-0 px-3 py-1 text-xs font-medium text-gray-600">
+        <div className="w-96 flex-shrink-0 px-3 py-1 text-xs font-medium text-gray-600">
           Activity
         </div>
         {months.map((m) => (
           <div
             key={m.label}
-            className="flex-1 min-w-[50px] text-[10px] text-center text-gray-400 border-l border-gray-100 py-1"
+            className="flex-1 min-w-[36px] text-[10px] text-center text-gray-400 border-l border-gray-100 py-1"
           >
             {m.label.split(' ')[0]}
           </div>
@@ -265,12 +272,14 @@ function ResultGroup({
   months,
   milestoneMap,
   levels,
+  resultCodes,
   depth,
 }: {
   node: ResultNode
   months: MonthKey[]
   milestoneMap: Map<number, MilestoneMarker[]>
   levels: Record<string, string>
+  resultCodes: Map<number, string>
   depth: number
 }) {
   if (!hasActivities(node)) return null
@@ -278,16 +287,20 @@ function ResultGroup({
   const level = node.result.level ?? depth + 1
   const bg = LEVEL_BG[level] ?? 'bg-white'
   const levelLabel = levels[String(level)] ?? ''
+  const code = resultCodes.get(node.result.id) ?? ''
 
   return (
     <>
       {/* Result group header */}
       <div className={clsx('flex border-b border-gray-100', bg)}>
         <div
-          className="w-48 flex-shrink-0 px-3 py-1.5 text-xs font-semibold text-gray-700 truncate"
+          className="w-96 flex-shrink-0 px-3 py-1.5 text-xs font-semibold text-gray-700 truncate"
           style={{ paddingLeft: `${depth * 16 + 12}px` }}
           title={node.result.name}
         >
+          {code && (
+            <span className="text-[10px] font-semibold text-gray-400 mr-1">{code}</span>
+          )}
           {levelLabel && (
             <span className="text-[10px] font-bold text-gray-400 mr-1">{levelLabel}:</span>
           )}
@@ -316,6 +329,7 @@ function ResultGroup({
           months={months}
           milestoneMap={milestoneMap}
           levels={levels}
+          resultCodes={resultCodes}
           depth={depth + 1}
         />
       ))}
@@ -344,7 +358,7 @@ function ActivityBarRow({
     <div className="flex border-b border-gray-50 hover:bg-gray-50/50 group">
       {/* Activity name — sticky left */}
       <div
-        className="w-48 flex-shrink-0 px-3 py-2 text-xs text-gray-600 truncate sticky left-0 bg-white group-hover:bg-gray-50/50 z-10"
+        className="w-96 flex-shrink-0 px-3 py-2 text-xs text-gray-600 truncate sticky left-0 bg-white group-hover:bg-gray-50/50 z-10"
         style={{ paddingLeft: `${(depth + 1) * 16 + 12}px` }}
         title={`${activity.name}\n${dateRange}`}
       >
@@ -404,7 +418,7 @@ function TodayLine({ position }: { position: number }) {
   return (
     <div
       className="absolute top-0 bottom-0 z-10 pointer-events-none"
-      style={{ left: `calc(192px + (100% - 192px) * ${position / 100})` }}
+      style={{ left: `calc(384px + (100% - 384px) * ${position / 100})` }}
     >
       <div className="w-px h-full border-l-2 border-dashed border-red-400 opacity-60" />
       <div className="absolute -top-0.5 -left-3 text-[9px] text-red-500 font-medium bg-white px-0.5 rounded">

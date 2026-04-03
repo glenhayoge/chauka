@@ -33,6 +33,7 @@ export default function LandingPage() {
         )}
 
         {/* Features */}
+        <p className="text-2xl font-bold text-foreground mb-3">Features</p>
         <div id="features" className="grid grid-cols-1 sm:grid-cols-2 gap-x-12 gap-y-6 border-t border-gray-100 pt-10">
           <Feature
             title="Logframe design"
@@ -70,7 +71,7 @@ export default function LandingPage() {
 
         {/* Built for */}
         <div className="border-t border-gray-100 mt-12 pt-10">
-          <p className="text-lg text-foreground mb-3">Built for</p>
+          <p className="text-2xl font-bold text-foreground mb-3">Built for</p>
           <div className="flex flex-wrap gap-2">
             {['NGOs', 'Government agencies', 'Donor-funded programs', 'M&E teams', 'Project managers', 'Field organisations', 'Agriculture Programs', 'Program Managers', 'M&E Specialists'].map((tag) => (
               <span key={tag} className="text-xs text-gray-500 border border-gray-200 rounded-md px-6 py-3">{tag}</span>
@@ -80,7 +81,7 @@ export default function LandingPage() {
 
         {/* About */}
         <div id="about" className="border-t border-gray-100 mt-12 pt-10">
-          <p className="text-xl text-gray-900 mb-2">About Chauka</p>
+          <p className="text-2xl font-bold text-foreground mb-2">About Chauka</p>
           <div className="text-sm text-gray-500 leading-relaxed space-y-3">
             <p>
               Chauka is a monitoring, evaluation and learning (MEL) information system
@@ -94,7 +95,7 @@ export default function LandingPage() {
             </p>
             <p>
               The system supports flexible programme structures, from simple
-              single-project logframes to multi-organisation programmes with dozens
+              single-project logframes to multi-organisation programs with dozens
               of projects and logframes across regions.
             </p>
           </div>
@@ -105,14 +106,14 @@ export default function LandingPage() {
               <img
                 src="https://upload.wikimedia.org/wikipedia/commons/thumb/f/fd/Philemon_albitorques.jpg/500px-Philemon_albitorques.jpg"
                 alt="The Chauka bird (Philemon albitorques) from Manus Island, Papua New Guinea"
-                className="w-full sm:w-56 rounded-lg object-cover"
+                className="w-full sm:w-56 rounded-lg object-cover border border-gray-200"
               />
               <p className="text-xs text-gray-400 mt-1.5">
                 Picture: <a href="https://en.wikipedia.org/wiki/Manus_friarbird" target="_blank" rel="noopener noreferrer" className="underline hover:text-gray-500">Manus friarbird</a> via Wikimedia Commons
               </p>
             </div>
             <div className="text-sm text-gray-500 leading-relaxed space-y-3">
-              <p className="text-lg text-gray-900 font-medium">Why "Chauka"?</p>
+              <p className="text-lg text-foreground font-medium">Why "Chauka"?</p>
               <p>
                 The Chauka is a bird from Manus Island, Papua New Guinea. In Manus
                 folklore, the Chauka is known as a guide, a time-keeper and a voice
@@ -130,7 +131,7 @@ export default function LandingPage() {
 
         {/* Open source */}
         <div className="border-t border-gray-100 mt-12 pt-10">
-          <p className="text-lg text-gray-900 mb-2">Open source</p>
+          <p className="text-2xl font-bold text-foreground mb-2">Open source</p>
           <p className="text-sm text-gray-500 leading-relaxed">
             Chauka is free to use and open source. Self-host it for your organisation
             or use the hosted version. No vendor lock-in, your data is yours.
@@ -139,7 +140,7 @@ export default function LandingPage() {
 
         {/* Contact */}
         <div id="contact" className="border-t border-border mt-12 pt-10 bg-background ">
-          <p className="text-lg text-foreground mb-2">Get in touch</p>
+          <p className="text-2xl font-bold text-foreground mb-2">Get in touch</p>
           <p className="text-sm text-foreground mb-4">
             Questions, feedback or partnership enquiries, we'd like to hear from you.
           </p>

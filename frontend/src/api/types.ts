@@ -258,6 +258,7 @@ export interface AppSettings {
   max_result_level: number
   open_result_level: number
   use_components: boolean
+  level_labels: Record<string, string> | null
 }
 
 export interface BootstrapConf {

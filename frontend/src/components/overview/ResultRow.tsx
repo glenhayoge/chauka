@@ -25,9 +25,11 @@ interface Props {
   logframeId: number
   depth?: number
   visibleResultIds?: Set<number> | null
+  resultCodes?: Map<number, string>
+  activityCodes?: Map<number, string>
 }
 
-export default function ResultRow({ result, allResults, logframeId, depth = 0, visibleResultIds }: Props) {
+export default function ResultRow({ result, allResults, logframeId, depth = 0, visibleResultIds, resultCodes, activityCodes }: Props) {
   const data = useLogframeStore((s) => s.data!)
   const queryClient = useQueryClient()
   const canEdit = data.canEdit
@@ -54,6 +56,7 @@ export default function ResultRow({ result, allResults, logframeId, depth = 0, v
   }
   const resultBudgetTotal = getResultBudgetTotal(result.id)
 
+  const resultCode = resultCodes?.get(result.id) ?? ''
   const levelLabel = result.level !== null ? (data.levels?.[String(result.level)] ?? null) : null
   const levelBg = result.level !== null ? (LEVEL_STYLES[result.level] ?? 'bg-white') : 'bg-white'
 
@@ -99,9 +102,10 @@ export default function ResultRow({ result, allResults, logframeId, depth = 0, v
             {expanded ? '\u25BC' : '\u25B6'}
           </button>
 
-          {/* Level label */}
+          {/* Level label with result code */}
           {levelLabel && (
             <span className="text-xs font-bold text-blue-700 whitespace-nowrap hidden sm:inline min-w-[70px]">
+              {resultCode && <span className="text-gray-500 font-semibold mr-1">{resultCode}</span>}
               {levelLabel}
             </span>
           )}
@@ -153,6 +157,7 @@ export default function ResultRow({ result, allResults, logframeId, depth = 0, v
         <div className="flex sm:hidden items-center gap-2 px-2 pb-2" style={{ paddingLeft: '2.5rem' }}>
           {levelLabel && (
             <span className="text-xs font-bold text-blue-700 whitespace-nowrap">
+              {resultCode && <span className="text-gray-500 font-semibold mr-1">{resultCode}</span>}
               {levelLabel}
             </span>
           )}
@@ -192,6 +197,8 @@ export default function ResultRow({ result, allResults, logframeId, depth = 0, v
               logframeId={logframeId}
               depth={depth + 1}
               visibleResultIds={visibleResultIds}
+              resultCodes={resultCodes}
+              activityCodes={activityCodes}
             />
           ))}
 
@@ -205,6 +212,7 @@ export default function ResultRow({ result, allResults, logframeId, depth = 0, v
               <ActivityRow
                 activity={activity}
                 logframeId={logframeId}
+                activityCode={activityCodes?.get(activity.id)}
               />
             </div>
           ))}

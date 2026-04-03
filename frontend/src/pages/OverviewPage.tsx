@@ -8,6 +8,7 @@ import ExportControls from '../components/overview/ExportControls'
 import FilterBar from '../components/overview/FilterBar'
 import ResultRow from '../components/overview/ResultRow'
 import AddResultRow from '../components/overview/AddResultRow'
+import { buildResultCodeMap, buildActivityCodeMap } from '../utils/resultCodes'
 import EmptyState from '../components/ui/EmptyState'
 import type { Activity, Result } from '../api/types'
 
@@ -131,6 +132,9 @@ export default function OverviewPage() {
   if (error) return <p className="text-destructive">Failed to load data.</p>
   if (!data) return null
 
+  const resultCodes = useMemo(() => buildResultCodeMap(data.results), [data.results])
+  const activityCodes = useMemo(() => buildActivityCodeMap(data.activities, resultCodes), [data.activities, resultCodes])
+
   const topLevelResults = data.results
     .filter((r) => r.parent_id === null)
     .filter((r) => !visibleResultIds || visibleResultIds.has(r.id))
@@ -149,6 +153,8 @@ export default function OverviewPage() {
             allResults={data.results}
             logframeId={id}
             visibleResultIds={visibleResultIds}
+            resultCodes={resultCodes}
+            activityCodes={activityCodes}
           />
         ))}
 

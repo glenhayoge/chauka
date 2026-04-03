@@ -1,4 +1,4 @@
-from sqlalchemy import Boolean, ForeignKey, Integer, SmallInteger, String
+from sqlalchemy import Boolean, ForeignKey, Integer, JSON, SmallInteger, String
 from sqlalchemy.orm import Mapped, mapped_column
 
 from app.database import Base
@@ -19,3 +19,4 @@ class Settings(Base):
     max_result_level: Mapped[int] = mapped_column(SmallInteger, default=3)
     open_result_level: Mapped[int] = mapped_column(SmallInteger, default=0)
     use_components: Mapped[bool] = mapped_column(Boolean, default=False)
+    level_labels: Mapped[dict | None] = mapped_column(JSON, nullable=True, default=None)

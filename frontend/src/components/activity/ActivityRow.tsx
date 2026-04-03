@@ -1,8 +1,10 @@
+import { useState } from 'react'
 import type { Activity } from '../../api/types'
 import { useLogframeStore } from '../../store/logframe'
 import { useUIStore } from '../../store/ui'
 import EditableText from '../ui/EditableText'
 import EditableDate from '../ui/EditableDate'
+import ConfirmDialog from '../ui/ConfirmDialog'
 import { apiClient } from '../../api/client'
 import { useQueryClient } from '@tanstack/react-query'
 import ActivityDetail from './ActivityDetail'
@@ -10,19 +12,27 @@ import ActivityDetail from './ActivityDetail'
 interface Props {
   activity: Activity
   logframeId: number
+  activityCode?: string
 }
 
-export default function ActivityRow({ activity, logframeId }: Props) {
+export default function ActivityRow({ activity, logframeId, activityCode }: Props) {
   const data = useLogframeStore((s) => s.data!)
   const queryClient = useQueryClient()
   const canEdit = data.canEdit
   const expanded = useUIStore((s) => s.expandedActivities.has(activity.id))
   const toggleActivity = useUIStore((s) => s.toggleActivity)
 
+  const [confirmDelete, setConfirmDelete] = useState(false)
+
   const activityBase = `/logframes/${logframeId}/results/${activity.result_id}/activities/${activity.id}`
 
   async function saveField(field: string, value: unknown) {
     await apiClient.patch(activityBase, { [field]: value })
+    queryClient.invalidateQueries({ queryKey: ['bootstrap', logframeId] })
+  }
+
+  async function deleteActivity() {
+    await apiClient.delete(activityBase)
     queryClient.invalidateQueries({ queryKey: ['bootstrap', logframeId] })
   }
 
@@ -39,6 +49,7 @@ export default function ActivityRow({ activity, logframeId }: Props) {
         </button>
 
         <span className="text-xs font-bold text-amber-600 whitespace-nowrap hidden sm:inline min-w-[70px]">
+          {activityCode && <span className="text-gray-500 font-semibold mr-1">{activityCode}</span>}
           Activity
         </span>
 
@@ -71,11 +82,25 @@ export default function ActivityRow({ activity, logframeId }: Props) {
             disabled={!canEdit}
           />
         </div>
+
+        {/* Delete button */}
+        {canEdit && (
+          <button
+            onClick={() => setConfirmDelete(true)}
+            className="text-gray-300 hover:text-red-500 flex-shrink-0 text-sm px-1"
+            title="Delete activity"
+          >
+            ×
+          </button>
+        )}
       </div>
 
       {/* Mobile dates row */}
       <div className="flex sm:hidden items-center gap-1 text-xs text-gray-500 px-2 pb-2" style={{ paddingLeft: '2.5rem' }}>
-        <span className="text-xs font-bold text-amber-600 mr-1">Activity</span>
+        <span className="text-xs font-bold text-amber-600 mr-1">
+          {activityCode && <span className="text-gray-500 font-semibold mr-1">{activityCode}</span>}
+          Activity
+        </span>
         <EditableDate
           value={activity.start_date}
           onSave={(v) => saveField('start_date', v)}
@@ -92,6 +117,16 @@ export default function ActivityRow({ activity, logframeId }: Props) {
           disabled={!canEdit}
         />
       </div>
+
+      {/* Delete confirmation */}
+      <ConfirmDialog
+        open={confirmDelete}
+        title="Delete Activity"
+        description={`Delete "${activity.name || 'this activity'}"? This will also remove all associated budget lines, resources, milestones, and status updates.`}
+        confirmText="Delete"
+        onConfirm={deleteActivity}
+        onCancel={() => setConfirmDelete(false)}
+      />
 
       {/* Expanded detail: TA lines, Budget, Status History */}
       {expanded && (

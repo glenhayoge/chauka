@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useMemo } from 'react'
 import { Link, useNavigate, useParams, useSearchParams } from 'react-router-dom'
 import { useQueryClient } from '@tanstack/react-query'
 import { useBootstrap } from '../hooks/useBootstrap'
@@ -13,6 +13,7 @@ import EditableSelect from '../components/ui/EditableSelect'
 import EditableNumber from '../components/ui/EditableNumber'
 import RichTextEditor from '../components/ui/RichTextEditor'
 import AddButton from '../components/ui/AddButton'
+import { buildResultCodeMap } from '../utils/resultCodes'
 
 export default function ResultDesignPage() {
   const { logframeId } = useParams<{ logframeId: string }>()
@@ -35,6 +36,7 @@ export default function ResultDesignPage() {
 
   const result = filterResultId ? results[0] : null
   const canEdit = data.canEdit
+  const resultCodes = useMemo(() => buildResultCodeMap(data.results), [data.results])
 
   // Single-result editor view
   if (result) {
@@ -66,6 +68,7 @@ export default function ResultDesignPage() {
 
     const riskRatingOptions = data.riskRatings.map((r) => ({ value: r.id, label: r.name }))
     const levelLabel = result.level ? data.levels[String(result.level)] : 'Result'
+    const code = resultCodes.get(result.id) ?? ''
 
     return (
       <div>
@@ -80,7 +83,7 @@ export default function ResultDesignPage() {
             &larr; All results
           </Link>
           <span className="text-xs bg-gray-100 text-gray-600 rounded px-2 py-0.5 font-medium">
-            {levelLabel}
+            {code && <span className="mr-1">{code}</span>}{levelLabel}
           </span>
         </div>
 
@@ -199,11 +202,14 @@ export default function ResultDesignPage() {
       {results.map((r) => {
         const indicators = data.indicators.filter((i) => i.result_id === r.id)
         const levelLabel = r.level ? data.levels[String(r.level)] : ''
+        const code = resultCodes.get(r.id) ?? ''
         return (
           <div key={r.id} className="mb-4 border rounded-lg p-3 bg-white hover:border-blue-300 transition-colors">
             <div className="flex items-center gap-2">
               {levelLabel && (
-                <span className="text-xs bg-gray-100 text-gray-600 rounded px-2 py-0.5 font-medium">{levelLabel}</span>
+                <span className="text-xs bg-gray-100 text-gray-600 rounded px-2 py-0.5 font-medium">
+                  {code && <span className="mr-1">{code}</span>}{levelLabel}
+                </span>
               )}
               <Link
                 to={`/app/logframes/${id}/design?result=${r.id}`}

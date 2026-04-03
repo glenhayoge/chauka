@@ -103,20 +103,10 @@ function LogframeSettingsPanel({ logframeId, canEdit }: { logframeId: number; ca
   }
 
   const settings = data.settings
-  const useComponents = settings.use_components ?? false
 
   async function saveSetting(field: string, value: string | number) {
     if (!canEdit) return
     await apiClient.patch(`/logframes/${logframeId}/settings/`, { [field]: value })
-    queryClient.invalidateQueries({ queryKey: ['bootstrap', logframeId] })
-  }
-
-  async function toggleComponents() {
-    if (!canEdit) return
-    await apiClient.patch(`/logframes/${logframeId}/settings/`, {
-      use_components: !useComponents,
-      max_result_level: !useComponents ? 4 : 3,
-    })
     queryClient.invalidateQueries({ queryKey: ['bootstrap', logframeId] })
   }
 
@@ -184,53 +174,14 @@ function LogframeSettingsPanel({ logframeId, canEdit }: { logframeId: number; ca
         <h3 className="text-sm font-semibold text-gray-700 uppercase tracking-wide mb-3">
           Results Hierarchy
         </h3>
-
-        <div className="flex items-start gap-3 mb-4">
-          <button
-            onClick={toggleComponents}
-            disabled={!canEdit}
-            className={clsx(
-              'relative inline-flex h-6 w-11 items-center rounded-full transition-colors flex-shrink-0 mt-0.5',
-              useComponents ? 'bg-blue-600' : 'bg-gray-300',
-              !canEdit && 'opacity-50 cursor-not-allowed',
-            )}
-          >
-            <span
-              className={clsx(
-                'inline-block h-4 w-4 rounded-full bg-white transition-transform',
-                useComponents ? 'translate-x-6' : 'translate-x-1',
-              )}
-            />
-          </button>
-          <div>
-            <div className="text-sm font-medium text-gray-700">
-              Enable Components
-            </div>
-            <p className="text-xs text-gray-500 mt-0.5">
-              Add an optional "Component" level between Outcome and Output to group related
-              outputs and activities by project strategy area.
-            </p>
-          </div>
-        </div>
-
-        {/* Visual hierarchy preview */}
-        <div className="border rounded p-3 bg-gray-50">
-          <p className="text-xs font-medium text-gray-500 mb-2">Hierarchy structure:</p>
-          <div className="space-y-1">
-            <HierarchyLevel level={1} label="Impact (Goal)" indent={0} />
-            <HierarchyLevel level={2} label="Outcome" indent={1} />
-            {useComponents && (
-              <HierarchyLevel level={3} label="Component" indent={2} highlight
-                hint="groups related outputs" />
-            )}
-            <HierarchyLevel level={useComponents ? 4 : 3} label="Output" indent={useComponents ? 3 : 2} />
-            <div className="flex items-center gap-2" style={{ paddingLeft: `${(useComponents ? 4 : 3) * 1}rem` }}>
-              <span className="w-2 h-2 rounded-full bg-amber-400" />
-              <span className="text-xs text-amber-700">Activity</span>
-              <span className="text-[10px] text-gray-400">(under Outputs only)</span>
-            </div>
-          </div>
-        </div>
+        <p className="text-xs text-gray-500 mb-3">
+          Configure the level names for your logframe hierarchy. Activities attach under the deepest level.
+        </p>
+        <LevelEditor
+          levels={data.levels}
+          logframeId={logframeId}
+          canEdit={canEdit}
+        />
       </div>
     </div>
   )
@@ -302,29 +253,151 @@ function SettingField({ label, value, type = 'text', options, onSave, canEdit }:
   )
 }
 
-function HierarchyLevel({ level, label, indent, highlight, hint }: { level: number; label: string; indent: number; highlight?: boolean; hint?: string }) {
-  const colors: Record<number, string> = {
-    1: 'bg-slate-400',
-    2: 'bg-slate-300',
-    3: 'bg-slate-200',
-    4: 'bg-slate-100',
+function LevelEditor({ levels, logframeId, canEdit }: {
+  levels: Record<string, string>
+  logframeId: number
+  canEdit: boolean
+}) {
+  const queryClient = useQueryClient()
+
+  // Initialize from bootstrap levels (works for both custom and default)
+  const sortedEntries = Object.entries(levels).sort(([a], [b]) => Number(a) - Number(b))
+  const [drafts, setDrafts] = useState<{ level: number; name: string }[]>(
+    sortedEntries.map(([k, v]) => ({ level: Number(k), name: v }))
+  )
+  const [saving, setSaving] = useState(false)
+
+  // Sync when levels change externally (e.g., after save)
+  const levelsKey = JSON.stringify(levels)
+  const [lastKey, setLastKey] = useState(levelsKey)
+  if (levelsKey !== lastKey) {
+    setLastKey(levelsKey)
+    setDrafts(Object.entries(levels).sort(([a], [b]) => Number(a) - Number(b)).map(([k, v]) => ({ level: Number(k), name: v })))
   }
+
+  async function saveLevels(newDrafts: { level: number; name: string }[]) {
+    setSaving(true)
+    try {
+      const labelMap: Record<string, string> = {}
+      newDrafts.forEach((d, i) => { labelMap[String(i + 1)] = d.name })
+      await apiClient.patch(`/logframes/${logframeId}/settings/`, {
+        level_labels: labelMap,
+        max_result_level: newDrafts.length,
+      })
+      queryClient.invalidateQueries({ queryKey: ['bootstrap', logframeId] })
+    } finally {
+      setSaving(false)
+    }
+  }
+
+  function handleRename(index: number, name: string) {
+    const updated = drafts.map((d, i) => i === index ? { ...d, name } : d)
+    setDrafts(updated)
+  }
+
+  async function handleBlur(index: number) {
+    const current = drafts[index]
+    const original = sortedEntries[index]
+    if (original && current.name === original[1]) return
+    if (!current.name.trim()) return
+    await saveLevels(drafts)
+  }
+
+  async function addLevel() {
+    const newDrafts = [...drafts, { level: drafts.length + 1, name: `Level ${drafts.length + 1}` }]
+    setDrafts(newDrafts)
+    await saveLevels(newDrafts)
+  }
+
+  async function removeLevel(index: number) {
+    if (drafts.length <= 1) return
+    const newDrafts = drafts.filter((_, i) => i !== index)
+    setDrafts(newDrafts)
+    await saveLevels(newDrafts)
+  }
+
+  async function moveLevel(index: number, direction: -1 | 1) {
+    const target = index + direction
+    if (target < 0 || target >= drafts.length) return
+    const newDrafts = [...drafts]
+    ;[newDrafts[index], newDrafts[target]] = [newDrafts[target], newDrafts[index]]
+    setDrafts(newDrafts)
+    await saveLevels(newDrafts)
+  }
+
   return (
-    <div
-      className={clsx('flex items-center gap-2', highlight && 'font-medium')}
-      style={{ paddingLeft: `${indent * 1}rem` }}
-    >
-      <span className={clsx('w-2 h-2 rounded-full', colors[level] ?? 'bg-slate-100')} />
-      <span className={clsx('text-xs', highlight ? 'text-blue-700' : 'text-gray-600')}>
-        {label}
-      </span>
-      {highlight && (
-        <span className="text-[10px] bg-blue-50 text-blue-600 px-1.5 py-0.5 rounded font-medium">
-          NEW
-        </span>
-      )}
-      {hint && (
-        <span className="text-[10px] text-gray-400">{hint}</span>
+    <div>
+      <div className="space-y-2 mb-3">
+        {drafts.map((d, i) => (
+          <div key={i} className="flex items-center gap-2">
+            <span className="text-xs text-gray-400 w-5 text-right flex-shrink-0">{i + 1}</span>
+            <div
+              className="w-2 h-2 rounded-full flex-shrink-0"
+              style={{ marginLeft: `${i * 8}px` }}
+            />
+            {canEdit ? (
+              <input
+                type="text"
+                value={d.name}
+                onChange={(e) => handleRename(i, e.target.value)}
+                onBlur={() => handleBlur(i)}
+                onKeyDown={(e) => { if (e.key === 'Enter') (e.target as HTMLInputElement).blur() }}
+                className="border border-gray-200 rounded px-2 py-1 text-sm flex-1 min-w-[120px] focus:border-blue-400 focus:outline-none"
+                disabled={saving}
+              />
+            ) : (
+              <span className="text-sm text-gray-700 flex-1">{d.name}</span>
+            )}
+            {canEdit && (
+              <div className="flex gap-0.5 flex-shrink-0">
+                <button
+                  onClick={() => moveLevel(i, -1)}
+                  disabled={i === 0 || saving}
+                  className="text-gray-400 hover:text-gray-600 disabled:opacity-30 px-1 text-xs"
+                  title="Move up"
+                >
+                  ▲
+                </button>
+                <button
+                  onClick={() => moveLevel(i, 1)}
+                  disabled={i === drafts.length - 1 || saving}
+                  className="text-gray-400 hover:text-gray-600 disabled:opacity-30 px-1 text-xs"
+                  title="Move down"
+                >
+                  ▼
+                </button>
+                <button
+                  onClick={() => removeLevel(i)}
+                  disabled={drafts.length <= 1 || saving}
+                  className="text-red-400 hover:text-red-600 disabled:opacity-30 px-1 text-xs font-bold"
+                  title="Remove level"
+                >
+                  ×
+                </button>
+              </div>
+            )}
+          </div>
+        ))}
+        {/* Activity indicator */}
+        <div className="flex items-center gap-2">
+          <span className="w-5 flex-shrink-0" />
+          <div
+            className="w-2 h-2 rounded-full bg-amber-400 flex-shrink-0"
+            style={{ marginLeft: `${drafts.length * 8}px` }}
+          />
+          <span className="text-xs text-amber-700">Activity</span>
+          <span className="text-[10px] text-gray-400">(under {drafts[drafts.length - 1]?.name ?? 'deepest level'} only)</span>
+        </div>
+      </div>
+
+      {canEdit && (
+        <button
+          onClick={addLevel}
+          disabled={saving}
+          className="text-sm text-blue-600 hover:text-blue-800 disabled:opacity-50"
+        >
+          + Add level
+        </button>
       )}
     </div>
   )

@@ -16,16 +16,26 @@ _DEFAULT_LEVEL_LABELS = {1: "Impact (Goal)", 2: "Outcome", 3: "Output"}
 _COMPONENT_LEVEL_LABELS = {1: "Impact (Goal)", 2: "Outcome", 3: "Component", 4: "Output"}
 
 
-def _build_levels(max_level: int, use_components: bool = False) -> dict[str, str]:
+def _build_levels(
+    max_level: int,
+    use_components: bool = False,
+    custom_labels: dict[str, str] | None = None,
+) -> dict[str, str]:
     """Build a level-number -> label mapping.
 
-    When use_components is True, inserts a "Component" level between
-    Outcome and Output: Impact(1) → Outcome(2) → Component(3) → Output(4).
+    If custom_labels is provided, uses those labels (capped to max_level).
+    Otherwise falls back to the hardcoded defaults.
 
     Keys are strings to match the JSON convention used by the legacy Django app.
     """
+    if custom_labels:
+        levels: dict[str, str] = {}
+        for n in range(1, max_level + 1):
+            levels[str(n)] = custom_labels.get(str(n), f"Level {n}")
+        return levels
+
     labels = _COMPONENT_LEVEL_LABELS if use_components else _DEFAULT_LEVEL_LABELS
-    levels: dict[str, str] = {}
+    levels = {}
     for n in range(1, max_level + 1):
         levels[str(n)] = labels.get(n, f"Level {n}")
     return levels
@@ -132,7 +142,8 @@ async def get_bootstrap_data(logframe_id: int, db: AsyncSession, current_user: U
     if use_components and max_level < 4:
         max_level = 4
 
-    levels = _build_levels(max_level, use_components=use_components)
+    custom_labels = getattr(settings, 'level_labels', None) if settings else None
+    levels = _build_levels(max_level, use_components=use_components, custom_labels=custom_labels)
     conf = {
         "max_result_level": max_level,
         "open_result_level": open_level,

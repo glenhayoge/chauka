@@ -77,7 +77,7 @@ export default function WorkloadPage() {
               onClick={() => setView(key)}
               className={clsx(
                 'px-3 py-1 text-xs rounded font-medium',
-                view === key ? 'bg-white text-blue-700 shadow-sm' : 'text-gray-600 hover:text-gray-800',
+                view === key ? 'bg-white text-blue-700' : 'text-gray-600 hover:text-gray-800',
               )}
             >
               {label}

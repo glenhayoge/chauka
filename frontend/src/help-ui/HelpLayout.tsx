@@ -55,7 +55,7 @@ export default function HelpLayout() {
             ${mobileOpen ? 'block' : 'hidden'} lg:block
             w-64 shrink-0 border-r border-border overflow-y-auto
             fixed lg:sticky top-[57px] bottom-0 left-0 z-20
-            bg-background lg:bg-transparent p-4
+            bg-background lg:bg-transparent p-4 mt-12
             lg:h-[calc(100vh-57px)]
           `}
         >
