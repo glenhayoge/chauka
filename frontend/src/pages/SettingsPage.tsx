@@ -40,7 +40,7 @@ export default function SettingsPage() {
 
   return (
     <div>
-      <h2 className="text-lg font-semibold mb-4">Settings</h2>
+      {/* <h2 className="text-lg font-semibold mb-4">Settings</h2> */}
 
       {/* Tab bar */}
       <div className="flex overflow-x-auto border-b border-border mb-6 -mx-3 px-3 sm:mx-0 sm:px-0">
@@ -244,9 +244,8 @@ function SettingField({ label, value, type = 'text', options, onSave, canEdit }:
       ) : (
         <div
           onClick={() => canEdit && setEditing(true)}
-          className={`text-sm px-3 py-1.5 rounded border border-border ${
-            canEdit ? 'cursor-pointer hover:bg-warning/10 active:bg-warning/10' : ''
-          } ${saving ? 'text-muted-foreground' : 'text-foreground'}`}
+          className={`text-sm px-3 py-1.5 rounded border border-border ${canEdit ? 'cursor-pointer hover:bg-warning/10 active:bg-warning/10' : ''
+            } ${saving ? 'text-muted-foreground' : 'text-foreground'}`}
         >
           {type === 'select' ? (options?.find((o) => o.value === value)?.label ?? value) : value}
         </div>
@@ -322,7 +321,7 @@ function LevelEditor({ levels, logframeId, canEdit }: {
     const target = index + direction
     if (target < 0 || target >= drafts.length) return
     const newDrafts = [...drafts]
-    ;[newDrafts[index], newDrafts[target]] = [newDrafts[target], newDrafts[index]]
+      ;[newDrafts[index], newDrafts[target]] = [newDrafts[target], newDrafts[index]]
     setDrafts(newDrafts)
     await saveLevels(newDrafts)
   }

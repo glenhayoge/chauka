@@ -15,7 +15,7 @@ export default function PeoplePage() {
 
   return (
     <div>
-      <h2 className="text-lg font-semibold mb-4">People</h2>
+      {/* <h2 className="text-lg font-semibold mb-4">People</h2> */}
       <PeoplePanel logframeId={id} canEdit={data.canEdit} />
     </div>
   )
