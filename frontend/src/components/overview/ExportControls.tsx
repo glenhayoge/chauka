@@ -61,16 +61,16 @@ export default function ExportControls({ logframeId, periods, settings }: Props)
   }
 
   return (
-    <div className="mt-6 p-4 bg-gray-50 border border-gray-200 rounded-lg">
-      <h3 className="text-sm font-semibold text-gray-700 mb-3">Export</h3>
+    <div className="mt-6 p-4 bg-muted border border-border rounded-lg">
+      <h3 className="text-sm font-semibold text-foreground mb-3">Export</h3>
       <div className="flex flex-wrap gap-4">
         {/* Quarterly Report */}
         <div className="flex items-center gap-2">
-          <label className="text-sm text-gray-600">Quarterly report</label>
+          <label className="text-sm text-muted-foreground">Quarterly report</label>
           <select
             value={quarterReportPeriod}
             onChange={(e) => setQuarterReportPeriod(e.target.value)}
-            className="border border-gray-300 rounded px-2 py-1 text-sm focus:outline-none focus:ring-1 focus:ring-blue-400"
+            className="border border-border rounded px-2 py-1 text-sm focus:outline-none focus:ring-1 focus:ring-ring"
           >
             <option value="">Select period</option>
             {periods.map((p) => (
@@ -84,7 +84,7 @@ export default function ExportControls({ logframeId, periods, settings }: Props)
             onClick={() =>
               downloadExport(logframeId, `quarterly-report?period=${quarterReportPeriod}`)
             }
-            className="px-3 py-1 text-sm rounded bg-blue-600 text-white hover:bg-blue-700 disabled:opacity-40 disabled:cursor-not-allowed"
+            className="px-3 py-1 text-sm rounded bg-primary text-background hover:bg-primary/80 disabled:opacity-40 disabled:cursor-not-allowed"
           >
             Download
           </button>
@@ -92,11 +92,11 @@ export default function ExportControls({ logframeId, periods, settings }: Props)
 
         {/* Annual Plan */}
         <div className="flex items-center gap-2">
-          <label className="text-sm text-gray-600">Annual plan</label>
+          <label className="text-sm text-muted-foreground">Annual plan</label>
           <select
             value={annualPlanYear}
             onChange={(e) => setAnnualPlanYear(e.target.value)}
-            className="border border-gray-300 rounded px-2 py-1 text-sm focus:outline-none focus:ring-1 focus:ring-blue-400"
+            className="border border-border rounded px-2 py-1 text-sm focus:outline-none focus:ring-1 focus:ring-ring"
           >
             <option value="">Select year</option>
             {years.map((y) => (
@@ -110,7 +110,7 @@ export default function ExportControls({ logframeId, periods, settings }: Props)
             onClick={() =>
               downloadExport(logframeId, `annual-plan?year=${annualPlanYear}`)
             }
-            className="px-3 py-1 text-sm rounded bg-blue-600 text-white hover:bg-blue-700 disabled:opacity-40 disabled:cursor-not-allowed"
+            className="px-3 py-1 text-sm rounded bg-primary text-background hover:bg-primary/80 disabled:opacity-40 disabled:cursor-not-allowed"
           >
             Download
           </button>
@@ -118,11 +118,11 @@ export default function ExportControls({ logframeId, periods, settings }: Props)
 
         {/* Quarterly Plan */}
         <div className="flex items-center gap-2">
-          <label className="text-sm text-gray-600">Quarterly plan</label>
+          <label className="text-sm text-muted-foreground">Quarterly plan</label>
           <select
             value={quarterPlanPeriod}
             onChange={(e) => setQuarterPlanPeriod(e.target.value)}
-            className="border border-gray-300 rounded px-2 py-1 text-sm focus:outline-none focus:ring-1 focus:ring-blue-400"
+            className="border border-border rounded px-2 py-1 text-sm focus:outline-none focus:ring-1 focus:ring-ring"
           >
             <option value="">Select period</option>
             {periods.map((p) => (
@@ -136,7 +136,7 @@ export default function ExportControls({ logframeId, periods, settings }: Props)
             onClick={() =>
               downloadExport(logframeId, `quarterly-plan?period=${quarterPlanPeriod}`)
             }
-            className="px-3 py-1 text-sm rounded bg-blue-600 text-white hover:bg-blue-700 disabled:opacity-40 disabled:cursor-not-allowed"
+            className="px-3 py-1 text-sm rounded bg-primary text-background hover:bg-primary/80 disabled:opacity-40 disabled:cursor-not-allowed"
           >
             Download
           </button>

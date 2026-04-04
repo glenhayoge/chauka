@@ -75,7 +75,7 @@ export default function OrgSelectPage() {
     }
   }, [orgs, selectedOrgId])
 
-  if (orgsLoading) return <p className="text-center text-gray-500 py-12">Loading...</p>
+  if (orgsLoading) return <p className="text-center text-muted-foreground py-12">Loading...</p>
 
   const isNewUser = orgs && orgs.length === 0
 
@@ -105,14 +105,14 @@ export default function OrgSelectPage() {
     <div className="max-w-2xl mx-auto px-4 py-10">
       {/* Breadcrumb */}
       {crumbs.length > 0 && (
-        <nav className="flex items-center gap-2 text-sm text-gray-500 mb-4">
+        <nav className="flex items-center gap-2 text-sm text-muted-foreground mb-4">
           {crumbs.map((crumb, i) => (
             <span key={i} className="flex items-center gap-2">
               {i > 0 && <span>/</span>}
               {crumb.onClick ? (
-                <button onClick={crumb.onClick} className="text-gray-700 hover:text-gray-900">{crumb.label}</button>
+                <button onClick={crumb.onClick} className="text-foreground hover:text-foreground">{crumb.label}</button>
               ) : (
-                <span className="font-medium text-gray-700">{crumb.label}</span>
+                <span className="font-medium text-foreground">{crumb.label}</span>
               )}
             </span>
           ))}
@@ -124,7 +124,7 @@ export default function OrgSelectPage() {
         <div className='mx-auto'>
           {isNewUser ? (
             <>
-              <p className="text-sm font-medium text-gray-900 mb-4 text-center">Create your organisation to get started.</p>
+              <p className="text-sm font-medium text-foreground mb-4 text-center">Create your organisation to get started.</p>
               <NewOrgForm
                 onCreated={(orgId) => {
                   queryClient.invalidateQueries({ queryKey: ['organisations'] })
@@ -136,29 +136,29 @@ export default function OrgSelectPage() {
             <>
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2 mb-4 w-full">
                 {orgs?.map((org) => (
-                  <div key={org.id} className="border border-gray-200 rounded-lg p-4 hover:bg-gray-50 transition-colors">
+                  <div key={org.id} className="border border-border rounded-lg p-4 hover:bg-muted transition-colors">
                     <button
                       onClick={() => setSelectedOrgId(org.id)}
                       className="block w-full text-left"
                     >
                       <div className="flex items-center justify-between mb-1">
-                        <span className="text-sm font-medium text-gray-900">{org.name}</span>
-                        <svg className="w-4 h-4 text-gray-300" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" /></svg>
+                        <span className="text-sm font-medium text-foreground">{org.name}</span>
+                        <svg className="w-4 h-4 text-muted-foreground" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" /></svg>
                       </div>
-                      {org.description && <p className="text-sm text-gray-500 leading-snug">{org.description}</p>}
+                      {org.description && <p className="text-sm text-muted-foreground leading-snug">{org.description}</p>}
                     </button>
-                    <div className="flex gap-3 mt-3 pt-3 border-t border-gray-100">
+                    <div className="flex gap-3 mt-3 pt-3 border-t border-border">
                       <Link
                         to={`/organisations/${org.id}/dashboard`}
                         onClick={(e) => e.stopPropagation()}
-                        className="text-xs text-gray-500 hover:text-gray-700"
+                        className="text-xs text-muted-foreground hover:text-foreground"
                       >
                         Dashboard
                       </Link>
                       <Link
                         to={`/organisations/${org.id}/settings`}
                         onClick={(e) => e.stopPropagation()}
-                        className="text-xs text-gray-500 hover:text-gray-700"
+                        className="text-xs text-muted-foreground hover:text-foreground"
                       >
                         Settings
                       </Link>
@@ -196,15 +196,15 @@ export default function OrgSelectPage() {
               <button
                 key={`prog-${prog.id}`}
                 onClick={() => setSelectedProgramId(prog.id)}
-                className="text-left border border-gray-200 rounded-lg p-4 hover:bg-gray-50 transition-colors"
+                className="text-left border border-border rounded-lg p-4 hover:bg-muted transition-colors"
               >
                 <div className="flex items-center justify-between mb-1">
-                  <span className="text-sm font-medium text-gray-900">{prog.name}</span>
-                  <svg className="w-4 h-4 text-gray-300" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" /></svg>
+                  <span className="text-sm font-medium text-foreground">{prog.name}</span>
+                  <svg className="w-4 h-4 text-muted-foreground" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" /></svg>
                 </div>
-                {prog.description && <p className="text-sm text-gray-500 leading-snug">{prog.description}</p>}
+                {prog.description && <p className="text-sm text-muted-foreground leading-snug">{prog.description}</p>}
                 {prog.start_date && prog.end_date && (
-                  <p className="text-xs text-gray-400 mt-2">{prog.start_date} — {prog.end_date}</p>
+                  <p className="text-xs text-muted-foreground mt-2">{prog.start_date} — {prog.end_date}</p>
                 )}
               </button>
             ))}
@@ -213,15 +213,15 @@ export default function OrgSelectPage() {
               <button
                 key={`proj-${proj.id}`}
                 onClick={() => setStandaloneProjectId(proj.id)}
-                className="text-left border border-gray-200 rounded-lg p-4 hover:bg-gray-50 transition-colors"
+                className="text-left border border-border rounded-lg p-4 hover:bg-muted transition-colors"
               >
                 <div className="flex items-center justify-between mb-1">
-                  <span className="text-sm font-medium text-gray-900">{proj.name}</span>
-                  <svg className="w-4 h-4 text-gray-300" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" /></svg>
+                  <span className="text-sm font-medium text-foreground">{proj.name}</span>
+                  <svg className="w-4 h-4 text-muted-foreground" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" /></svg>
                 </div>
-                {proj.description && <p className="text-sm text-gray-500 leading-snug">{proj.description}</p>}
+                {proj.description && <p className="text-sm text-muted-foreground leading-snug">{proj.description}</p>}
                 {proj.status !== 'active' && (
-                  <p className="text-xs text-gray-400 mt-2">{proj.status}</p>
+                  <p className="text-xs text-muted-foreground mt-2">{proj.status}</p>
                 )}
               </button>
             ))}
@@ -229,11 +229,11 @@ export default function OrgSelectPage() {
 
           {/* Empty state */}
           {(!programs || programs.length === 0) && (!orgProjects || orgProjects.length === 0) && (
-            <p className="text-sm text-gray-500 mb-4">No programs or projects yet.</p>
+            <p className="text-sm text-muted-foreground mb-4">No programs or projects yet.</p>
           )}
 
           {/* Create actions */}
-          <div className="flex flex-wrap items-center justify-center gap-3 border-t border-gray-100 pt-4">
+          <div className="flex flex-wrap items-center justify-center gap-3 border-t border-border pt-4">
             <CreateForm
               label="program"
               fields={[
@@ -277,7 +277,7 @@ export default function OrgSelectPage() {
                   }
                 }}
                 disabled={skipping}
-                className="text-sm text-gray-400 hover:text-gray-600 disabled:opacity-50"
+                className="text-sm text-muted-foreground hover:text-muted-foreground disabled:opacity-50"
               >
                 {skipping ? 'Setting up...' : 'Skip for now'}
               </button>
@@ -289,10 +289,10 @@ export default function OrgSelectPage() {
       {/* Step 2b: Standalone project logframes */}
       {standaloneProjectId !== null && (
         <div className="flex flex-col items-center">
-          <h2 className="text-sm font-medium text-gray-900 mb-2 text-center">
+          <h2 className="text-sm font-medium text-foreground mb-2 text-center">
             {standaloneLogframes && standaloneLogframes.length > 0 ? 'Select a Logframe' : 'Create a Logframe'}
           </h2>
-          <p className="text-sm text-gray-500 mb-4 text-center">
+          <p className="text-sm text-muted-foreground mb-4 text-center">
             A logframe is where you define your results chain, indicators, and activities.
           </p>
           {standaloneLogframes && standaloneLogframes.length === 1 && (
@@ -303,7 +303,7 @@ export default function OrgSelectPage() {
               <Link
                 key={lf.id}
                 to={`/app/logframes/${lf.id}`}
-                className="block border rounded-lg p-4 hover:bg-gray-50 transition-colors"
+                className="block border rounded-lg p-4 hover:bg-muted transition-colors"
               >
                 <span className="font-medium">{lf.name}</span>
               </Link>
@@ -323,10 +323,10 @@ export default function OrgSelectPage() {
       {/* Step 3: Select / Create Project */}
       {selectedProgramId !== null && selectedProjectId === null && (
         <div className="flex flex-col items-center">
-          <h2 className="text-sm font-medium text-gray-900 mb-2 text-center">
+          <h2 className="text-sm font-medium text-foreground mb-2 text-center">
             {projects && projects.length > 0 ? 'Select a Project' : 'Create a Project'}
           </h2>
-          <p className="text-sm text-gray-500 mb-4 text-center">
+          <p className="text-sm text-muted-foreground mb-4 text-center">
             Projects contain the logframes where you plan and monitor your work.
           </p>
           <div className="grid gap-3 max-w-md">
@@ -334,16 +334,16 @@ export default function OrgSelectPage() {
               <button
                 key={proj.id}
                 onClick={() => setSelectedProjectId(proj.id)}
-                className="block w-full text-left border rounded-lg p-4 hover:bg-gray-50 transition-colors"
+                className="block w-full text-left border rounded-lg p-4 hover:bg-muted transition-colors"
               >
                 <div className="flex items-center justify-between">
                   <span className="font-medium">{proj.name}</span>
-                  <span className={`text-xs px-2 py-0.5 rounded-full ${proj.status === 'active' ? 'bg-green-100 text-green-700'
-                    : proj.status === 'completed' ? 'bg-gray-200 text-gray-600'
-                      : 'bg-gray-100 text-gray-700'
+                  <span className={`text-xs px-2 py-0.5 rounded-full ${proj.status === 'active' ? 'bg-ok/10 text-ok'
+                    : proj.status === 'completed' ? 'bg-muted text-muted-foreground'
+                      : 'bg-muted text-foreground'
                     }`}>{proj.status}</span>
                 </div>
-                {proj.description && <p className="text-sm text-gray-500 mt-1">{proj.description}</p>}
+                {proj.description && <p className="text-sm text-muted-foreground mt-1">{proj.description}</p>}
               </button>
             ))}
           </div>
@@ -374,7 +374,7 @@ export default function OrgSelectPage() {
                   }
                 }}
                 disabled={skipping}
-                className="text-sm text-gray-400 hover:text-gray-600 disabled:opacity-50"
+                className="text-sm text-muted-foreground hover:text-muted-foreground disabled:opacity-50"
               >
                 {skipping ? 'Setting up...' : 'Skip for now'}
               </button>
@@ -386,10 +386,10 @@ export default function OrgSelectPage() {
       {/* Step 4: Select / Create Logframe */}
       {selectedProjectId !== null && (
         <div className="flex flex-col items-center">
-          <h2 className="text-sm font-medium text-gray-900 mb-2 text-center">
+          <h2 className="text-sm font-medium text-foreground mb-2 text-center">
             {logframes && logframes.length > 0 ? 'Select a Logframe' : 'Set Up Your Logframe'}
           </h2>
-          <p className="text-sm text-gray-500 mb-4 text-center">
+          <p className="text-sm text-muted-foreground mb-4 text-center">
             {logframes && logframes.length > 0
               ? 'A logframe is where you define your results chain, indicators, and activities.'
               : 'Configure the reporting periods and currency for your logframe. These can be adjusted later in Settings.'}
@@ -402,7 +402,7 @@ export default function OrgSelectPage() {
               <Link
                 key={lf.id}
                 to={`/app/logframes/${lf.id}`}
-                className="block border rounded-lg p-4 hover:bg-gray-50 transition-colors"
+                className="block border rounded-lg p-4 hover:bg-muted transition-colors"
               >
                 <span className="font-medium">{lf.name}</span>
               </Link>
@@ -479,16 +479,16 @@ function LogframeSetupForm({ autoOpen, onSubmit }: {
 
   if (!open) {
     return (
-      <button onClick={() => setOpen(true)} className="mt-4 text-sm text-gray-600 hover:text-gray-900">
+      <button onClick={() => setOpen(true)} className="mt-4 text-sm text-muted-foreground hover:text-foreground">
         + Create new logframe
       </button>
     )
   }
 
   return (
-    <form onSubmit={handleSubmit} className="mt-4 border border-gray-200 rounded-lg p-6 bg-white w-full max-w-md mx-auto space-y-3 shadow-sm">
+    <form onSubmit={handleSubmit} className="mt-4 border border-border rounded-lg p-6 bg-card w-full max-w-md mx-auto space-y-3 shadow-sm">
       <div>
-        <label className="block text-sm text-gray-600 mb-1">Logframe name</label>
+        <label className="block text-sm text-muted-foreground mb-1">Logframe name</label>
         <input
           autoFocus
           type="text"
@@ -496,37 +496,37 @@ function LogframeSetupForm({ autoOpen, onSubmit }: {
           onChange={(e) => setName(e.target.value)}
           placeholder="e.g. Rural Water Access 2025-2028"
           required
-          className="w-full border border-gray-300 rounded px-3 py-2 text-sm focus:outline-none focus:ring-1 focus:ring-gray-400 focus:border-gray-400"
+          className="w-full border border-border rounded px-3 py-2 text-sm focus:outline-none focus:ring-1 focus:ring-ring focus:border-ring"
         />
       </div>
 
       <div className="border-t pt-4">
-        <p className="text-sm text-gray-600 mb-2">Reporting Periods</p>
+        <p className="text-sm text-muted-foreground mb-2">Reporting Periods</p>
         <div className="grid grid-cols-2 gap-3">
           <div>
-            <label className="block text-sm text-gray-600 mb-1">Start Year</label>
+            <label className="block text-sm text-muted-foreground mb-1">Start Year</label>
             <input
               type="number"
               value={startYear}
               onChange={(e) => setStartYear(parseInt(e.target.value) || currentYear)}
-              className="w-full border border-gray-300 rounded px-3 py-1.5 text-sm focus:outline-none focus:ring-1 focus:ring-gray-400 focus:border-gray-400"
+              className="w-full border border-border rounded px-3 py-1.5 text-sm focus:outline-none focus:ring-1 focus:ring-ring focus:border-ring"
             />
           </div>
           <div>
-            <label className="block text-sm text-gray-600 mb-1">End Year</label>
+            <label className="block text-sm text-muted-foreground mb-1">End Year</label>
             <input
               type="number"
               value={endYear}
               onChange={(e) => setEndYear(parseInt(e.target.value) || currentYear + 3)}
-              className="w-full border border-gray-300 rounded px-3 py-1.5 text-sm focus:outline-none focus:ring-1 focus:ring-gray-400 focus:border-gray-400"
+              className="w-full border border-border rounded px-3 py-1.5 text-sm focus:outline-none focus:ring-1 focus:ring-ring focus:border-ring"
             />
           </div>
           <div>
-            <label className="block text-sm text-gray-600 mb-1">Start Month</label>
+            <label className="block text-sm text-muted-foreground mb-1">Start Month</label>
             <select
               value={startMonth}
               onChange={(e) => setStartMonth(parseInt(e.target.value))}
-              className="w-full border border-gray-300 rounded px-3 py-1.5 text-sm focus:outline-none focus:ring-1 focus:ring-gray-400 focus:border-gray-400"
+              className="w-full border border-border rounded px-3 py-1.5 text-sm focus:outline-none focus:ring-1 focus:ring-ring focus:border-ring"
             >
               {MONTH_OPTIONS.map((m) => (
                 <option key={m.value} value={m.value}>{m.label}</option>
@@ -534,11 +534,11 @@ function LogframeSetupForm({ autoOpen, onSubmit }: {
             </select>
           </div>
           <div>
-            <label className="block text-sm text-gray-600 mb-1">Frequency</label>
+            <label className="block text-sm text-muted-foreground mb-1">Frequency</label>
             <select
               value={nPeriods}
               onChange={(e) => setNPeriods(parseInt(e.target.value))}
-              className="w-full border border-gray-300 rounded px-3 py-1.5 text-sm focus:outline-none focus:ring-1 focus:ring-gray-400 focus:border-gray-400"
+              className="w-full border border-border rounded px-3 py-1.5 text-sm focus:outline-none focus:ring-1 focus:ring-ring focus:border-ring"
             >
               {PERIOD_OPTIONS.map((p) => (
                 <option key={p.value} value={p.value}>{p.label}</option>
@@ -549,22 +549,22 @@ function LogframeSetupForm({ autoOpen, onSubmit }: {
       </div>
 
       <div>
-        <label className="block text-sm text-gray-600 mb-1">Currency</label>
+        <label className="block text-sm text-muted-foreground mb-1">Currency</label>
         <input
           type="text"
           value={currency}
           onChange={(e) => setCurrency(e.target.value)}
           placeholder="e.g. USD, GBP, EUR"
-          className="w-full border border-gray-300 rounded px-3 py-1.5 text-sm focus:outline-none focus:ring-1 focus:ring-gray-400 focus:border-gray-400"
+          className="w-full border border-border rounded px-3 py-1.5 text-sm focus:outline-none focus:ring-1 focus:ring-ring focus:border-ring"
         />
       </div>
 
-      {error && <p className="text-red-600 text-sm">{error}</p>}
+      {error && <p className="text-destructive text-sm">{error}</p>}
       <div className="flex gap-2">
         <button
           type="submit"
           disabled={saving || !name.trim()}
-          className="flex-1 px-4 py-2 bg-gray-900 text-white text-sm font-medium rounded hover:bg-gray-800 disabled:opacity-50"
+          className="flex-1 px-4 py-2 bg-foreground text-background text-sm font-medium rounded hover:bg-foreground/80 disabled:opacity-50"
         >
           {saving ? 'Creating...' : 'Create Logframe'}
         </button>
@@ -572,7 +572,7 @@ function LogframeSetupForm({ autoOpen, onSubmit }: {
           <button
             type="button"
             onClick={() => setOpen(false)}
-            className="px-4 py-2 text-gray-600 text-sm rounded border hover:bg-gray-50"
+            className="px-4 py-2 text-muted-foreground text-sm rounded border hover:bg-muted"
           >
             Cancel
           </button>
@@ -615,9 +615,9 @@ function NewOrgForm({ onCreated }: { onCreated: (orgId: number) => void }) {
   }
 
   return (
-    <form onSubmit={handleSubmit} className="border border-gray-200 rounded-lg p-6 bg-white w-full max-w-lg mx-auto space-y-3 shadow-sm">
+    <form onSubmit={handleSubmit} className="border border-border rounded-lg p-6 bg-card w-full max-w-lg mx-auto space-y-3 shadow-sm">
       <div>
-        <label className="block text-sm text-gray-600 mb-1">Organisation name</label>
+        <label className="block text-sm text-muted-foreground mb-1">Organisation name</label>
         <input
           autoFocus
           type="text"
@@ -625,60 +625,60 @@ function NewOrgForm({ onCreated }: { onCreated: (orgId: number) => void }) {
           onChange={(e) => setName(e.target.value)}
           placeholder="e.g. WaterAid Zambia"
           required
-          className="w-full border border-gray-300 rounded px-3 py-2 text-sm focus:outline-none focus:ring-1 focus:ring-gray-400 focus:border-gray-400"
+          className="w-full border border-border rounded px-3 py-2 text-sm focus:outline-none focus:ring-1 focus:ring-ring focus:border-ring"
         />
       </div>
       <div>
-        <label className="block text-sm text-gray-600 mb-1">Description <span className="text-gray-400 font-normal">(optional)</span></label>
+        <label className="block text-sm text-muted-foreground mb-1">Description <span className="text-muted-foreground font-normal">(optional)</span></label>
         <input
           type="text"
           value={description}
           onChange={(e) => setDescription(e.target.value)}
           placeholder="What does your organisation do?"
-          className="w-full border border-gray-300 rounded px-3 py-2 text-sm focus:outline-none focus:ring-1 focus:ring-gray-400 focus:border-gray-400"
+          className="w-full border border-border rounded px-3 py-2 text-sm focus:outline-none focus:ring-1 focus:ring-ring focus:border-ring"
         />
       </div>
       <div>
-        <label className="block text-sm text-gray-600 mb-1">Country</label>
+        <label className="block text-sm text-muted-foreground mb-1">Country</label>
         <select
           value={country}
           onChange={(e) => setCountry(e.target.value)}
           required
-          className="w-full border border-gray-300 rounded px-3 py-2 text-sm focus:outline-none focus:ring-1 focus:ring-gray-400 focus:border-gray-400"
+          className="w-full border border-border rounded px-3 py-2 text-sm focus:outline-none focus:ring-1 focus:ring-ring focus:border-ring"
         >
           <option value="">Select country</option>
           {COUNTRIES.map((c) => <option key={c} value={c}>{c}</option>)}
         </select>
       </div>
       <div>
-        <label className="block text-sm text-gray-600 mb-1">Organisation type</label>
+        <label className="block text-sm text-muted-foreground mb-1">Organisation type</label>
         <select
           value={orgType}
           onChange={(e) => setOrgType(e.target.value)}
           required
-          className="w-full border border-gray-300 rounded px-3 py-2 text-sm focus:outline-none focus:ring-1 focus:ring-gray-400 focus:border-gray-400"
+          className="w-full border border-border rounded px-3 py-2 text-sm focus:outline-none focus:ring-1 focus:ring-ring focus:border-ring"
         >
           <option value="">Select type</option>
           {ORG_TYPES.map((t) => <option key={t} value={t}>{t}</option>)}
         </select>
       </div>
       <div>
-        <label className="block text-sm text-gray-600 mb-1">Sector</label>
+        <label className="block text-sm text-muted-foreground mb-1">Sector</label>
         <select
           value={sector}
           onChange={(e) => setSector(e.target.value)}
           required
-          className="w-full border border-gray-300 rounded px-3 py-2 text-sm focus:outline-none focus:ring-1 focus:ring-gray-400 focus:border-gray-400"
+          className="w-full border border-border rounded px-3 py-2 text-sm focus:outline-none focus:ring-1 focus:ring-ring focus:border-ring"
         >
           <option value="">Select sector</option>
           {SECTORS.map((s) => <option key={s} value={s}>{s}</option>)}
         </select>
       </div>
-      {error && <p className="text-red-600 text-sm">{error}</p>}
+      {error && <p className="text-destructive text-sm">{error}</p>}
       <button
         type="submit"
         disabled={saving || !name.trim() || !country || !orgType || !sector}
-        className="w-full px-4 py-2.5 bg-gray-900 text-white text-sm font-medium rounded hover:bg-gray-800 disabled:opacity-50"
+        className="w-full px-4 py-2.5 bg-foreground text-background text-sm font-medium rounded hover:bg-foreground/80 disabled:opacity-50"
       >
         {saving ? 'Creating...' : 'Create Organisation'}
       </button>
@@ -735,7 +735,7 @@ function CreateForm({ label, fields, onSubmit, autoOpen, isOpen, onToggle }: {
     return (
       <button
         onClick={() => setOpen(true)}
-        className="mt-4 text-sm text-gray-600 hover:text-gray-900"
+        className="mt-4 text-sm text-muted-foreground hover:text-foreground"
       >
         + Create new {label}
       </button>
@@ -743,34 +743,34 @@ function CreateForm({ label, fields, onSubmit, autoOpen, isOpen, onToggle }: {
   }
 
   return (
-    <form onSubmit={handleSubmit} className="mt-4 border border-gray-200 rounded-lg p-6 bg-white w-full max-w-md mx-auto space-y-3 shadow-sm">
-      <h3 className="text-sm font-medium text-gray-700">Create {label}</h3>
+    <form onSubmit={handleSubmit} className="mt-4 border border-border rounded-lg p-6 bg-card w-full max-w-md mx-auto space-y-3 shadow-sm">
+      <h3 className="text-sm font-medium text-foreground">Create {label}</h3>
       {fields.map((field) => (
         <div key={field.name}>
-          <label className="block text-sm text-gray-600 mb-1">{field.label}</label>
+          <label className="block text-sm text-muted-foreground mb-1">{field.label}</label>
           <input
             type="text"
             value={values[field.name] ?? ''}
             onChange={(e) => setValue(field.name, e.target.value)}
             placeholder={field.placeholder}
             required={field.required}
-            className="w-full border border-gray-300 rounded px-3 py-2 text-sm focus:outline-none focus:ring-1 focus:ring-gray-400 focus:border-gray-400"
+            className="w-full border border-border rounded px-3 py-2 text-sm focus:outline-none focus:ring-1 focus:ring-ring focus:border-ring"
           />
         </div>
       ))}
-      {error && <p className="text-red-600 text-xs">{error}</p>}
+      {error && <p className="text-destructive text-xs">{error}</p>}
       <div className="flex gap-2">
         <button
           type="submit"
           disabled={saving}
-          className="px-4 py-2 bg-gray-900 text-white text-sm rounded hover:bg-gray-800 disabled:opacity-50"
+          className="px-4 py-2 bg-foreground text-background text-sm rounded hover:bg-foreground/80 disabled:opacity-50"
         >
           {saving ? 'Creating\u2026' : `Create ${label}`}
         </button>
         <button
           type="button"
           onClick={() => { setOpen(false); setValues({}); setError('') }}
-          className="px-4 py-2 text-gray-600 text-sm rounded border hover:bg-gray-50"
+          className="px-4 py-2 text-muted-foreground text-sm rounded border hover:bg-muted"
         >
           Cancel
         </button>

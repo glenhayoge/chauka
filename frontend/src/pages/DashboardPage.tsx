@@ -11,8 +11,8 @@ export default function DashboardPage() {
   const { isLoading, error } = useBootstrap(id)
   const data = useLogframeStore((s) => s.data)
 
-  if (isLoading) return <p className="text-gray-500">Loading…</p>
-  if (error) return <p className="text-red-600">Failed to load data.</p>
+  if (isLoading) return <p className="text-muted-foreground">Loading…</p>
+  if (error) return <p className="text-destructive">Failed to load data.</p>
   if (!data) return null
 
   const resultCount = data.results.length
@@ -38,7 +38,7 @@ export default function DashboardPage() {
           to={`/app/logframes/${id}/print`}
           target="_blank"
           rel="noopener noreferrer"
-          className="inline-flex items-center gap-1.5 px-3 py-1.5 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50"
+          className="inline-flex items-center gap-1.5 px-3 py-1.5 text-sm font-medium text-foreground bg-card border border-border rounded-md hover:bg-muted"
         >
           <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
             <path strokeLinecap="round" strokeLinejoin="round" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z" />
@@ -71,27 +71,27 @@ export default function DashboardPage() {
       </div>
 
       {data.settings && (
-        <div className="bg-white border rounded-lg p-4 mb-6">
-          <h3 className="text-sm font-semibold text-gray-700 uppercase tracking-wide mb-3">
+        <div className="bg-card border rounded-lg p-4 mb-6">
+          <h3 className="text-sm font-semibold text-foreground uppercase tracking-wide mb-3">
             Logframe Details
           </h3>
           <dl className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-sm">
             <div>
-              <dt className="text-gray-500">Name</dt>
+              <dt className="text-muted-foreground">Name</dt>
               <dd className="font-medium">{data.settings.name}</dd>
             </div>
             {data.settings.description && (
               <div className="col-span-2">
-                <dt className="text-gray-500">Description</dt>
+                <dt className="text-muted-foreground">Description</dt>
                 <dd>{data.settings.description}</dd>
               </div>
             )}
             <div>
-              <dt className="text-gray-500">Period</dt>
+              <dt className="text-muted-foreground">Period</dt>
               <dd>{data.settings.start_year} – {data.settings.end_year}</dd>
             </div>
             <div>
-              <dt className="text-gray-500">Currency</dt>
+              <dt className="text-muted-foreground">Currency</dt>
               <dd>{data.settings.currency}</dd>
             </div>
           </dl>
@@ -103,9 +103,9 @@ export default function DashboardPage() {
 
 function SummaryCard({ label, count }: { label: string; count: number }) {
   return (
-    <div className="bg-white border rounded-lg p-4 text-center">
-      <div className="text-3xl font-bold text-blue-700">{count}</div>
-      <div className="text-sm text-gray-500 mt-1">{label}</div>
+    <div className="bg-card border rounded-lg p-4 text-center">
+      <div className="text-3xl font-bold text-primary">{count}</div>
+      <div className="text-sm text-muted-foreground mt-1">{label}</div>
     </div>
   )
 }

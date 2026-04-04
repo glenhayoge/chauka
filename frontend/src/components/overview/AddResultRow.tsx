@@ -38,7 +38,7 @@ export default function AddResultRow({ logframeId, parentId = null, depth = 0 }:
   if (editing) {
     return (
       <div
-        className="border-b border-gray-200 py-2 bg-yellow-50"
+        className="border-b border-border py-2 bg-warning/10"
         style={{ paddingLeft: `${depth * 1.5 + 2.5}rem` }}
       >
         <input
@@ -51,7 +51,7 @@ export default function AddResultRow({ logframeId, parentId = null, depth = 0 }:
             if (e.key === 'Escape') { setName(''); setEditing(false) }
           }}
           placeholder="Enter result name"
-          className="border border-blue-400 rounded px-2 py-1 text-sm w-72"
+          className="border border-ring rounded px-2 py-1 text-sm w-72"
           disabled={saving}
         />
       </div>
@@ -61,7 +61,7 @@ export default function AddResultRow({ logframeId, parentId = null, depth = 0 }:
   return (
     <div
       onClick={() => setEditing(true)}
-      className="border-b border-gray-200 py-2 text-gray-400 italic text-sm cursor-pointer hover:bg-gray-50"
+      className="border-b border-border py-2 text-muted-foreground italic text-sm cursor-pointer hover:bg-muted"
       style={{ paddingLeft: `${depth * 1.5 + 2.5}rem` }}
     >
       + Click to add {parentId ? 'child result' : 'title'}

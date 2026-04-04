@@ -7,11 +7,11 @@ export default function DocsPage() {
       <Navbar />
       <div className="flex-1 px-4 py-12">
         <div className="max-w-4xl mx-auto">
-          <p className="text-sm font-medium text-gray-900 mb-4">Documentation</p>
+          <p className="text-sm font-medium text-foreground mb-4">Documentation</p>
 
-          <div className="space-y-6 text-sm text-gray-600 leading-relaxed">
+          <div className="space-y-6 text-sm text-muted-foreground leading-relaxed">
             <Section title="Getting started">
-              <ol className="list-decimal pl-5 space-y-1 text-gray-500">
+              <ol className="list-decimal pl-5 space-y-1 text-muted-foreground">
                 <li>Create an account and set up your organisation</li>
                 <li>Create a program or standalone project</li>
                 <li>Create a logframe with reporting periods and currency</li>
@@ -43,8 +43,8 @@ export default function DocsPage() {
             </Section>
 
             <Section title="Organisation structure">
-              <p className="text-gray-500 mb-2">Chauka supports flexible hierarchies:</p>
-              <ul className="list-disc pl-5 space-y-1 text-gray-500">
+              <p className="text-muted-foreground mb-2">Chauka supports flexible hierarchies:</p>
+              <ul className="list-disc pl-5 space-y-1 text-muted-foreground">
                 <li>Organisation &rarr; Program &rarr; Project &rarr; Logframe</li>
                 <li>Organisation &rarr; Program &rarr; Logframe (no project)</li>
                 <li>Organisation &rarr; Project &rarr; Logframe (no program)</li>
@@ -70,7 +70,7 @@ export default function DocsPage() {
 function Section({ title, children }: { title: string; children: React.ReactNode }) {
   return (
     <div>
-      <p className="text-sm text-gray-900 mb-2">{title}</p>
+      <p className="text-sm text-foreground mb-2">{title}</p>
       <div>{children}</div>
     </div>
   )
@@ -79,8 +79,8 @@ function Section({ title, children }: { title: string; children: React.ReactNode
 function Def({ term, description }: { term: string; description: string }) {
   return (
     <div>
-      <dt className="text-sm text-gray-700">{term}</dt>
-      <dd className="text-sm text-gray-500">{description}</dd>
+      <dt className="text-sm text-foreground">{term}</dt>
+      <dd className="text-sm text-muted-foreground">{description}</dd>
     </div>
   )
 }

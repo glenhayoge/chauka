@@ -49,10 +49,10 @@ export default function AssumptionEditor({ assumptions, riskRatings, resultId, l
   return (
     <div>
       {assumptions.length === 0 && (
-        <p className="text-sm text-gray-400 italic mb-2">No assumptions yet.</p>
+        <p className="text-sm text-muted-foreground italic mb-2">No assumptions yet.</p>
       )}
       {assumptions.map((a) => (
-        <div key={a.id} className="border rounded p-3 mb-2 bg-white">
+        <div key={a.id} className="border rounded p-3 mb-2 bg-card">
           <div className="flex items-start gap-2">
             <div className="flex-1">
               <RichTextEditor
@@ -66,7 +66,7 @@ export default function AssumptionEditor({ assumptions, riskRatings, resultId, l
             )}
           </div>
           {riskRatings.length > 0 && (
-            <div className="mt-2 flex items-center gap-2 text-sm text-gray-600">
+            <div className="mt-2 flex items-center gap-2 text-sm text-muted-foreground">
               <span>Risk:</span>
               <EditableSelect
                 value={a.risk_rating_id}

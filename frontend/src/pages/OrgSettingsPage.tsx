@@ -57,7 +57,7 @@ export default function OrgSettingsPage() {
   return (
     <div className="min-h-screen flex flex-col bg-background">
       {/* Header */}
-      <header className="bg-foreground text-primary-foreground px-4 sm:px-6 py-3 flex items-center justify-between">
+      <header className="bg-background/95 text-foreground px-4 sm:px-6 py-3 flex items-center justify-between">
         <div className="flex items-center gap-4">
           <Link to="/app" className="text-lg font-semibold hover:opacity-80">
             Chauka
@@ -78,7 +78,7 @@ export default function OrgSettingsPage() {
         </div>
       </header>
 
-      <main className="flex-1 p-3 sm:p-6 max-w-4xl mx-auto w-full">
+      <main className="flex-1 p-3 sm:p-6 max-w-7xl mx-auto w-full">
         <Link to="/app" className="text-sm text-muted-foreground hover:underline mb-4 inline-block">
           &larr; Back to organisations
         </Link>

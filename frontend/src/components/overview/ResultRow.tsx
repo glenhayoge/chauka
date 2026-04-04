@@ -16,7 +16,7 @@ const LEVEL_STYLES: Record<number, string> = {
   1: 'bg-slate-200',    // Impact (Goal) — darkest
   2: 'bg-slate-100',    // Outcome — medium
   3: 'bg-slate-50',     // Component or Output — light
-  4: 'bg-white',        // Output (when components enabled)
+  4: 'bg-background',        // Output (when components enabled)
 }
 
 interface Props {
@@ -58,7 +58,7 @@ export default function ResultRow({ result, allResults, logframeId, depth = 0, v
 
   const resultCode = resultCodes?.get(result.id) ?? ''
   const levelLabel = result.level !== null ? (data.levels?.[String(result.level)] ?? null) : null
-  const levelBg = result.level !== null ? (LEVEL_STYLES[result.level] ?? 'bg-white') : 'bg-white'
+  const levelBg = result.level !== null ? (LEVEL_STYLES[result.level] ?? 'bg-background') : 'bg-background'
 
   // Determine if this result can have child results based on max_result_level
   const maxLevel = data.conf?.max_result_level ?? 3
@@ -89,14 +89,14 @@ export default function ResultRow({ result, allResults, logframeId, depth = 0, v
     <div>
       {/* Result header row — full width with level-based background */}
       <div
-        className={clsx('border-b border-gray-300', levelBg)}
+        className={clsx('border-b border-border', levelBg)}
         style={{ paddingLeft: `${depth * 1.5 + 0.5}rem` }}
       >
         <div className="flex items-center gap-2 px-2 py-2.5">
           {/* Toggle triangle — always visible */}
           <button
             onClick={() => toggleResult(result.id)}
-            className="text-gray-600 hover:text-gray-800 w-8 h-8 flex items-center justify-center flex-shrink-0 text-sm"
+            className="text-muted-foreground hover:text-foreground w-8 h-8 flex items-center justify-center flex-shrink-0 text-sm"
             aria-label={expanded ? 'Collapse' : 'Expand'}
           >
             {expanded ? '\u25BC' : '\u25B6'}
@@ -104,8 +104,8 @@ export default function ResultRow({ result, allResults, logframeId, depth = 0, v
 
           {/* Level label with result code */}
           {levelLabel && (
-            <span className="text-xs font-bold text-blue-700 whitespace-nowrap hidden sm:inline min-w-[70px]">
-              {resultCode && <span className="text-gray-500 font-semibold mr-1">{resultCode}</span>}
+            <span className="text-xs font-bold text-primary whitespace-nowrap hidden sm:inline min-w-[70px]">
+              {resultCode && <span className="text-muted-foreground font-semibold mr-1">{resultCode}</span>}
               {levelLabel}
             </span>
           )}
@@ -114,13 +114,13 @@ export default function ResultRow({ result, allResults, logframeId, depth = 0, v
           <div className="hidden sm:flex gap-1 flex-shrink-0">
             <Link
               to={`/app/logframes/${logframeId}/design?result=${result.id}`}
-              className="text-xs px-2.5 py-0.5 rounded border border-gray-400 text-gray-700 bg-white hover:bg-gray-50 whitespace-nowrap"
+              className="text-xs px-2.5 py-0.5 rounded border border-border text-foreground bg-card hover:bg-muted whitespace-nowrap"
             >
               Edit
             </Link>
             <Link
               to={`/app/logframes/${logframeId}/monitor?result=${result.id}`}
-              className="text-xs px-2.5 py-0.5 rounded border border-gray-400 text-gray-700 bg-white hover:bg-gray-50 whitespace-nowrap"
+              className="text-xs px-2.5 py-0.5 rounded border border-border text-foreground bg-card hover:bg-muted whitespace-nowrap"
             >
               Monitor
             </Link>
@@ -132,14 +132,14 @@ export default function ResultRow({ result, allResults, logframeId, depth = 0, v
               value={result.name}
               onSave={(v) => saveField('name', v)}
               placeholder="Click to add title"
-              className="font-semibold text-gray-900"
+              className="font-semibold text-foreground"
               disabled={!canEdit}
             />
           </div>
 
           {/* Budget total */}
           {resultBudgetTotal > 0 && (
-            <span className="text-xs text-gray-400 flex-shrink-0 hidden sm:inline">
+            <span className="text-xs text-muted-foreground flex-shrink-0 hidden sm:inline">
               {currency} {resultBudgetTotal.toLocaleString()}
             </span>
           )}
@@ -156,20 +156,20 @@ export default function ResultRow({ result, allResults, logframeId, depth = 0, v
         {/* Mobile-only: level label + Edit/Monitor buttons below result name */}
         <div className="flex sm:hidden items-center gap-2 px-2 pb-2" style={{ paddingLeft: '2.5rem' }}>
           {levelLabel && (
-            <span className="text-xs font-bold text-blue-700 whitespace-nowrap">
-              {resultCode && <span className="text-gray-500 font-semibold mr-1">{resultCode}</span>}
+            <span className="text-xs font-bold text-primary whitespace-nowrap">
+              {resultCode && <span className="text-muted-foreground font-semibold mr-1">{resultCode}</span>}
               {levelLabel}
             </span>
           )}
           <Link
             to={`/app/logframes/${logframeId}/design?result=${result.id}`}
-            className="text-xs px-2.5 py-1 rounded border border-gray-400 text-gray-700 bg-white active:bg-gray-100 whitespace-nowrap"
+            className="text-xs px-2.5 py-1 rounded border border-border text-foreground bg-card active:bg-muted whitespace-nowrap"
           >
             Edit
           </Link>
           <Link
             to={`/app/logframes/${logframeId}/monitor?result=${result.id}`}
-            className="text-xs px-2.5 py-1 rounded border border-gray-400 text-gray-700 bg-white active:bg-gray-100 whitespace-nowrap"
+            className="text-xs px-2.5 py-1 rounded border border-border text-foreground bg-card active:bg-muted whitespace-nowrap"
           >
             Monitor
           </Link>
@@ -178,7 +178,7 @@ export default function ResultRow({ result, allResults, logframeId, depth = 0, v
         {/* Description below (if present) */}
         {result.description && (
           <div
-            className="text-sm text-gray-600 pb-2 px-2"
+            className="text-sm text-muted-foreground pb-2 px-2"
             style={{ paddingLeft: `${1.5 + 4.5 + 5}rem` }}
             dangerouslySetInnerHTML={{ __html: result.description }}
           />
@@ -206,7 +206,7 @@ export default function ResultRow({ result, allResults, logframeId, depth = 0, v
           {isLeafLevel && activities.map((activity) => (
             <div
               key={activity.id}
-              className="border-b border-gray-200 bg-white"
+              className="border-b border-border bg-card"
               style={{ paddingLeft: `${(depth + 1) * 1.5}rem` }}
             >
               <ActivityRow
@@ -229,7 +229,7 @@ export default function ResultRow({ result, allResults, logframeId, depth = 0, v
           {/* Click to add activity — only at leaf level (Output) */}
           {canEdit && isLeafLevel && (
             <div
-              className="border-b border-gray-200 px-3 py-2 text-gray-400 italic text-sm cursor-pointer hover:bg-gray-50"
+              className="border-b border-border px-3 py-2 text-muted-foreground italic text-sm cursor-pointer hover:bg-muted"
               style={{ paddingLeft: `${(depth + 1) * 1.5 + 0.75}rem` }}
               onClick={addActivity}
             >

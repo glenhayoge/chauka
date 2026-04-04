@@ -47,18 +47,18 @@ export default function RegisterPage() {
     }
   }
 
-  const inputClass = "w-full border border-gray-300 rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-1 focus:ring-gray-400 focus:border-gray-400"
+  const inputClass = "w-full border border-border rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-1 focus:ring-ring focus:border-ring"
 
   return (
     <div className="min-h-screen flex flex-col">
       <Navbar />
       <div className="flex-1 flex items-center justify-center px-4 py-8">
         <div className="w-full max-w-lg">
-          <p className="text-lg font-medium text-gray-900 mb-6">Create an account</p>
+          <p className="text-lg font-medium text-foreground mb-6">Create an account</p>
           <form onSubmit={handleSubmit} className="space-y-3">
             <div className="grid grid-cols-2 gap-3">
               <div>
-                <label className="block text-sm text-gray-600 mb-1">First name</label>
+                <label className="block text-sm text-muted-foreground mb-1">First name</label>
                 <input
                   type="text"
                   value={firstName}
@@ -67,7 +67,7 @@ export default function RegisterPage() {
                 />
               </div>
               <div>
-                <label className="block text-sm text-gray-600 mb-1">Last name</label>
+                <label className="block text-sm text-muted-foreground mb-1">Last name</label>
                 <input
                   type="text"
                   value={lastName}
@@ -77,7 +77,7 @@ export default function RegisterPage() {
               </div>
             </div>
             <div>
-              <label className="block text-sm text-gray-600 mb-1">Username</label>
+              <label className="block text-sm text-muted-foreground mb-1">Username</label>
               <input
                 type="text"
                 value={username}
@@ -87,7 +87,7 @@ export default function RegisterPage() {
               />
             </div>
             <div>
-              <label className="block text-sm text-gray-600 mb-1">Email</label>
+              <label className="block text-sm text-muted-foreground mb-1">Email</label>
               <input
                 type="email"
                 value={email}
@@ -97,7 +97,7 @@ export default function RegisterPage() {
               />
             </div>
             <div>
-              <label className="block text-sm text-gray-600 mb-1">Password</label>
+              <label className="block text-sm text-muted-foreground mb-1">Password</label>
               <input
                 type="password"
                 value={password}
@@ -106,7 +106,7 @@ export default function RegisterPage() {
                 required
                 minLength={6}
               />
-              <p className="text-xs text-gray-400 mt-1">At least 6 characters</p>
+              <p className="text-xs text-muted-foreground mt-1">At least 6 characters</p>
             </div>
 
             <div className="flex items-start gap-2 pt-1">
@@ -115,17 +115,17 @@ export default function RegisterPage() {
                 id="terms"
                 checked={agreedToTerms}
                 onChange={(e) => setAgreedToTerms(e.target.checked)}
-                className="mt-0.5 h-4 w-4 rounded border-gray-300 text-gray-900 focus:ring-gray-400"
+                className="mt-0.5 h-4 w-4 rounded border-border text-foreground focus:ring-ring"
               />
-              <label htmlFor="terms" className="text-sm text-gray-500">
+              <label htmlFor="terms" className="text-sm text-muted-foreground">
                 I agree to the{' '}
-                <a href="/terms" target="_blank" className="text-gray-700 hover:text-gray-900">terms</a>
+                <a href="/terms" target="_blank" className="text-foreground hover:text-foreground">terms</a>
                 {' and '}
-                <a href="/privacy" target="_blank" className="text-gray-700 hover:text-gray-900">privacy policy</a>
+                <a href="/privacy" target="_blank" className="text-foreground hover:text-foreground">privacy policy</a>
               </label>
             </div>
 
-            {error && <p className="text-sm text-red-600">{error}</p>}
+            {error && <p className="text-sm text-destructive">{error}</p>}
             <button
               type="submit"
               disabled={loading || !agreedToTerms}
@@ -134,9 +134,9 @@ export default function RegisterPage() {
               {loading ? 'Creating account\u2026' : 'Create account'}
             </button>
           </form>
-          <p className="text-sm text-gray-500 mt-4">
+          <p className="text-sm text-muted-foreground mt-4">
             Have an account?{' '}
-            <Link to="/login" className="text-gray-700 hover:text-gray-900">Sign in</Link>
+            <Link to="/login" className="text-foreground hover:text-foreground">Sign in</Link>
           </p>
         </div>
       </div>

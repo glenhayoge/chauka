@@ -47,7 +47,7 @@ export default function EditableNumber({ value, onSave, currency, disabled }: Pr
         onChange={(e) => setDraft(e.target.value)}
         onBlur={handleBlur}
         onKeyDown={handleKeyDown}
-        className="border border-blue-400 rounded px-1 py-0.5 w-24 text-right"
+        className="border border-ring rounded px-1 py-0.5 w-24 text-right"
       />
     )
   }
@@ -62,11 +62,11 @@ export default function EditableNumber({ value, onSave, currency, disabled }: Pr
         onClick={() => !disabled && setEditing(true)}
         className={clsx(
           'rounded px-1 transition-colors duration-300',
-          !disabled && 'cursor-pointer hover:bg-yellow-50 active:bg-yellow-100',
+          !disabled && 'cursor-pointer hover:bg-warning/10 active:bg-warning/10',
           disabled && 'cursor-default hover:bg-transparent',
-          state === 'saving' && 'animate-pulse border border-blue-300',
-          state === 'success' && 'bg-green-50 border border-green-300',
-          state === 'error' && 'bg-red-50 border border-red-400',
+          state === 'saving' && 'animate-pulse border border-ring',
+          state === 'success' && 'bg-ok/10 border border-ok',
+          state === 'error' && 'bg-destructive/10 border border-destructive',
         )}
       >
         {display}

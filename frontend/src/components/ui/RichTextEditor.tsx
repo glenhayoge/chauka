@@ -35,10 +35,10 @@ export default function RichTextEditor({ value, onSave, disabled }: Props) {
       <div
         className={clsx(
           'border rounded p-2 min-h-[60px] transition-colors duration-300',
-          disabled ? 'bg-gray-50' : 'bg-white focus-within:border-blue-400',
-          state === 'saving' && 'animate-pulse border-blue-300',
-          state === 'success' && 'border-green-400 bg-green-50',
-          state === 'error' && 'border-red-400 bg-red-50',
+          disabled ? 'bg-muted' : 'bg-card focus-within:border-ring',
+          state === 'saving' && 'animate-pulse border-ring',
+          state === 'success' && 'border-ok bg-ok/10',
+          state === 'error' && 'border-destructive bg-destructive/10',
         )}
       >
         <EditorContent editor={editor} />

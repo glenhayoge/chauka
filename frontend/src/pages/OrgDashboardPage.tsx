@@ -26,8 +26,8 @@ export default function OrgDashboardPage() {
     navigate('/login')
   }
 
-  if (orgLoading || dashLoading) return <p className="text-gray-500 p-6">Loading dashboard...</p>
-  if (orgError || !org) return <p className="text-red-600 p-6">Organisation not found.</p>
+  if (orgLoading || dashLoading) return <p className="text-muted-foreground p-6">Loading dashboard...</p>
+  if (orgError || !org) return <p className="text-destructive p-6">Organisation not found.</p>
 
   const healthTotal =
     (dashboard?.indicator_health.on_track ?? 0) +
@@ -47,23 +47,23 @@ export default function OrgDashboardPage() {
   }
 
   return (
-    <div className="min-h-screen flex flex-col bg-gray-50">
+    <div className="min-h-screen flex flex-col bg-muted">
       {/* Header */}
-      <header className="bg-blue-700 text-white px-4 sm:px-6 py-3 flex items-center justify-between">
+      <header className="bg-primary text-background px-4 sm:px-6 py-3 flex items-center justify-between">
         <div className="flex items-center gap-4">
-          <Link to="/app" className="text-lg font-semibold hover:text-blue-100">
+          <Link to="/app" className="text-lg font-semibold hover:text-background/80">
             Chauka
           </Link>
-          <span className="text-blue-300">/</span>
-          <span className="text-sm text-blue-200 truncate">{org.name}</span>
-          <span className="text-blue-300">/</span>
-          <span className="text-sm text-blue-100">Dashboard</span>
+          <span className="text-background/40">/</span>
+          <span className="text-sm text-background/70 truncate">{org.name}</span>
+          <span className="text-background/40">/</span>
+          <span className="text-sm text-background/90">Dashboard</span>
         </div>
         <div className="flex items-center gap-4">
-          <span className="text-sm text-blue-200 hidden sm:inline">{username}</span>
+          <span className="text-sm text-background/70 hidden sm:inline">{username}</span>
           <button
             onClick={handleLogout}
-            className="text-sm text-blue-200 hover:text-white underline hover:no-underline"
+            className="text-sm text-background/70 hover:text-background underline hover:no-underline"
           >
             Log out
           </button>
@@ -73,12 +73,12 @@ export default function OrgDashboardPage() {
       <main className="flex-1 p-3 sm:p-6 max-w-5xl mx-auto w-full">
         {/* Navigation links */}
         <div className="flex items-center gap-4 mb-4">
-          <Link to="/app" className="text-sm text-gray-500 hover:underline">
+          <Link to="/app" className="text-sm text-muted-foreground hover:underline">
             &larr; Back to organisations
           </Link>
           <Link
             to={`/organisations/${id}/settings`}
-            className="text-sm text-gray-500 hover:text-gray-700"
+            className="text-sm text-muted-foreground hover:text-foreground"
           >
             Settings
           </Link>
@@ -87,7 +87,7 @@ export default function OrgDashboardPage() {
         <h2 className="text-xl font-semibold mb-6">{org.name} Dashboard</h2>
 
         {!dashboard ? (
-          <p className="text-gray-400 text-sm">No data available yet.</p>
+          <p className="text-muted-foreground text-sm">No data available yet.</p>
         ) : (
           <>
             {/* Summary cards */}
@@ -120,20 +120,20 @@ export default function OrgDashboardPage() {
             </div>
 
             {/* Indicator health */}
-            <div className="bg-white border rounded-lg p-5 mb-8">
-              <h3 className="text-sm font-semibold text-gray-700 mb-4">Result Health</h3>
+            <div className="bg-card border rounded-lg p-5 mb-8">
+              <h3 className="text-sm font-semibold text-foreground mb-4">Result Health</h3>
               {healthTotal === 0 ? (
-                <p className="text-sm text-gray-400">No results with ratings yet.</p>
+                <p className="text-sm text-muted-foreground">No results with ratings yet.</p>
               ) : (
                 <>
                   {/* Health bar */}
                   <div className="flex h-6 rounded-full overflow-hidden mb-4">
                     {dashboard.indicator_health.on_track > 0 && (
                       <div
-                        className="bg-green-500 flex items-center justify-center"
+                        className="bg-ok flex items-center justify-center"
                         style={{ width: `${healthPct(dashboard.indicator_health.on_track)}%` }}
                       >
-                        <span className="text-[10px] text-white font-medium">
+                        <span className="text-[10px] text-background font-medium">
                           {dashboard.indicator_health.on_track}
                         </span>
                       </div>
@@ -143,27 +143,27 @@ export default function OrgDashboardPage() {
                         className="bg-amber-400 flex items-center justify-center"
                         style={{ width: `${healthPct(dashboard.indicator_health.caution)}%` }}
                       >
-                        <span className="text-[10px] text-white font-medium">
+                        <span className="text-[10px] text-background font-medium">
                           {dashboard.indicator_health.caution}
                         </span>
                       </div>
                     )}
                     {dashboard.indicator_health.off_track > 0 && (
                       <div
-                        className="bg-red-500 flex items-center justify-center"
+                        className="bg-destructive flex items-center justify-center"
                         style={{ width: `${healthPct(dashboard.indicator_health.off_track)}%` }}
                       >
-                        <span className="text-[10px] text-white font-medium">
+                        <span className="text-[10px] text-background font-medium">
                           {dashboard.indicator_health.off_track}
                         </span>
                       </div>
                     )}
                     {dashboard.indicator_health.not_rated > 0 && (
                       <div
-                        className="bg-gray-300 flex items-center justify-center"
+                        className="bg-muted flex items-center justify-center"
                         style={{ width: `${healthPct(dashboard.indicator_health.not_rated)}%` }}
                       >
-                        <span className="text-[10px] text-gray-600 font-medium">
+                        <span className="text-[10px] text-muted-foreground font-medium">
                           {dashboard.indicator_health.not_rated}
                         </span>
                       </div>
@@ -171,9 +171,9 @@ export default function OrgDashboardPage() {
                   </div>
 
                   {/* Legend */}
-                  <div className="flex flex-wrap gap-4 text-xs text-gray-600">
+                  <div className="flex flex-wrap gap-4 text-xs text-muted-foreground">
                     <span className="flex items-center gap-1.5">
-                      <span className="w-2.5 h-2.5 rounded-full bg-green-500 inline-block" />
+                      <span className="w-2.5 h-2.5 rounded-full bg-ok inline-block" />
                       On Track ({dashboard.indicator_health.on_track})
                     </span>
                     <span className="flex items-center gap-1.5">
@@ -181,11 +181,11 @@ export default function OrgDashboardPage() {
                       Caution ({dashboard.indicator_health.caution})
                     </span>
                     <span className="flex items-center gap-1.5">
-                      <span className="w-2.5 h-2.5 rounded-full bg-red-500 inline-block" />
+                      <span className="w-2.5 h-2.5 rounded-full bg-destructive inline-block" />
                       Off Track ({dashboard.indicator_health.off_track})
                     </span>
                     <span className="flex items-center gap-1.5">
-                      <span className="w-2.5 h-2.5 rounded-full bg-gray-300 inline-block" />
+                      <span className="w-2.5 h-2.5 rounded-full bg-muted inline-block" />
                       Not Rated ({dashboard.indicator_health.not_rated})
                     </span>
                   </div>
@@ -194,27 +194,27 @@ export default function OrgDashboardPage() {
             </div>
 
             {/* Recent status updates */}
-            <div className="bg-white border rounded-lg p-5">
-              <h3 className="text-sm font-semibold text-gray-700 mb-4">Recent Activity</h3>
+            <div className="bg-card border rounded-lg p-5">
+              <h3 className="text-sm font-semibold text-foreground mb-4">Recent Activity</h3>
               {dashboard.recent_status_updates.length === 0 ? (
-                <p className="text-sm text-gray-400">No status updates yet.</p>
+                <p className="text-sm text-muted-foreground">No status updates yet.</p>
               ) : (
                 <div className="space-y-3">
                   {dashboard.recent_status_updates.map((update: { id: number; activity_name: string; logframe_name: string; date: string; description: string }) => (
                     <div
                       key={update.id}
-                      className="flex items-start gap-3 border-b border-gray-100 pb-3 last:border-0 last:pb-0"
+                      className="flex items-start gap-3 border-b border-border pb-3 last:border-0 last:pb-0"
                     >
-                      <div className="flex-shrink-0 mt-1 w-2 h-2 rounded-full bg-blue-400" />
+                      <div className="flex-shrink-0 mt-1 w-2 h-2 rounded-full bg-primary" />
                       <div className="flex-1 min-w-0">
-                        <div className="flex items-center gap-2 text-xs text-gray-500 mb-0.5">
-                          <span className="font-medium text-gray-700">{update.activity_name}</span>
+                        <div className="flex items-center gap-2 text-xs text-muted-foreground mb-0.5">
+                          <span className="font-medium text-foreground">{update.activity_name}</span>
                           <span>&middot;</span>
                           <span>{update.logframe_name}</span>
                           <span>&middot;</span>
                           <span>{new Date(update.date).toLocaleDateString()}</span>
                         </div>
-                        <p className="text-sm text-gray-600 truncate">{update.description}</p>
+                        <p className="text-sm text-muted-foreground truncate">{update.description}</p>
                       </div>
                     </div>
                   ))}
@@ -229,15 +229,15 @@ export default function OrgDashboardPage() {
 }
 
 const COLOR_MAP: Record<string, string> = {
-  blue: 'bg-blue-50 text-blue-700 border-blue-200',
-  green: 'bg-green-50 text-green-700 border-green-200',
-  purple: 'bg-purple-50 text-purple-700 border-purple-200',
-  amber: 'bg-amber-50 text-amber-700 border-amber-200',
-  orange: 'bg-orange-50 text-orange-700 border-orange-200',
-  red: 'bg-red-50 text-red-700 border-red-200',
-  indigo: 'bg-indigo-50 text-indigo-700 border-indigo-200',
-  teal: 'bg-teal-50 text-teal-700 border-teal-200',
-  cyan: 'bg-cyan-50 text-cyan-700 border-cyan-200',
+  blue: 'bg-accent text-primary border-border',
+  green: 'bg-ok/10 text-ok border-border',
+  purple: 'bg-purple-50 text-purple-700 border-border',
+  amber: 'bg-amber-50 text-amber-700 border-border',
+  orange: 'bg-accent text-primary border-border',
+  red: 'bg-destructive/10 text-destructive border-border',
+  indigo: 'bg-indigo-50 text-indigo-700 border-border',
+  teal: 'bg-teal-50 text-teal-700 border-border',
+  cyan: 'bg-cyan-50 text-cyan-700 border-border',
 }
 
 function SummaryCard({

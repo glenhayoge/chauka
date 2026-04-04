@@ -16,8 +16,8 @@ export default function BudgetPage() {
   const { isLoading, error } = useBootstrap(id)
   const data = useLogframeStore((s) => s.data)
 
-  if (isLoading) return <p className="text-gray-500">Loading…</p>
-  if (error) return <p className="text-red-600">Failed to load data.</p>
+  if (isLoading) return <p className="text-muted-foreground">Loading…</p>
+  if (error) return <p className="text-destructive">Failed to load data.</p>
   if (!data) return null
 
   const currency = data.settings?.currency ?? ''
@@ -43,7 +43,7 @@ export default function BudgetPage() {
         <SummaryCard
           label="Remaining"
           value={`${currency} ${totalRemaining.toLocaleString()}`}
-          color={totalRemaining < 0 ? 'text-red-600' : 'text-green-700'}
+          color={totalRemaining < 0 ? 'text-destructive' : 'text-ok'}
         />
         <SummaryCard label="Utilization" value={`${utilizationPct}%`} />
       </div>
@@ -77,9 +77,9 @@ export default function BudgetPage() {
 
 function SummaryCard({ label, value, color }: { label: string; value: string; color?: string }) {
   return (
-    <div className="bg-white border rounded-lg p-4 text-center">
-      <div className={`text-xl sm:text-2xl font-bold ${color || 'text-blue-700'}`}>{value}</div>
-      <div className="text-xs sm:text-sm text-gray-500 mt-1">{label}</div>
+    <div className="bg-card border rounded-lg p-4 text-center">
+      <div className={`text-xl sm:text-2xl font-bold ${color || 'text-primary'}`}>{value}</div>
+      <div className="text-xs sm:text-sm text-muted-foreground mt-1">{label}</div>
     </div>
   )
 }
@@ -101,15 +101,15 @@ function ActivityBudgetSection({ activity, budgetLines, expenses, currency, logf
   const pct = actBudget > 0 ? Math.round((actSpent / actBudget) * 100) : 0
 
   return (
-    <div className="mb-6 bg-white border rounded-lg overflow-hidden">
+    <div className="mb-6 bg-card border rounded-lg overflow-hidden">
       {/* Activity header */}
-      <div className="px-4 py-3 bg-gray-50 border-b flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
-        <h3 className="text-sm font-semibold text-gray-800">
-          {activity.name || <span className="text-gray-400 italic">(unnamed activity)</span>}
+      <div className="px-4 py-3 bg-muted border-b flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
+        <h3 className="text-sm font-semibold text-foreground">
+          {activity.name || <span className="text-muted-foreground italic">(unnamed activity)</span>}
         </h3>
-        <div className="flex items-center gap-4 text-xs text-gray-500">
-          <span>Budget: <strong className="text-gray-700">{currency} {actBudget.toLocaleString()}</strong></span>
-          <span>Spent: <strong className="text-gray-700">{currency} {actSpent.toLocaleString()}</strong></span>
+        <div className="flex items-center gap-4 text-xs text-muted-foreground">
+          <span>Budget: <strong className="text-foreground">{currency} {actBudget.toLocaleString()}</strong></span>
+          <span>Spent: <strong className="text-foreground">{currency} {actSpent.toLocaleString()}</strong></span>
           <UtilizationBar pct={pct} />
         </div>
       </div>
@@ -118,12 +118,12 @@ function ActivityBudgetSection({ activity, budgetLines, expenses, currency, logf
       <div className="overflow-x-auto">
         <table className="text-sm border-collapse w-full">
           <thead>
-            <tr className="bg-gray-50">
-              <th className="border-b border-gray-200 px-4 py-2 text-left font-medium text-gray-600">Budget Line</th>
-              <th className="border-b border-gray-200 px-4 py-2 text-right font-medium text-gray-600">Budget</th>
-              <th className="border-b border-gray-200 px-4 py-2 text-right font-medium text-gray-600">Spent</th>
-              <th className="border-b border-gray-200 px-4 py-2 text-right font-medium text-gray-600">Remaining</th>
-              <th className="border-b border-gray-200 px-4 py-2 text-center font-medium text-gray-600 w-24">%</th>
+            <tr className="bg-muted">
+              <th className="border-b border-border px-4 py-2 text-left font-medium text-muted-foreground">Budget Line</th>
+              <th className="border-b border-border px-4 py-2 text-right font-medium text-muted-foreground">Budget</th>
+              <th className="border-b border-border px-4 py-2 text-right font-medium text-muted-foreground">Spent</th>
+              <th className="border-b border-border px-4 py-2 text-right font-medium text-muted-foreground">Remaining</th>
+              <th className="border-b border-border px-4 py-2 text-center font-medium text-muted-foreground w-24">%</th>
             </tr>
           </thead>
           <tbody>
@@ -171,23 +171,23 @@ function BudgetLineRow({ budgetLine, expenses, spent, remaining, pct, currency, 
   return (
     <>
       <tr
-        className="hover:bg-gray-50 cursor-pointer"
+        className="hover:bg-muted cursor-pointer"
         onClick={() => setExpanded(!expanded)}
       >
-        <td className="border-b border-gray-100 px-4 py-2 text-gray-700">
-          <span className="text-gray-400 text-xs mr-1">{expanded ? '▼' : '▶'}</span>
+        <td className="border-b border-border px-4 py-2 text-foreground">
+          <span className="text-muted-foreground text-xs mr-1">{expanded ? '▼' : '▶'}</span>
           {budgetLine.name || '(unnamed)'}
         </td>
-        <td className="border-b border-gray-100 px-4 py-2 text-right text-gray-700">
+        <td className="border-b border-border px-4 py-2 text-right text-foreground">
           {currency} {(budgetLine.amount || 0).toLocaleString()}
         </td>
-        <td className="border-b border-gray-100 px-4 py-2 text-right text-gray-700">
+        <td className="border-b border-border px-4 py-2 text-right text-foreground">
           {currency} {spent.toLocaleString()}
         </td>
-        <td className={`border-b border-gray-100 px-4 py-2 text-right font-medium ${remaining < 0 ? 'text-red-600' : 'text-gray-700'}`}>
+        <td className={`border-b border-border px-4 py-2 text-right font-medium ${remaining < 0 ? 'text-destructive' : 'text-foreground'}`}>
           {currency} {remaining.toLocaleString()}
         </td>
-        <td className="border-b border-gray-100 px-4 py-2 text-center">
+        <td className="border-b border-border px-4 py-2 text-center">
           <UtilizationBar pct={pct} />
         </td>
       </tr>
@@ -195,11 +195,11 @@ function BudgetLineRow({ budgetLine, expenses, spent, remaining, pct, currency, 
       {/* Expanded: show expenses and add form */}
       {expanded && (
         <tr>
-          <td colSpan={5} className="border-b border-gray-200 px-4 py-2 bg-gray-50">
+          <td colSpan={5} className="border-b border-border px-4 py-2 bg-muted">
             {expenses.length > 0 && (
               <table className="text-xs w-full mb-2">
                 <thead>
-                  <tr className="text-gray-500">
+                  <tr className="text-muted-foreground">
                     <th className="text-left py-1 font-medium">Date</th>
                     <th className="text-left py-1 font-medium">Description</th>
                     <th className="text-right py-1 font-medium">Amount</th>
@@ -214,12 +214,12 @@ function BudgetLineRow({ budgetLine, expenses, spent, remaining, pct, currency, 
               </table>
             )}
             {expenses.length === 0 && !showForm && (
-              <p className="text-xs text-gray-400 italic mb-2">No expenses recorded yet.</p>
+              <p className="text-xs text-muted-foreground italic mb-2">No expenses recorded yet.</p>
             )}
             {canEdit && !showForm && (
               <button
                 onClick={(e) => { e.stopPropagation(); setShowForm(true) }}
-                className="text-xs text-blue-600 hover:text-blue-800"
+                className="text-xs text-primary hover:text-primary/80"
               >
                 + Add expense
               </button>
@@ -248,10 +248,10 @@ function ExpenseRow({ expense, currency, logframeId, canEdit }: { expense: Expen
   }
 
   return (
-    <tr className="hover:bg-white">
-      <td className="py-1 text-gray-600">{formatDateDisplay(expense.date)}</td>
-      <td className="py-1 text-gray-600">{expense.description || '—'}</td>
-      <td className="py-1 text-right text-gray-700">{currency} {expense.amount.toLocaleString()}</td>
+    <tr className="hover:bg-card">
+      <td className="py-1 text-muted-foreground">{formatDateDisplay(expense.date)}</td>
+      <td className="py-1 text-muted-foreground">{expense.description || '—'}</td>
+      <td className="py-1 text-right text-foreground">{currency} {expense.amount.toLocaleString()}</td>
       {canEdit && (
         <td className="py-1 text-center">
           <DeleteButton onClick={handleDelete} label="Remove" />
@@ -289,47 +289,47 @@ function AddExpenseForm({ budgetLineId, logframeId, currency, onDone }: { budget
   return (
     <form onSubmit={handleSubmit} className="flex flex-wrap gap-2 items-end mt-1" onClick={(e) => e.stopPropagation()}>
       <div>
-        <label className="block text-[10px] text-gray-500 mb-0.5">Date</label>
+        <label className="block text-[10px] text-muted-foreground mb-0.5">Date</label>
         <input
           type="date"
           value={date}
           onChange={(e) => setDate(e.target.value)}
-          className="border border-gray-300 rounded px-2 py-1 text-xs"
+          className="border border-border rounded px-2 py-1 text-xs"
           required
         />
       </div>
       <div>
-        <label className="block text-[10px] text-gray-500 mb-0.5">Amount ({currency})</label>
+        <label className="block text-[10px] text-muted-foreground mb-0.5">Amount ({currency})</label>
         <input
           type="number"
           step="0.01"
           value={amount}
           onChange={(e) => setAmount(e.target.value)}
-          className="border border-gray-300 rounded px-2 py-1 text-xs w-24"
+          className="border border-border rounded px-2 py-1 text-xs w-24"
           required
         />
       </div>
       <div className="flex-1 min-w-[120px]">
-        <label className="block text-[10px] text-gray-500 mb-0.5">Description</label>
+        <label className="block text-[10px] text-muted-foreground mb-0.5">Description</label>
         <input
           type="text"
           value={description}
           onChange={(e) => setDescription(e.target.value)}
           placeholder="Optional"
-          className="border border-gray-300 rounded px-2 py-1 text-xs w-full"
+          className="border border-border rounded px-2 py-1 text-xs w-full"
         />
       </div>
       <button
         type="submit"
         disabled={saving}
-        className="px-3 py-1 bg-blue-600 text-white text-xs rounded hover:bg-blue-700 disabled:opacity-50"
+        className="px-3 py-1 bg-primary text-background text-xs rounded hover:bg-primary/80 disabled:opacity-50"
       >
         {saving ? 'Saving…' : 'Add'}
       </button>
       <button
         type="button"
         onClick={onDone}
-        className="px-3 py-1 text-gray-500 text-xs rounded border hover:bg-gray-50"
+        className="px-3 py-1 text-muted-foreground text-xs rounded border hover:bg-muted"
       >
         Cancel
       </button>
@@ -338,13 +338,13 @@ function AddExpenseForm({ budgetLineId, logframeId, currency, onDone }: { budget
 }
 
 function UtilizationBar({ pct }: { pct: number }) {
-  const color = pct >= 100 ? 'bg-red-500' : pct >= 75 ? 'bg-yellow-500' : 'bg-green-500'
+  const color = pct >= 100 ? 'bg-destructive' : pct >= 75 ? 'bg-warning' : 'bg-ok'
   return (
     <div className="inline-flex items-center gap-1.5">
-      <div className="w-16 h-2 bg-gray-200 rounded-full overflow-hidden">
+      <div className="w-16 h-2 bg-muted rounded-full overflow-hidden">
         <div className={`h-full rounded-full ${color}`} style={{ width: `${Math.min(pct, 100)}%` }} />
       </div>
-      <span className="text-xs text-gray-500 w-8">{pct}%</span>
+      <span className="text-xs text-muted-foreground w-8">{pct}%</span>
     </div>
   )
 }

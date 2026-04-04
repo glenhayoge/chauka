@@ -41,23 +41,23 @@ export default function ResourcesTable({ resources, activityId, logframeId, canE
       {/* Human Resources */}
       {humanResources.length > 0 && (
         <div>
-          <p className="text-xs font-semibold text-gray-500 mb-1">Human Resources</p>
+          <p className="text-xs font-semibold text-muted-foreground mb-1">Human Resources</p>
           <div className="overflow-x-auto">
             <table className="text-xs border-collapse w-full">
               <thead>
-                <tr className="bg-gray-50">
-                  <th className="border border-gray-200 px-2 py-1 text-left font-medium text-gray-600">Role</th>
-                  <th className="border border-gray-200 px-2 py-1 text-left font-medium text-gray-600">Person</th>
-                  <th className="border border-gray-200 px-2 py-1 text-center font-medium text-gray-600">Qty</th>
-                  <th className="border border-gray-200 px-2 py-1 text-center font-medium text-gray-600">Days</th>
-                  <th className="border border-gray-200 px-2 py-1 text-center font-medium text-gray-600">%</th>
-                  {canEdit && <th className="border border-gray-200 px-1 py-1 w-6" />}
+                <tr className="bg-muted">
+                  <th className="border border-border px-2 py-1 text-left font-medium text-muted-foreground">Role</th>
+                  <th className="border border-border px-2 py-1 text-left font-medium text-muted-foreground">Person</th>
+                  <th className="border border-border px-2 py-1 text-center font-medium text-muted-foreground">Qty</th>
+                  <th className="border border-border px-2 py-1 text-center font-medium text-muted-foreground">Days</th>
+                  <th className="border border-border px-2 py-1 text-center font-medium text-muted-foreground">%</th>
+                  {canEdit && <th className="border border-border px-1 py-1 w-6" />}
                 </tr>
               </thead>
               <tbody>
                 {humanResources.map((r) => (
-                  <tr key={r.id} className="hover:bg-gray-50">
-                    <td className="border border-gray-200 px-2 py-1">
+                  <tr key={r.id} className="hover:bg-muted">
+                    <td className="border border-border px-2 py-1">
                       <EditableText
                         value={r.role}
                         onSave={(v) => saveResource(r.id, 'role', v)}
@@ -66,30 +66,30 @@ export default function ResourcesTable({ resources, activityId, logframeId, canE
                         disabled={!canEdit}
                       />
                     </td>
-                    <td className="border border-gray-200 px-2 py-1">
+                    <td className="border border-border px-2 py-1">
                       <EditableText
                         value={r.person}
                         onSave={(v) => saveResource(r.id, 'person', v)}
                         placeholder="—"
-                        className="text-xs text-gray-500"
+                        className="text-xs text-muted-foreground"
                         disabled={!canEdit}
                       />
                     </td>
-                    <td className="border border-gray-200 px-2 py-1 text-center">
+                    <td className="border border-border px-2 py-1 text-center">
                       <EditableNumber
                         value={r.quantity}
                         onSave={(v) => saveResource(r.id, 'quantity', v)}
                         disabled={!canEdit}
                       />
                     </td>
-                    <td className="border border-gray-200 px-2 py-1 text-center">
+                    <td className="border border-border px-2 py-1 text-center">
                       <EditableNumber
                         value={r.days_required}
                         onSave={(v) => saveResource(r.id, 'days_required', v)}
                         disabled={!canEdit}
                       />
                     </td>
-                    <td className="border border-gray-200 px-2 py-1 text-center">
+                    <td className="border border-border px-2 py-1 text-center">
                       <EditableNumber
                         value={r.allocation_pct}
                         onSave={(v) => saveResource(r.id, 'allocation_pct', v)}
@@ -97,7 +97,7 @@ export default function ResourcesTable({ resources, activityId, logframeId, canE
                       />
                     </td>
                     {canEdit && (
-                      <td className="border border-gray-200 px-1 py-1 text-center">
+                      <td className="border border-border px-1 py-1 text-center">
                         <DeleteButton onClick={() => deleteResource(r.id)} label="Remove" />
                       </td>
                     )}
@@ -112,21 +112,21 @@ export default function ResourcesTable({ resources, activityId, logframeId, canE
       {/* Equipment */}
       {equipment.length > 0 && (
         <div>
-          <p className="text-xs font-semibold text-gray-500 mb-1">Equipment / Assets</p>
+          <p className="text-xs font-semibold text-muted-foreground mb-1">Equipment / Assets</p>
           <div className="overflow-x-auto">
             <table className="text-xs border-collapse w-full">
               <thead>
-                <tr className="bg-gray-50">
-                  <th className="border border-gray-200 px-2 py-1 text-left font-medium text-gray-600">Resource</th>
-                  <th className="border border-gray-200 px-2 py-1 text-center font-medium text-gray-600">Qty</th>
-                  <th className="border border-gray-200 px-2 py-1 text-center font-medium text-gray-600">Days</th>
-                  {canEdit && <th className="border border-gray-200 px-1 py-1 w-6" />}
+                <tr className="bg-muted">
+                  <th className="border border-border px-2 py-1 text-left font-medium text-muted-foreground">Resource</th>
+                  <th className="border border-border px-2 py-1 text-center font-medium text-muted-foreground">Qty</th>
+                  <th className="border border-border px-2 py-1 text-center font-medium text-muted-foreground">Days</th>
+                  {canEdit && <th className="border border-border px-1 py-1 w-6" />}
                 </tr>
               </thead>
               <tbody>
                 {equipment.map((r) => (
-                  <tr key={r.id} className="hover:bg-gray-50">
-                    <td className="border border-gray-200 px-2 py-1">
+                  <tr key={r.id} className="hover:bg-muted">
+                    <td className="border border-border px-2 py-1">
                       <EditableText
                         value={r.resource_name}
                         onSave={(v) => saveResource(r.id, 'resource_name', v)}
@@ -135,14 +135,14 @@ export default function ResourcesTable({ resources, activityId, logframeId, canE
                         disabled={!canEdit}
                       />
                     </td>
-                    <td className="border border-gray-200 px-2 py-1 text-center">
+                    <td className="border border-border px-2 py-1 text-center">
                       <EditableNumber
                         value={r.quantity}
                         onSave={(v) => saveResource(r.id, 'quantity', v)}
                         disabled={!canEdit}
                       />
                     </td>
-                    <td className="border border-gray-200 px-2 py-1 text-center">
+                    <td className="border border-border px-2 py-1 text-center">
                       <EditableNumber
                         value={r.days_required}
                         onSave={(v) => saveResource(r.id, 'days_required', v)}
@@ -150,7 +150,7 @@ export default function ResourcesTable({ resources, activityId, logframeId, canE
                       />
                     </td>
                     {canEdit && (
-                      <td className="border border-gray-200 px-1 py-1 text-center">
+                      <td className="border border-border px-1 py-1 text-center">
                         <DeleteButton onClick={() => deleteResource(r.id)} label="Remove" />
                       </td>
                     )}
@@ -165,20 +165,20 @@ export default function ResourcesTable({ resources, activityId, logframeId, canE
       {/* Partners */}
       {partners.length > 0 && (
         <div>
-          <p className="text-xs font-semibold text-gray-500 mb-1">Partners / Institutions</p>
+          <p className="text-xs font-semibold text-muted-foreground mb-1">Partners / Institutions</p>
           <div className="overflow-x-auto">
             <table className="text-xs border-collapse w-full">
               <thead>
-                <tr className="bg-gray-50">
-                  <th className="border border-gray-200 px-2 py-1 text-left font-medium text-gray-600">Organisation</th>
-                  <th className="border border-gray-200 px-2 py-1 text-left font-medium text-gray-600">Role</th>
-                  {canEdit && <th className="border border-gray-200 px-1 py-1 w-6" />}
+                <tr className="bg-muted">
+                  <th className="border border-border px-2 py-1 text-left font-medium text-muted-foreground">Organisation</th>
+                  <th className="border border-border px-2 py-1 text-left font-medium text-muted-foreground">Role</th>
+                  {canEdit && <th className="border border-border px-1 py-1 w-6" />}
                 </tr>
               </thead>
               <tbody>
                 {partners.map((r) => (
-                  <tr key={r.id} className="hover:bg-gray-50">
-                    <td className="border border-gray-200 px-2 py-1">
+                  <tr key={r.id} className="hover:bg-muted">
+                    <td className="border border-border px-2 py-1">
                       <EditableText
                         value={r.organisation_name}
                         onSave={(v) => saveResource(r.id, 'organisation_name', v)}
@@ -187,17 +187,17 @@ export default function ResourcesTable({ resources, activityId, logframeId, canE
                         disabled={!canEdit}
                       />
                     </td>
-                    <td className="border border-gray-200 px-2 py-1">
+                    <td className="border border-border px-2 py-1">
                       <EditableText
                         value={r.role_in_activity}
                         onSave={(v) => saveResource(r.id, 'role_in_activity', v)}
                         placeholder="Role"
-                        className="text-xs text-gray-500"
+                        className="text-xs text-muted-foreground"
                         disabled={!canEdit}
                       />
                     </td>
                     {canEdit && (
-                      <td className="border border-gray-200 px-1 py-1 text-center">
+                      <td className="border border-border px-1 py-1 text-center">
                         <DeleteButton onClick={() => deleteResource(r.id)} label="Remove" />
                       </td>
                     )}
@@ -210,7 +210,7 @@ export default function ResourcesTable({ resources, activityId, logframeId, canE
       )}
 
       {resources.length === 0 && (
-        <p className="text-xs text-gray-400 italic">No resources assigned yet.</p>
+        <p className="text-xs text-muted-foreground italic">No resources assigned yet.</p>
       )}
 
       {/* Add resource */}
@@ -292,7 +292,7 @@ function AddResourceForm({ activityId, logframeId }: { activityId: number; logfr
     return (
       <button
         onClick={() => setOpen(true)}
-        className="text-xs text-blue-600 hover:text-blue-800"
+        className="text-xs text-primary hover:text-primary/80"
       >
         + Add Resource
       </button>
@@ -300,7 +300,7 @@ function AddResourceForm({ activityId, logframeId }: { activityId: number; logfr
   }
 
   return (
-    <form onSubmit={handleSubmit} className="border rounded p-3 bg-blue-50 space-y-2 mt-1">
+    <form onSubmit={handleSubmit} className="border rounded p-3 bg-accent space-y-2 mt-1">
       <div>
         <select
           value={type}
@@ -342,10 +342,10 @@ function AddResourceForm({ activityId, logframeId }: { activityId: number; logfr
 
       {type && (
         <div className="flex gap-2">
-          <button type="submit" disabled={saving} className="px-3 py-1 bg-blue-600 text-white text-xs rounded hover:bg-blue-700 disabled:opacity-50">
+          <button type="submit" disabled={saving} className="px-3 py-1 bg-primary text-background text-xs rounded hover:bg-primary/80 disabled:opacity-50">
             {saving ? 'Adding...' : 'Add'}
           </button>
-          <button type="button" onClick={reset} className="px-3 py-1 text-gray-500 text-xs rounded border hover:bg-gray-50">
+          <button type="button" onClick={reset} className="px-3 py-1 text-muted-foreground text-xs rounded border hover:bg-muted">
             Cancel
           </button>
         </div>

@@ -37,7 +37,7 @@ export default function DataGrid({ logframeId, subindicators }: Props) {
     <div className="overflow-x-auto">
       <table className="text-sm border-collapse w-full">
         <thead>
-          <tr className="bg-gray-50">
+          <tr className="bg-muted">
             <th className="border px-3 py-2 text-left">Sub-indicator</th>
             {columns.map((col) => (
               <th key={col.id} className="border px-3 py-2 text-center">{col.name}</th>
@@ -51,7 +51,7 @@ export default function DataGrid({ logframeId, subindicators }: Props) {
         </thead>
         <tbody>
           {subindicators.map((sub) => (
-            <tr key={sub.id} className="hover:bg-gray-50">
+            <tr key={sub.id} className="hover:bg-muted">
               <td className="border px-3 py-2">{sub.name || '(unnamed)'}</td>
               {columns.map((col) => {
                 const entry = dataEntries.find(

@@ -32,12 +32,12 @@ export default function PeoplePanel({ logframeId, canEdit }: Props) {
   })
 
   const isLoading = membersLoading
-  if (isLoading) return <p className="text-gray-500">Loading…</p>
+  if (isLoading) return <p className="text-muted-foreground">Loading…</p>
   if (!data) return null
 
   // If no org context, fall back to showing nothing meaningful
   if (!orgId || !members) {
-    return <p className="text-sm text-gray-400 italic">No team members yet. Invite people from Settings.</p>
+    return <p className="text-sm text-muted-foreground italic">No team members yet. Invite people from Settings.</p>
   }
 
   const activities = data.activities
@@ -84,10 +84,10 @@ export default function PeoplePanel({ logframeId, canEdit }: Props) {
   if (teamUsers.length === 0) {
     return (
       <div className="text-center py-8">
-        <p className="text-gray-500 text-sm mb-2">No team members yet.</p>
-        <p className="text-gray-400 text-xs">
+        <p className="text-muted-foreground text-sm mb-2">No team members yet.</p>
+        <p className="text-muted-foreground text-xs">
           Invite people to your organisation from{' '}
-          <a href={`/app/logframes/${logframeId}/settings?tab=members`} className="text-blue-600 hover:underline">
+          <a href={`/app/logframes/${logframeId}/settings?tab=members`} className="text-primary hover:underline">
             Settings &rarr; Members
           </a>
         </p>
@@ -101,17 +101,17 @@ export default function PeoplePanel({ logframeId, canEdit }: Props) {
       <div className="overflow-x-auto">
         <table className="text-sm border-collapse w-full">
           <thead>
-            <tr className="bg-gray-50">
-              <th className="border border-gray-200 px-3 py-2 text-left font-medium text-gray-600">
+            <tr className="bg-muted">
+              <th className="border border-border px-3 py-2 text-left font-medium text-muted-foreground">
                 Name
               </th>
-              <th className="border border-gray-200 px-3 py-2 text-left font-medium text-gray-600">
+              <th className="border border-border px-3 py-2 text-left font-medium text-muted-foreground">
                 Username
               </th>
-              <th className="border border-gray-200 px-3 py-2 text-center font-medium text-gray-600">
+              <th className="border border-border px-3 py-2 text-center font-medium text-muted-foreground">
                 Role
               </th>
-              <th className="border border-gray-200 px-3 py-2 text-center font-medium text-gray-600">
+              <th className="border border-border px-3 py-2 text-center font-medium text-muted-foreground">
                 Activities
               </th>
             </tr>
@@ -138,28 +138,28 @@ export default function PeoplePanel({ logframeId, canEdit }: Props) {
       {/* Unassigned activities */}
       {unassignedActivities.length > 0 && (
         <div className="mt-6">
-          <h3 className="text-sm font-semibold text-gray-700 uppercase tracking-wide mb-2">
+          <h3 className="text-sm font-semibold text-foreground uppercase tracking-wide mb-2">
             Unassigned Activities ({unassignedActivities.length})
           </h3>
           <div className="overflow-x-auto">
             <table className="text-sm border-collapse w-full">
               <thead>
-                <tr className="bg-gray-50">
-                  <th className="border border-gray-200 px-3 py-2 text-left font-medium text-gray-600">
+                <tr className="bg-muted">
+                  <th className="border border-border px-3 py-2 text-left font-medium text-muted-foreground">
                     Activity
                   </th>
-                  <th className="border border-gray-200 px-3 py-2 text-left font-medium text-gray-600 w-48">
+                  <th className="border border-border px-3 py-2 text-left font-medium text-muted-foreground w-48">
                     Assign Lead
                   </th>
                 </tr>
               </thead>
               <tbody>
                 {unassignedActivities.map((activity) => (
-                  <tr key={activity.id} className="hover:bg-gray-50">
-                    <td className="border border-gray-200 px-3 py-2 text-gray-700">
-                      {activity.name || <span className="text-gray-400 italic">(unnamed)</span>}
+                  <tr key={activity.id} className="hover:bg-muted">
+                    <td className="border border-border px-3 py-2 text-foreground">
+                      {activity.name || <span className="text-muted-foreground italic">(unnamed)</span>}
                     </td>
-                    <td className="border border-gray-200 px-3 py-2">
+                    <td className="border border-border px-3 py-2">
                       <EditableSelect
                         value={null}
                         options={userOptions}
@@ -177,7 +177,7 @@ export default function PeoplePanel({ logframeId, canEdit }: Props) {
       )}
 
       {activities.length === 0 && (
-        <p className="text-gray-400 text-sm italic mt-4">
+        <p className="text-muted-foreground text-sm italic mt-4">
           No activities in this logframe yet.
         </p>
       )}
@@ -187,7 +187,7 @@ export default function PeoplePanel({ logframeId, canEdit }: Props) {
 
 const ROLE_BADGE_STYLES: Record<string, string> = {
   admin: 'bg-purple-50 text-purple-700',
-  member: 'bg-blue-50 text-blue-700',
+  member: 'bg-accent text-primary',
 }
 
 const ROLE_BADGE_LABELS: Record<string, string> = {
@@ -209,34 +209,34 @@ function UserRow({ user, displayName, activityCount, activities, role }: UserRow
 
   return (
     <>
-      <tr className="hover:bg-gray-50">
-        <td className="border border-gray-200 px-3 py-2 font-medium text-gray-900">
+      <tr className="hover:bg-muted">
+        <td className="border border-border px-3 py-2 font-medium text-foreground">
           {displayName}
         </td>
-        <td className="border border-gray-200 px-3 py-2 text-gray-500">
+        <td className="border border-border px-3 py-2 text-muted-foreground">
           {user.username}
         </td>
-        <td className="border border-gray-200 px-3 py-2 text-center">
+        <td className="border border-border px-3 py-2 text-center">
           <span className={clsx('inline-block text-xs font-medium px-2 py-0.5 rounded', badgeStyle)}>
             {badgeLabel}
           </span>
         </td>
-        <td className="border border-gray-200 px-3 py-2 text-center">
+        <td className="border border-border px-3 py-2 text-center">
           {activityCount > 0 ? (
-            <span className="text-blue-700 font-medium">{activityCount}</span>
+            <span className="text-primary font-medium">{activityCount}</span>
           ) : (
-            <span className="text-gray-400">0</span>
+            <span className="text-muted-foreground">0</span>
           )}
         </td>
       </tr>
       {activityCount > 0 && (
         <tr>
-          <td colSpan={4} className="border border-gray-200 px-3 py-1 bg-gray-50">
+          <td colSpan={4} className="border border-border px-3 py-1 bg-muted">
             <div className="flex flex-wrap gap-2 py-1">
               {activities.map((a) => (
                 <span
                   key={a.id}
-                  className="text-xs bg-white border border-gray-200 rounded px-2 py-1 text-gray-600"
+                  className="text-xs bg-card border border-border rounded px-2 py-1 text-muted-foreground"
                 >
                   {a.name || '(unnamed)'}
                 </span>

@@ -15,37 +15,37 @@ export default function FilterBar() {
   const hasFilters = filters.dateFrom || filters.dateTo || filters.leadId !== null
 
   return (
-    <div className="flex flex-col sm:flex-row sm:flex-wrap sm:items-center gap-2 sm:gap-3 mb-4 p-3 bg-gray-50 border border-gray-200 rounded-lg">
-      <label className="flex items-center gap-1.5 text-sm text-gray-700">
+    <div className="flex flex-col sm:flex-row sm:flex-wrap sm:items-center gap-2 sm:gap-3 mb-4 p-3 bg-muted border border-border rounded-lg">
+      <label className="flex items-center gap-1.5 text-sm text-foreground">
         From
         <input
           type="date"
           value={filters.dateFrom}
           max={filters.dateTo || undefined}
           onChange={(e) => setFilter('dateFrom', e.target.value)}
-          className="border border-gray-300 rounded px-2 py-1 text-sm focus:outline-none focus:ring-1 focus:ring-blue-400"
+          className="border border-border rounded px-2 py-1 text-sm focus:outline-none focus:ring-1 focus:ring-ring"
         />
       </label>
 
-      <label className="flex items-center gap-1.5 text-sm text-gray-700">
+      <label className="flex items-center gap-1.5 text-sm text-foreground">
         To
         <input
           type="date"
           value={filters.dateTo}
           min={filters.dateFrom || undefined}
           onChange={(e) => setFilter('dateTo', e.target.value)}
-          className="border border-gray-300 rounded px-2 py-1 text-sm focus:outline-none focus:ring-1 focus:ring-blue-400"
+          className="border border-border rounded px-2 py-1 text-sm focus:outline-none focus:ring-1 focus:ring-ring"
         />
       </label>
 
-      <label className="flex items-center gap-1.5 text-sm text-gray-700">
+      <label className="flex items-center gap-1.5 text-sm text-foreground">
         Lead
         <select
           value={filters.leadId ?? ''}
           onChange={(e) =>
             setFilter('leadId', e.target.value ? Number(e.target.value) : null)
           }
-          className="border border-gray-300 rounded px-2 py-1 text-sm focus:outline-none focus:ring-1 focus:ring-blue-400"
+          className="border border-border rounded px-2 py-1 text-sm focus:outline-none focus:ring-1 focus:ring-ring"
         >
           <option value="">All</option>
           {users?.map((u) => (
@@ -61,7 +61,7 @@ export default function FilterBar() {
       {hasFilters && (
         <button
           onClick={clearFilters}
-          className="text-sm text-gray-500 hover:text-gray-700 underline"
+          className="text-sm text-muted-foreground hover:text-foreground underline"
         >
           Clear filters
         </button>

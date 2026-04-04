@@ -49,23 +49,23 @@ export default function ConfirmDialog({
       />
 
       {/* Dialog */}
-      <div className="relative bg-white rounded-lg shadow-xl w-full max-w-sm mx-4 p-6">
-        <h3 className="text-lg font-semibold text-gray-900 mb-2">{title}</h3>
-        <p className="text-sm text-gray-600 mb-6">{description}</p>
+      <div className="relative bg-card rounded-lg shadow-xl w-full max-w-sm mx-4 p-6">
+        <h3 className="text-lg font-semibold text-foreground mb-2">{title}</h3>
+        <p className="text-sm text-muted-foreground mb-6">{description}</p>
         <div className="flex justify-end gap-2">
           <button
             onClick={onCancel}
-            className="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50"
+            className="px-4 py-2 text-sm font-medium text-foreground bg-card border border-border rounded-md hover:bg-muted"
           >
             {cancelText}
           </button>
           <button
             ref={confirmRef}
             onClick={() => { onConfirm(); onCancel() }}
-            className={`px-4 py-2 text-sm font-medium text-white rounded-md ${
+            className={`px-4 py-2 text-sm font-medium text-background rounded-md ${
               destructive
-                ? 'bg-red-600 hover:bg-red-700'
-                : 'bg-blue-600 hover:bg-blue-700'
+                ? 'bg-destructive hover:bg-destructive/80'
+                : 'bg-primary hover:bg-primary/80'
             }`}
           >
             {confirmText}

@@ -2,9 +2,9 @@ import { useToastStore } from '../../store/toast'
 import clsx from 'clsx'
 
 const STYLES = {
-  success: 'bg-green-600 text-white',
-  error: 'bg-red-600 text-white',
-  info: 'bg-blue-600 text-white',
+  success: 'bg-ok text-background',
+  error: 'bg-destructive text-background',
+  info: 'bg-primary text-background',
 }
 
 export default function ToastContainer() {
@@ -26,7 +26,7 @@ export default function ToastContainer() {
           <span className="flex-1">{toast.message}</span>
           <button
             onClick={() => removeToast(toast.id)}
-            className="text-white/70 hover:text-white flex-shrink-0"
+            className="text-background/70 hover:text-background flex-shrink-0"
           >
             &times;
           </button>

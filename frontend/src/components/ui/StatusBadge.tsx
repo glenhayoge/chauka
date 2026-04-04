@@ -3,9 +3,9 @@ import clsx from 'clsx'
 type Status = 'OK' | 'WARNING' | 'DANGER'
 
 const STYLES: Record<Status, string> = {
-  OK: 'bg-green-100 text-green-800',
-  WARNING: 'bg-yellow-100 text-yellow-800',
-  DANGER: 'bg-red-100 text-red-800',
+  OK: 'bg-ok/10 text-ok',
+  WARNING: 'bg-warning/10 text-warning',
+  DANGER: 'bg-destructive/10 text-destructive',
 }
 
 export default function StatusBadge({ status }: { status: Status }) {

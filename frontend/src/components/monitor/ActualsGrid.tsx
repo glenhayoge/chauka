@@ -127,30 +127,30 @@ export default function ActualsGrid({
 
   return (
     <div className="mb-6">
-      <h4 className="text-sm font-medium text-gray-600 mb-2">
+      <h4 className="text-sm font-medium text-muted-foreground mb-2">
         {indicator.name || '(unnamed indicator)'}
       </h4>
       <div className="overflow-x-auto">
         <table className="text-sm border-collapse w-full">
           <thead>
-            <tr className="bg-gray-50">
-              <th className="border border-gray-200 px-3 py-2 text-left font-medium text-gray-600 min-w-[140px]">
+            <tr className="bg-muted">
+              <th className="border border-border px-3 py-2 text-left font-medium text-muted-foreground min-w-[140px]">
                 Sub-indicator
               </th>
               {baselinePeriod && (
-                <th className="border border-gray-200 px-3 py-2 text-center font-medium text-gray-500 bg-blue-50 min-w-[80px]">
+                <th className="border border-border px-3 py-2 text-center font-medium text-muted-foreground bg-accent min-w-[80px]">
                   <div className="text-xs">Baseline</div>
-                  <div className="text-[10px] text-gray-400">{displayDate(baselinePeriod.start_month, baselinePeriod.start_year)}</div>
+                  <div className="text-[10px] text-muted-foreground">{displayDate(baselinePeriod.start_month, baselinePeriod.start_year)}</div>
                 </th>
               )}
               {nextPeriod && nextPeriod !== baselinePeriod && (
-                <th className="border border-gray-200 px-3 py-2 text-center font-medium text-gray-500 bg-green-50 min-w-[80px]">
+                <th className="border border-border px-3 py-2 text-center font-medium text-muted-foreground bg-ok/10 min-w-[80px]">
                   <div className="text-xs">Next Target</div>
-                  <div className="text-[10px] text-gray-400">{displayDate(nextPeriod.start_month, nextPeriod.start_year)}</div>
+                  <div className="text-[10px] text-muted-foreground">{displayDate(nextPeriod.start_month, nextPeriod.start_year)}</div>
                 </th>
               )}
               {recentColumns.map((col) => (
-                <th key={col.id} className="border border-gray-200 px-3 py-2 text-center min-w-[100px]">
+                <th key={col.id} className="border border-border px-3 py-2 text-center min-w-[100px]">
                   <div className="flex items-center justify-center gap-1">
                     <EditableText
                       value={col.name}
@@ -162,7 +162,7 @@ export default function ActualsGrid({
                     {canEdit && (
                       <button
                         onClick={() => setDeleteColumnId(col.id)}
-                        className="text-gray-300 hover:text-red-500 text-xs flex-shrink-0"
+                        className="text-muted-foreground hover:text-destructive text-xs flex-shrink-0"
                         title="Delete column"
                       >
                         &times;
@@ -171,11 +171,11 @@ export default function ActualsGrid({
                   </div>
                 </th>
               ))}
-              <th className="border border-gray-200 px-3 py-2 text-center font-medium text-gray-600 min-w-[80px]">
+              <th className="border border-border px-3 py-2 text-center font-medium text-muted-foreground min-w-[80px]">
                 Rating
               </th>
               {canEdit && (
-                <th className="border border-gray-200 px-1 py-2 bg-gray-50 w-8" />
+                <th className="border border-border px-1 py-2 bg-muted w-8" />
               )}
             </tr>
           </thead>
@@ -271,22 +271,22 @@ function SubIndicatorRow({
 }: SubIndicatorRowProps) {
   return (
     <>
-      <tr className="hover:bg-gray-50">
-        <td className="border border-gray-200 px-3 py-2 text-gray-700 font-medium">
+      <tr className="hover:bg-muted">
+        <td className="border border-border px-3 py-2 text-foreground font-medium">
           {sub.name || '(unnamed)'}
         </td>
 
         {/* Baseline column (read-only) */}
         {hasBaseline && (
-          <td className="border border-gray-200 px-3 py-2 text-center bg-blue-50 text-gray-600">
-            {baselineTarget?.value ?? <span className="text-gray-300">&mdash;</span>}
+          <td className="border border-border px-3 py-2 text-center bg-accent text-muted-foreground">
+            {baselineTarget?.value ?? <span className="text-muted-foreground">&mdash;</span>}
           </td>
         )}
 
         {/* Next target column (read-only) */}
         {hasNextTarget && (
-          <td className="border border-gray-200 px-3 py-2 text-center bg-green-50 text-gray-600">
-            {nextTarget?.value ?? <span className="text-gray-300">&mdash;</span>}
+          <td className="border border-border px-3 py-2 text-center bg-ok/10 text-muted-foreground">
+            {nextTarget?.value ?? <span className="text-muted-foreground">&mdash;</span>}
           </td>
         )}
 
@@ -298,7 +298,7 @@ function SubIndicatorRow({
           const cellKey = `${sub.id}-${col.id}`
           const isExpanded = expandedCells.has(cellKey)
           return (
-            <td key={col.id} className="border border-gray-200 px-3 py-2 text-center">
+            <td key={col.id} className="border border-border px-3 py-2 text-center">
               <div className="flex items-center justify-center gap-1">
                 <EditableText
                   value={entry?.data ?? ''}
@@ -308,7 +308,7 @@ function SubIndicatorRow({
                 />
                 <button
                   onClick={() => toggleEvidence(cellKey)}
-                  className={`text-[10px] flex-shrink-0 ${isExpanded ? 'text-blue-600' : 'text-gray-400 hover:text-gray-600'}`}
+                  className={`text-[10px] flex-shrink-0 ${isExpanded ? 'text-primary' : 'text-muted-foreground hover:text-foreground'}`}
                   title="Toggle evidence"
                 >
                   {isExpanded ? '▼' : '▶'}
@@ -319,7 +319,7 @@ function SubIndicatorRow({
         })}
 
         {/* Rating column */}
-        <td className="border border-gray-200 px-3 py-2 text-center">
+        <td className="border border-border px-3 py-2 text-center">
           {canEdit ? (
             <StatusPicker
               current={latestRp?.status ?? null}
@@ -327,11 +327,11 @@ function SubIndicatorRow({
               onSave={onSaveStatus}
             />
           ) : (
-            latestRp ? <StatusBadge status={latestRp.status} /> : <span className="text-gray-300">&mdash;</span>
+            latestRp ? <StatusBadge status={latestRp.status} /> : <span className="text-muted-foreground">&mdash;</span>
           )}
         </td>
 
-        {canEdit && <td className="border border-gray-200" />}
+        {canEdit && <td className="border border-border" />}
       </tr>
 
       {/* Evidence expansion rows */}
@@ -371,15 +371,15 @@ function StatusPicker({ current, options, onSave }: StatusPickerProps) {
         onClick={() => setOpen(!open)}
         className="cursor-pointer"
       >
-        {current ? <StatusBadge status={current} /> : <span className="text-gray-400 text-xs">Set rating</span>}
+        {current ? <StatusBadge status={current} /> : <span className="text-muted-foreground text-xs">Set rating</span>}
       </button>
       {open && (
-        <div className="absolute right-0 top-6 z-10 bg-white border border-gray-200 rounded shadow-lg py-1 min-w-[100px]">
+        <div className="absolute right-0 top-6 z-10 bg-card border border-border rounded shadow-lg py-1 min-w-[100px]">
           {options.map((opt) => (
             <button
               key={opt}
               onClick={() => { onSave(opt); setOpen(false) }}
-              className="flex items-center gap-2 w-full px-3 py-1 text-sm hover:bg-gray-50"
+              className="flex items-center gap-2 w-full px-3 py-1 text-sm hover:bg-muted"
             >
               <StatusBadge status={opt} />
             </button>
@@ -399,9 +399,9 @@ function EvidenceRow({ colSpan, canEdit }: EvidenceRowProps) {
   const [evidence, setEvidence] = useState('')
 
   return (
-    <tr className="bg-yellow-50">
-      <td colSpan={colSpan} className="border border-gray-200 px-3 py-2">
-        <div className="text-xs text-gray-500 mb-1">Evidence / Notes</div>
+    <tr className="bg-warning/10">
+      <td colSpan={colSpan} className="border border-border px-3 py-2">
+        <div className="text-xs text-muted-foreground mb-1">Evidence / Notes</div>
         <RichTextEditor
           value={evidence}
           onSave={setEvidence}

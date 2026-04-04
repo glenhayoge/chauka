@@ -7,7 +7,7 @@ export default function DeleteButton({ onClick, label = 'Delete' }: Props) {
   return (
     <button
       onClick={onClick}
-      className="text-sm text-red-500 hover:text-red-700"
+      className="text-sm text-destructive hover:text-destructive/80"
       title={label}
     >
       ×

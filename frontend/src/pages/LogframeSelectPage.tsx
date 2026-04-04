@@ -8,8 +8,8 @@ export default function LogframeSelectPage() {
     queryFn: getLogframes,
   })
 
-  if (isLoading) return <p className="text-gray-500">Loading…</p>
-  if (error) return <p className="text-red-600">Failed to load logframes.</p>
+  if (isLoading) return <p className="text-muted-foreground">Loading…</p>
+  if (error) return <p className="text-destructive">Failed to load logframes.</p>
 
   // Auto-redirect if single logframe
   if (logframes?.length === 1) {
@@ -24,7 +24,7 @@ export default function LogframeSelectPage() {
           <Link
             key={lf.id}
             to={`/app/logframes/${lf.id}`}
-            className="block border rounded-lg p-4 hover:border-blue-500 hover:shadow-sm transition-shadow"
+            className="block border rounded-lg p-4 hover:border-ring hover:shadow-sm transition-shadow"
           >
             <span className="font-medium">{lf.name}</span>
           </Link>

@@ -8,9 +8,9 @@ export default function TermsPage() {
       <div className="flex-1 px-4 py-12">
         <div className="max-w-4xl mx-auto">
           <p className="text-xl font-bold text-foreground mb-1">Terms and conditions</p>
-          <p className="text-xs text-gray-400 mb-8">Last updated March 2026</p>
+          <p className="text-xs text-muted-foreground mb-8">Last updated March 2026</p>
 
-          <div className="space-y-6 text-sm text-gray-600 leading-relaxed">
+          <div className="space-y-6 text-sm text-muted-foreground leading-relaxed">
             <Section title="1. Acceptance of terms">
               By accessing and using Chauka, you agree to be bound by these terms.
               If you do not agree, do not use the platform.
@@ -30,7 +30,7 @@ export default function TermsPage() {
 
             <Section title="4. Acceptable use">
               <p className="mb-2">You agree not to:</p>
-              <ul className="list-disc pl-5 space-y-1 text-gray-500">
+              <ul className="list-disc pl-5 space-y-1 text-muted-foreground">
                 <li>Use the service for any unlawful purpose</li>
                 <li>Attempt to gain unauthorized access to other users' data</li>
                 <li>Upload malicious content or interfere with the platform</li>
@@ -70,8 +70,8 @@ export default function TermsPage() {
 function Section({ title, children }: { title: string; children: React.ReactNode }) {
   return (
     <div>
-      <p className="text-sm text-gray-900 mb-1">{title}</p>
-      <div className="text-sm text-gray-600">{children}</div>
+      <p className="text-sm text-foreground mb-1">{title}</p>
+      <div className="text-sm text-muted-foreground">{children}</div>
     </div>
   )
 }

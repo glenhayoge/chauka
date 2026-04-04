@@ -57,7 +57,7 @@ export default function IndicatorEditor({ indicator, logframeId, periods, target
   }
 
   return (
-    <div className="border rounded p-3 mb-3 bg-white">
+    <div className="border rounded p-3 mb-3 bg-card">
       <div className="flex items-start gap-2">
         <div className="flex-1">
           <EditableText
@@ -71,8 +71,8 @@ export default function IndicatorEditor({ indicator, logframeId, periods, target
         {canEdit && <DeleteButton onClick={() => setDeleteIndicatorOpen(true)} label="Delete indicator" />}
       </div>
 
-      <div className="mt-1 text-sm text-gray-600">
-        <span className="text-gray-500 mr-1">Source:</span>
+      <div className="mt-1 text-sm text-muted-foreground">
+        <span className="text-muted-foreground mr-1">Source:</span>
         <EditableText
           value={indicator.source_of_verification}
           onSave={(v) => saveField('source_of_verification', v)}
@@ -92,10 +92,10 @@ export default function IndicatorEditor({ indicator, logframeId, periods, target
 
       {/* Sub-indicators */}
       <div className="mt-2 ml-2">
-        <p className="text-xs font-medium text-gray-500 uppercase tracking-wide mb-1">Sub-indicators</p>
+        <p className="text-xs font-medium text-muted-foreground uppercase tracking-wide mb-1">Sub-indicators</p>
         {subindicators.map((sub) => (
           <div key={sub.id} className="flex items-center gap-2 text-sm py-0.5">
-            <span className="text-gray-400">{'\u2192'}</span>
+            <span className="text-muted-foreground">{'\u2192'}</span>
             <EditableText
               value={sub.name}
               onSave={(v) => saveSubindicator(sub.id, v)}
@@ -111,7 +111,7 @@ export default function IndicatorEditor({ indicator, logframeId, periods, target
       {/* Targets table */}
       {subindicators.length > 0 && periods.length > 0 && (
         <div className="mt-3">
-          <p className="text-xs font-medium text-gray-500 uppercase tracking-wide mb-1">Targets</p>
+          <p className="text-xs font-medium text-muted-foreground uppercase tracking-wide mb-1">Targets</p>
           <TargetsTable
             subindicators={subindicators}
             periods={periods}

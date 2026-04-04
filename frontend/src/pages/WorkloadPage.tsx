@@ -61,8 +61,8 @@ export default function WorkloadPage() {
     return [...new Set(allocations.map((a) => a.person))].sort()
   }, [allocations])
 
-  if (isLoading) return <p className="text-gray-500">Loading...</p>
-  if (error) return <p className="text-red-600">Failed to load data.</p>
+  if (isLoading) return <p className="text-muted-foreground">Loading...</p>
+  if (error) return <p className="text-destructive">Failed to load data.</p>
   if (!data) return null
 
   return (
@@ -70,14 +70,14 @@ export default function WorkloadPage() {
       <TabNav />
       <div className="flex items-center justify-between mb-4">
         <h2 className="text-lg font-semibold">Workload Planning</h2>
-        <div className="flex gap-1 bg-gray-100 rounded p-0.5">
+        <div className="flex gap-1 bg-muted rounded p-0.5">
           {([['table', 'Staff Table'], ['timeline', 'Timeline'], ['roles', 'By Role']] as const).map(([key, label]) => (
             <button
               key={key}
               onClick={() => setView(key)}
               className={clsx(
                 'px-3 py-1 text-xs rounded font-medium',
-                view === key ? 'bg-white text-blue-700' : 'text-gray-600 hover:text-gray-800',
+                view === key ? 'bg-card text-primary' : 'text-muted-foreground hover:text-foreground',
               )}
             >
               {label}
@@ -88,8 +88,8 @@ export default function WorkloadPage() {
 
       {allocations.length === 0 ? (
         <div className="text-center py-12">
-          <p className="text-gray-500 text-sm mb-2">No human resources assigned to activities with dates.</p>
-          <p className="text-gray-400 text-xs">Assign staff in Activity &rarr; Resources, and set activity start/end dates.</p>
+          <p className="text-muted-foreground text-sm mb-2">No human resources assigned to activities with dates.</p>
+          <p className="text-muted-foreground text-xs">Assign staff in Activity &rarr; Resources, and set activity start/end dates.</p>
         </div>
       ) : (
         <>
@@ -117,12 +117,12 @@ function StaffTable({ staffList, allocations, months }: {
     <div className="overflow-x-auto">
       <table className="text-xs border-collapse w-full">
         <thead>
-          <tr className="bg-gray-50">
-            <th className="border border-gray-200 px-3 py-2 text-left font-medium text-gray-600 min-w-[140px] sticky left-0 bg-gray-50 z-10">
+          <tr className="bg-muted">
+            <th className="border border-border px-3 py-2 text-left font-medium text-muted-foreground min-w-[140px] sticky left-0 bg-muted z-10">
               Staff
             </th>
             {months.map((m) => (
-              <th key={m.label} className="border border-gray-200 px-2 py-2 text-center font-medium text-gray-500 min-w-[70px]">
+              <th key={m.label} className="border border-border px-2 py-2 text-center font-medium text-muted-foreground min-w-[70px]">
                 <div className="text-[10px]">{m.label}</div>
               </th>
             ))}
@@ -132,10 +132,10 @@ function StaffTable({ staffList, allocations, months }: {
           {staffList.map((person) => {
             const personAllocs = allocations.filter((a) => a.person === person)
             return (
-              <tr key={person} className="hover:bg-gray-50">
-                <td className="border border-gray-200 px-3 py-2 font-medium text-gray-700 sticky left-0 bg-white z-10">
+              <tr key={person} className="hover:bg-muted">
+                <td className="border border-border px-3 py-2 font-medium text-foreground sticky left-0 bg-card z-10">
                   {person}
-                  <div className="text-[10px] text-gray-400 font-normal">
+                  <div className="text-[10px] text-muted-foreground font-normal">
                     {personAllocs[0]?.role}
                   </div>
                 </td>
@@ -152,11 +152,11 @@ function StaffTable({ staffList, allocations, months }: {
                     <td
                       key={m.label}
                       className={clsx(
-                        'border border-gray-200 px-2 py-2 text-center',
-                        totalPct === 0 && 'text-gray-300',
-                        totalPct > 0 && totalPct <= 50 && 'bg-blue-50 text-blue-700',
-                        totalPct > 50 && totalPct <= 100 && 'bg-blue-100 text-blue-800',
-                        overAllocated && 'bg-red-100 text-red-700 font-bold',
+                        'border border-border px-2 py-2 text-center',
+                        totalPct === 0 && 'text-muted-foreground',
+                        totalPct > 0 && totalPct <= 50 && 'bg-accent text-primary',
+                        totalPct > 50 && totalPct <= 100 && 'bg-accent text-primary',
+                        overAllocated && 'bg-destructive/10 text-destructive font-bold',
                       )}
                       title={overAllocated ? `Over-allocated: ${totalPct}%` : `${totalPct}% allocated`}
                     >
@@ -170,10 +170,10 @@ function StaffTable({ staffList, allocations, months }: {
           })}
         </tbody>
       </table>
-      <div className="flex gap-4 mt-3 text-[10px] text-gray-500">
-        <span className="flex items-center gap-1"><span className="w-3 h-3 rounded bg-blue-50 border" /> 1-50%</span>
-        <span className="flex items-center gap-1"><span className="w-3 h-3 rounded bg-blue-100 border" /> 51-100%</span>
-        <span className="flex items-center gap-1"><span className="w-3 h-3 rounded bg-red-100 border" /> Over 100%</span>
+      <div className="flex gap-4 mt-3 text-[10px] text-muted-foreground">
+        <span className="flex items-center gap-1"><span className="w-3 h-3 rounded bg-accent border" /> 1-50%</span>
+        <span className="flex items-center gap-1"><span className="w-3 h-3 rounded bg-accent border" /> 51-100%</span>
+        <span className="flex items-center gap-1"><span className="w-3 h-3 rounded bg-destructive/10 border" /> Over 100%</span>
       </div>
     </div>
   )
@@ -191,9 +191,9 @@ function TimelineView({ allocations, months }: {
   }
 
   const COLORS = [
-    'bg-blue-200 text-blue-800',
-    'bg-green-200 text-green-800',
-    'bg-amber-200 text-amber-800',
+    'bg-primary/20 text-foreground',
+    'bg-ok/20 text-foreground',
+    'bg-warning/20 text-foreground',
     'bg-purple-200 text-purple-800',
     'bg-pink-200 text-pink-800',
     'bg-cyan-200 text-cyan-800',
@@ -203,10 +203,10 @@ function TimelineView({ allocations, months }: {
     <div className="overflow-x-auto">
       <div className="min-w-[600px]">
         {/* Month headers */}
-        <div className="flex border-b border-gray-200">
-          <div className="w-36 flex-shrink-0 px-2 py-1 text-xs font-medium text-gray-600">Staff</div>
+        <div className="flex border-b border-border">
+          <div className="w-36 flex-shrink-0 px-2 py-1 text-xs font-medium text-muted-foreground">Staff</div>
           {months.map((m) => (
-            <div key={m.label} className="flex-1 min-w-[60px] px-1 py-1 text-[10px] text-center text-gray-500 border-l border-gray-100">
+            <div key={m.label} className="flex-1 min-w-[60px] px-1 py-1 text-[10px] text-center text-muted-foreground border-l border-border">
               {m.label}
             </div>
           ))}
@@ -214,8 +214,8 @@ function TimelineView({ allocations, months }: {
 
         {/* Person rows */}
         {Array.from(byPerson.entries()).map(([person, allocs], personIdx) => (
-          <div key={person} className="flex border-b border-gray-100">
-            <div className="w-36 flex-shrink-0 px-2 py-2 text-xs font-medium text-gray-700">
+          <div key={person} className="flex border-b border-border">
+            <div className="w-36 flex-shrink-0 px-2 py-2 text-xs font-medium text-foreground">
               {person}
             </div>
             <div className="flex-1 relative" style={{ minHeight: `${Math.max(allocs.length, 1) * 24 + 8}px` }}>
@@ -264,10 +264,10 @@ function RoleDemandSummary({ allocations, months }: {
         const totalDays = roleAllocs.reduce((s, a) => s + a.days, 0)
 
         return (
-          <div key={role} className="bg-white border rounded-lg p-4">
+          <div key={role} className="bg-card border rounded-lg p-4">
             <div className="flex items-center justify-between mb-2">
-              <h3 className="text-sm font-semibold text-gray-700">{role}</h3>
-              <div className="flex gap-4 text-xs text-gray-500">
+              <h3 className="text-sm font-semibold text-foreground">{role}</h3>
+              <div className="flex gap-4 text-xs text-muted-foreground">
                 <span>{people.length} staff</span>
                 <span>{totalDays} total days</span>
               </div>
@@ -277,11 +277,11 @@ function RoleDemandSummary({ allocations, months }: {
             <div className="overflow-x-auto">
               <table className="text-xs border-collapse w-full">
                 <thead>
-                  <tr className="bg-gray-50">
-                    <th className="border border-gray-200 px-2 py-1 text-left font-medium text-gray-600 min-w-[100px]">Month</th>
-                    <th className="border border-gray-200 px-2 py-1 text-center font-medium text-gray-600">People needed</th>
-                    <th className="border border-gray-200 px-2 py-1 text-center font-medium text-gray-600">Total %</th>
-                    <th className="border border-gray-200 px-2 py-1 text-left font-medium text-gray-600">Activities</th>
+                  <tr className="bg-muted">
+                    <th className="border border-border px-2 py-1 text-left font-medium text-muted-foreground min-w-[100px]">Month</th>
+                    <th className="border border-border px-2 py-1 text-center font-medium text-muted-foreground">People needed</th>
+                    <th className="border border-border px-2 py-1 text-center font-medium text-muted-foreground">Total %</th>
+                    <th className="border border-border px-2 py-1 text-left font-medium text-muted-foreground">Activities</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -294,16 +294,16 @@ function RoleDemandSummary({ allocations, months }: {
                     const activePeople = [...new Set(active.map((a) => a.person))]
                     return (
                       <tr key={m.label}>
-                        <td className="border border-gray-200 px-2 py-1 text-gray-600">{m.label}</td>
-                        <td className="border border-gray-200 px-2 py-1 text-center">{activePeople.length}</td>
+                        <td className="border border-border px-2 py-1 text-muted-foreground">{m.label}</td>
+                        <td className="border border-border px-2 py-1 text-center">{activePeople.length}</td>
                         <td className={clsx(
-                          'border border-gray-200 px-2 py-1 text-center font-medium',
-                          totalPct > 100 ? 'text-red-600' : 'text-gray-700',
+                          'border border-border px-2 py-1 text-center font-medium',
+                          totalPct > 100 ? 'text-destructive' : 'text-foreground',
                         )}>
                           {totalPct}%
-                          {totalPct > 100 && <span className="text-[9px] ml-1 text-red-500">OVER</span>}
+                          {totalPct > 100 && <span className="text-[9px] ml-1 text-destructive">OVER</span>}
                         </td>
-                        <td className="border border-gray-200 px-2 py-1 text-gray-500">
+                        <td className="border border-border px-2 py-1 text-muted-foreground">
                           {active.map((a) => a.activityName).join(', ')}
                         </td>
                       </tr>
@@ -316,7 +316,7 @@ function RoleDemandSummary({ allocations, months }: {
             {/* Staff list */}
             <div className="mt-2 flex flex-wrap gap-1">
               {people.map((p) => (
-                <span key={p} className="text-[10px] bg-gray-100 text-gray-600 px-2 py-0.5 rounded">{p}</span>
+                <span key={p} className="text-[10px] bg-muted text-muted-foreground px-2 py-0.5 rounded">{p}</span>
               ))}
             </div>
           </div>
@@ -324,7 +324,7 @@ function RoleDemandSummary({ allocations, months }: {
       })}
 
       {roles.length === 0 && (
-        <p className="text-gray-400 text-sm italic">No role data available.</p>
+        <p className="text-muted-foreground text-sm italic">No role data available.</p>
       )}
     </div>
   )

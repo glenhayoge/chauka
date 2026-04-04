@@ -13,8 +13,8 @@ export default function MonitorPage() {
   const [searchParams] = useSearchParams()
   const filterResultId = searchParams.get('result')
 
-  if (isLoading) return <p className="text-gray-500">Loading…</p>
-  if (error) return <p className="text-red-600">Failed to load data.</p>
+  if (isLoading) return <p className="text-muted-foreground">Loading…</p>
+  if (error) return <p className="text-destructive">Failed to load data.</p>
   if (!data) return null
 
   const results = filterResultId
@@ -29,7 +29,7 @@ export default function MonitorPage() {
         {filterResultId && (
           <Link
             to={`/app/logframes/${id}/monitor`}
-            className="text-sm text-blue-600 hover:text-blue-800"
+            className="text-sm text-primary hover:text-primary/80"
           >
             &larr; Show all results
           </Link>
@@ -45,11 +45,11 @@ export default function MonitorPage() {
           <div key={result.id} className="mb-8">
             <div className="flex items-center gap-2 mb-3">
               {levelLabel && (
-                <span className="text-xs bg-gray-100 text-gray-600 rounded px-2 py-0.5 font-medium">
+                <span className="text-xs bg-muted text-muted-foreground rounded px-2 py-0.5 font-medium">
                   {levelLabel}
                 </span>
               )}
-              <h3 className="font-medium text-gray-700">
+              <h3 className="font-medium text-foreground">
                 {result.name || '(unnamed result)'}
               </h3>
             </div>

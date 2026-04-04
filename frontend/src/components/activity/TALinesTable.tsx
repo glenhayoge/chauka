@@ -68,7 +68,7 @@ export default function TALinesTable({ taLines, activityId, logframeId, currency
   }
 
   if (taLines.length === 0 && !canEdit) {
-    return <p className="text-xs text-gray-400 italic">No TA lines</p>
+    return <p className="text-xs text-muted-foreground italic">No TA lines</p>
   }
 
   return (
@@ -77,21 +77,21 @@ export default function TALinesTable({ taLines, activityId, logframeId, currency
         <div className="overflow-x-auto">
           <table className="text-xs border-collapse w-full">
             <thead>
-              <tr className="bg-gray-50">
-                <th className="border border-gray-200 px-2 py-1 text-left font-medium text-gray-600">Type</th>
-                <th className="border border-gray-200 px-2 py-1 text-left font-medium text-gray-600">Name</th>
-                <th className="border border-gray-200 px-2 py-1 text-center font-medium text-gray-600">Band</th>
-                <th className="border border-gray-200 px-2 py-1 text-center font-medium text-gray-600">Start</th>
-                <th className="border border-gray-200 px-2 py-1 text-center font-medium text-gray-600">End</th>
-                <th className="border border-gray-200 px-2 py-1 text-right font-medium text-gray-600">Days</th>
-                <th className="border border-gray-200 px-2 py-1 text-right font-medium text-gray-600">Amount</th>
-                {canEdit && <th className="border border-gray-200 px-1 py-1 w-6" />}
+              <tr className="bg-muted">
+                <th className="border border-border px-2 py-1 text-left font-medium text-muted-foreground">Type</th>
+                <th className="border border-border px-2 py-1 text-left font-medium text-muted-foreground">Name</th>
+                <th className="border border-border px-2 py-1 text-center font-medium text-muted-foreground">Band</th>
+                <th className="border border-border px-2 py-1 text-center font-medium text-muted-foreground">Start</th>
+                <th className="border border-border px-2 py-1 text-center font-medium text-muted-foreground">End</th>
+                <th className="border border-border px-2 py-1 text-right font-medium text-muted-foreground">Days</th>
+                <th className="border border-border px-2 py-1 text-right font-medium text-muted-foreground">Amount</th>
+                {canEdit && <th className="border border-border px-1 py-1 w-6" />}
               </tr>
             </thead>
             <tbody>
               {taLines.map((line) => (
-                <tr key={line.id} className="hover:bg-gray-50">
-                  <td className="border border-gray-200 px-2 py-1">
+                <tr key={line.id} className="hover:bg-muted">
+                  <td className="border border-border px-2 py-1">
                     <EditableSelect
                       value={line.type || null}
                       options={TA_TYPE_OPTIONS}
@@ -100,7 +100,7 @@ export default function TALinesTable({ taLines, activityId, logframeId, currency
                       disabled={!canEdit}
                     />
                   </td>
-                  <td className="border border-gray-200 px-2 py-1">
+                  <td className="border border-border px-2 py-1">
                     <EditableText
                       value={line.name}
                       onSave={(v) => saveField(line.id, 'name', v)}
@@ -108,7 +108,7 @@ export default function TALinesTable({ taLines, activityId, logframeId, currency
                       disabled={!canEdit}
                     />
                   </td>
-                  <td className="border border-gray-200 px-2 py-1 text-center">
+                  <td className="border border-border px-2 py-1 text-center">
                     <EditableSelect
                       value={line.band || null}
                       options={BAND_OPTIONS}
@@ -117,7 +117,7 @@ export default function TALinesTable({ taLines, activityId, logframeId, currency
                       disabled={!canEdit}
                     />
                   </td>
-                  <td className="border border-gray-200 px-2 py-1 text-center">
+                  <td className="border border-border px-2 py-1 text-center">
                     <EditableDate
                       value={line.start_date}
                       onSave={(v) => saveField(line.id, 'start_date', v)}
@@ -125,7 +125,7 @@ export default function TALinesTable({ taLines, activityId, logframeId, currency
                       disabled={!canEdit}
                     />
                   </td>
-                  <td className="border border-gray-200 px-2 py-1 text-center">
+                  <td className="border border-border px-2 py-1 text-center">
                     <EditableDate
                       value={line.end_date}
                       onSave={(v) => saveField(line.id, 'end_date', v)}
@@ -133,14 +133,14 @@ export default function TALinesTable({ taLines, activityId, logframeId, currency
                       disabled={!canEdit}
                     />
                   </td>
-                  <td className="border border-gray-200 px-2 py-1 text-right">
+                  <td className="border border-border px-2 py-1 text-right">
                     <EditableNumber
                       value={line.no_days}
                       onSave={(v) => saveField(line.id, 'no_days', v ?? 0)}
                       disabled={!canEdit}
                     />
                   </td>
-                  <td className="border border-gray-200 px-2 py-1 text-right">
+                  <td className="border border-border px-2 py-1 text-right">
                     <EditableNumber
                       value={line.amount}
                       onSave={(v) => saveField(line.id, 'amount', v ?? 0)}
@@ -149,22 +149,22 @@ export default function TALinesTable({ taLines, activityId, logframeId, currency
                     />
                   </td>
                   {canEdit && (
-                    <td className="border border-gray-200 px-1 py-1 text-center">
+                    <td className="border border-border px-1 py-1 text-center">
                       <DeleteButton onClick={() => deleteLine(line.id)} label="Remove" />
                     </td>
                   )}
                 </tr>
               ))}
               {/* Totals row */}
-              <tr className="bg-gray-50 font-medium">
-                <td colSpan={5} className="border border-gray-200 px-2 py-1 text-right text-gray-600">
+              <tr className="bg-muted font-medium">
+                <td colSpan={5} className="border border-border px-2 py-1 text-right text-muted-foreground">
                   Totals
                 </td>
-                <td className="border border-gray-200 px-2 py-1 text-right">{totalDays}</td>
-                <td className="border border-gray-200 px-2 py-1 text-right">
+                <td className="border border-border px-2 py-1 text-right">{totalDays}</td>
+                <td className="border border-border px-2 py-1 text-right">
                   {currency} {totalAmount.toLocaleString()}
                 </td>
-                {canEdit && <td className="border border-gray-200" />}
+                {canEdit && <td className="border border-border" />}
               </tr>
             </tbody>
           </table>

@@ -99,7 +99,7 @@ export default function NotificationBell() {
       <button
         ref={buttonRef}
         onClick={() => setOpen(!open)}
-        className="relative p-1 text-blue-200 hover:text-white transition-colors"
+        className="relative p-1 text-foreground hover:text-foreground/80 transition-colors"
         aria-label={`Notifications${unreadCount > 0 ? ` (${unreadCount} unread)` : ''}`}
       >
         {/* Bell icon */}
@@ -119,7 +119,7 @@ export default function NotificationBell() {
 
         {/* Unread badge */}
         {unreadCount > 0 && (
-          <span className="absolute -top-1 -right-1 flex items-center justify-center min-w-[18px] h-[18px] px-1 text-[10px] font-bold text-white bg-red-500 rounded-full leading-none">
+          <span className="absolute -top-1 -right-1 flex items-center justify-center min-w-[18px] h-[18px] px-1 text-[10px] font-bold text-background bg-destructive rounded-full leading-none">
             {unreadCount > 99 ? '99+' : unreadCount}
           </span>
         )}
@@ -129,18 +129,18 @@ export default function NotificationBell() {
       {open && (
         <div
           ref={panelRef}
-          className="absolute right-0 mt-2 w-80 bg-white rounded-lg shadow-lg border border-gray-200 z-50 overflow-hidden"
+          className="absolute right-0 mt-2 w-80 bg-card rounded-lg shadow-lg border border-border z-50 overflow-hidden"
         >
           {/* Header */}
-          <div className="flex items-center justify-between px-4 py-3 border-b border-gray-100 bg-gray-50">
-            <h3 className="text-sm font-semibold text-gray-900">
+          <div className="flex items-center justify-between px-4 py-3 border-b border-border bg-muted">
+            <h3 className="text-sm font-semibold text-foreground">
               Notifications
             </h3>
             {unreadCount > 0 && (
               <button
                 onClick={handleMarkAllRead}
                 disabled={markAllReadMutation.isPending}
-                className="text-xs text-blue-600 hover:text-blue-800 font-medium disabled:opacity-50"
+                className="text-xs text-primary hover:text-primary/80 font-medium disabled:opacity-50"
               >
                 Mark all as read
               </button>
@@ -150,7 +150,7 @@ export default function NotificationBell() {
           {/* Notification list */}
           <div className="max-h-96 overflow-y-auto">
             {notifications.length === 0 ? (
-              <div className="px-4 py-8 text-center text-sm text-gray-500">
+              <div className="px-4 py-8 text-center text-sm text-muted-foreground">
                 No notifications
               </div>
             ) : (
@@ -158,24 +158,23 @@ export default function NotificationBell() {
                 <button
                   key={n.id}
                   onClick={() => handleNotificationClick(n)}
-                  className={`w-full text-left px-4 py-3 border-b border-gray-50 hover:bg-gray-50 transition-colors ${
-                    !n.read ? 'bg-blue-50/50' : ''
-                  }`}
+                  className={`w-full text-left px-4 py-3 border-b border-border hover:bg-muted transition-colors ${!n.read ? 'bg-accent/50' : ''
+                    }`}
                 >
                   <div className="flex items-start gap-2">
                     {!n.read && (
-                      <span className="mt-1.5 flex-shrink-0 w-2 h-2 bg-blue-500 rounded-full" />
+                      <span className="mt-1.5 flex-shrink-0 w-2 h-2 bg-primary rounded-full" />
                     )}
                     <div className={!n.read ? '' : 'ml-4'}>
-                      <p className="text-sm font-medium text-gray-900 leading-snug">
+                      <p className="text-sm font-medium text-foreground leading-snug">
                         {n.title}
                       </p>
                       {n.message && (
-                        <p className="text-xs text-gray-600 mt-0.5 line-clamp-2">
+                        <p className="text-xs text-muted-foreground mt-0.5 line-clamp-2">
                           {n.message}
                         </p>
                       )}
-                      <p className="text-xs text-gray-400 mt-1">
+                      <p className="text-xs text-muted-foreground mt-1">
                         {formatTime(n.created_at)}
                       </p>
                     </div>

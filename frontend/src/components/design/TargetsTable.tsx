@@ -24,11 +24,11 @@ export default function TargetsTable({ subindicators, periods, targets, logframe
       <table className="text-sm border-collapse w-full">
         <thead>
           <tr>
-            <th className="border border-gray-200 bg-gray-50 px-2 py-1 text-left font-medium text-gray-600 min-w-[140px]">
+            <th className="border border-border bg-muted px-2 py-1 text-left font-medium text-muted-foreground min-w-[140px]">
               Sub-indicator
             </th>
             {periods.map((p) => (
-              <th key={p.id} className="border border-gray-200 bg-gray-50 px-2 py-1 text-center font-medium text-gray-600 min-w-[80px]">
+              <th key={p.id} className="border border-border bg-muted px-2 py-1 text-center font-medium text-muted-foreground min-w-[80px]">
                 {formatPeriod(p)}
               </th>
             ))}
@@ -37,7 +37,7 @@ export default function TargetsTable({ subindicators, periods, targets, logframe
         <tbody>
           {subindicators.map((sub) => (
             <tr key={sub.id}>
-              <td className="border border-gray-200 px-2 py-1 text-gray-700">{sub.name || '(unnamed)'}</td>
+              <td className="border border-border px-2 py-1 text-foreground">{sub.name || '(unnamed)'}</td>
               {periods.map((period) => {
                 const target = targets.find(
                   (t) => t.subindicator_id === sub.id && t.milestone_id === period.id
@@ -103,7 +103,7 @@ function TargetCell({ target, subindicatorId, indicatorId, periodId, logframeId,
 
   if (editing) {
     return (
-      <td className="border border-gray-200 p-0">
+      <td className="border border-border p-0">
         <input
           autoFocus
           value={draft}
@@ -113,7 +113,7 @@ function TargetCell({ target, subindicatorId, indicatorId, periodId, logframeId,
             if (e.key === 'Enter') (e.target as HTMLInputElement).blur()
             if (e.key === 'Escape') { setDraft(target?.value ?? ''); setEditing(false) }
           }}
-          className="w-full px-2 py-1 text-center border-blue-400 outline-none bg-blue-50"
+          className="w-full px-2 py-1 text-center border-ring outline-none bg-accent"
         />
       </td>
     )
@@ -122,8 +122,8 @@ function TargetCell({ target, subindicatorId, indicatorId, periodId, logframeId,
   return (
     <td
       onClick={() => canEdit && setEditing(true)}
-      className={`border border-gray-200 px-2 py-1 text-center ${canEdit ? 'cursor-pointer hover:bg-yellow-50' : ''
-        } ${saving ? 'text-gray-400' : ''}`}
+      className={`border border-border px-2 py-1 text-center ${canEdit ? 'cursor-pointer hover:bg-warning/10' : ''
+        } ${saving ? 'text-muted-foreground' : ''}`}
     >
       {target?.value ?? ''}
     </td>

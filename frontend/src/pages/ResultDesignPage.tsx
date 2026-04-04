@@ -26,8 +26,8 @@ export default function ResultDesignPage() {
   const navigate = useNavigate()
   const [confirmDelete, setConfirmDelete] = useState(false)
 
-  if (isLoading) return <p className="text-gray-500">Loading…</p>
-  if (error) return <p className="text-red-600">Failed to load data.</p>
+  if (isLoading) return <p className="text-muted-foreground">Loading…</p>
+  if (error) return <p className="text-destructive">Failed to load data.</p>
   if (!data) return null
 
   const results = filterResultId
@@ -78,19 +78,19 @@ export default function ResultDesignPage() {
         <div className="flex items-center gap-3 mb-4">
           <Link
             to={`/app/logframes/${id}/design`}
-            className="text-sm text-blue-600 hover:text-blue-800"
+            className="text-sm text-primary hover:text-primary/80"
           >
             &larr; All results
           </Link>
-          <span className="text-xs bg-gray-100 text-gray-600 rounded px-2 py-0.5 font-medium">
+          <span className="text-xs bg-muted text-muted-foreground rounded px-2 py-0.5 font-medium">
             {code && <span className="mr-1">{code}</span>}{levelLabel}
           </span>
         </div>
 
         {/* Result fields */}
-        <div className="bg-white border rounded-lg p-4 mb-6">
+        <div className="bg-card border rounded-lg p-4 mb-6">
           <div className="mb-3">
-            <label className="text-xs font-medium text-gray-500 uppercase tracking-wide">Name</label>
+            <label className="text-xs font-medium text-muted-foreground uppercase tracking-wide">Name</label>
             <EditableText
               value={result.name}
               onSave={(v) => saveResultField('name', v)}
@@ -101,7 +101,7 @@ export default function ResultDesignPage() {
           </div>
 
           <div className="mb-3">
-            <label className="text-xs font-medium text-gray-500 uppercase tracking-wide">Description</label>
+            <label className="text-xs font-medium text-muted-foreground uppercase tracking-wide">Description</label>
             <div className="mt-1">
               <RichTextEditor
                 value={result.description}
@@ -114,7 +114,7 @@ export default function ResultDesignPage() {
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             {riskRatingOptions.length > 0 && (
               <div>
-                <label className="text-xs font-medium text-gray-500 uppercase tracking-wide">Risk Rating</label>
+                <label className="text-xs font-medium text-muted-foreground uppercase tracking-wide">Risk Rating</label>
                 <div className="mt-1">
                   <EditableSelect
                     value={result.rating_id}
@@ -127,14 +127,14 @@ export default function ResultDesignPage() {
               </div>
             )}
             <div>
-              <label className="text-xs font-medium text-gray-500 uppercase tracking-wide">Contribution Weighting</label>
+              <label className="text-xs font-medium text-muted-foreground uppercase tracking-wide">Contribution Weighting</label>
               <div className="mt-1">
                 <EditableNumber
                   value={result.contribution_weighting}
                   onSave={(v) => saveResultField('contribution_weighting', v ?? 100)}
                   disabled={!canEdit}
                 />
-                <span className="text-xs text-gray-400 ml-1">%</span>
+                <span className="text-xs text-muted-foreground ml-1">%</span>
               </div>
             </div>
           </div>
@@ -142,7 +142,7 @@ export default function ResultDesignPage() {
 
         {/* Indicators section */}
         <div className="mb-6">
-          <h3 className="text-sm font-semibold text-gray-700 uppercase tracking-wide mb-2">
+          <h3 className="text-sm font-semibold text-foreground uppercase tracking-wide mb-2">
             Indicators ({indicators.length})
           </h3>
           {indicators.map((indicator) => (
@@ -159,7 +159,7 @@ export default function ResultDesignPage() {
 
         {/* Assumptions section */}
         <div className="mb-6">
-          <h3 className="text-sm font-semibold text-gray-700 uppercase tracking-wide mb-2">
+          <h3 className="text-sm font-semibold text-foreground uppercase tracking-wide mb-2">
             Assumptions ({assumptions.length})
           </h3>
           <AssumptionEditor
@@ -176,7 +176,7 @@ export default function ResultDesignPage() {
           <div className="border-t pt-4 mt-8">
             <button
               onClick={() => setConfirmDelete(true)}
-              className="text-sm text-red-500 hover:text-red-700"
+              className="text-sm text-destructive hover:text-destructive/80"
             >
               Delete this result
             </button>
@@ -204,20 +204,20 @@ export default function ResultDesignPage() {
         const levelLabel = r.level ? data.levels[String(r.level)] : ''
         const code = resultCodes.get(r.id) ?? ''
         return (
-          <div key={r.id} className="mb-4 border rounded-lg p-3 bg-white hover:border-blue-300 transition-colors">
+          <div key={r.id} className="mb-4 border rounded-lg p-3 bg-card hover:border-primary/30 transition-colors">
             <div className="flex items-center gap-2">
               {levelLabel && (
-                <span className="text-xs bg-gray-100 text-gray-600 rounded px-2 py-0.5 font-medium">
+                <span className="text-xs bg-muted text-muted-foreground rounded px-2 py-0.5 font-medium">
                   {code && <span className="mr-1">{code}</span>}{levelLabel}
                 </span>
               )}
               <Link
                 to={`/app/logframes/${id}/design?result=${r.id}`}
-                className="font-medium text-blue-600 hover:text-blue-800"
+                className="font-medium text-primary hover:text-primary/80"
               >
                 {r.name || '(unnamed result)'}
               </Link>
-              <span className="text-xs text-gray-400">{indicators.length} indicator{indicators.length !== 1 ? 's' : ''}</span>
+              <span className="text-xs text-muted-foreground">{indicators.length} indicator{indicators.length !== 1 ? 's' : ''}</span>
             </div>
           </div>
         )

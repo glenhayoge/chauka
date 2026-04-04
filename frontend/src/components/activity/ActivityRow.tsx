@@ -42,14 +42,14 @@ export default function ActivityRow({ activity, logframeId, activityCode }: Prop
       <div className="flex items-center gap-2 px-2 py-2.5">
         <button
           onClick={() => toggleActivity(activity.id)}
-          className="text-gray-600 hover:text-gray-800 w-8 h-8 flex items-center justify-center flex-shrink-0 text-sm"
+          className="text-muted-foreground hover:text-foreground w-8 h-8 flex items-center justify-center flex-shrink-0 text-sm"
           aria-label={expanded ? 'Collapse activity' : 'Expand activity'}
         >
           {expanded ? '\u25BC' : '\u25B6'}
         </button>
 
         <span className="text-xs font-bold text-amber-600 whitespace-nowrap hidden sm:inline min-w-[70px]">
-          {activityCode && <span className="text-gray-500 font-semibold mr-1">{activityCode}</span>}
+          {activityCode && <span className="text-muted-foreground font-semibold mr-1">{activityCode}</span>}
           Activity
         </span>
 
@@ -59,13 +59,13 @@ export default function ActivityRow({ activity, logframeId, activityCode }: Prop
             value={activity.name}
             onSave={(v) => saveField('name', v)}
             placeholder="Activity name"
-            className="text-sm font-semibold text-gray-900"
+            className="text-sm font-semibold text-foreground"
             disabled={!canEdit}
           />
         </div>
 
         {/* Activity dates — hidden on mobile, shown below */}
-        <div className="hidden sm:flex items-center gap-1 text-xs text-gray-500 flex-shrink-0">
+        <div className="hidden sm:flex items-center gap-1 text-xs text-muted-foreground flex-shrink-0">
           <EditableDate
             value={activity.start_date}
             onSave={(v) => saveField('start_date', v)}
@@ -87,7 +87,7 @@ export default function ActivityRow({ activity, logframeId, activityCode }: Prop
         {canEdit && (
           <button
             onClick={() => setConfirmDelete(true)}
-            className="text-gray-300 hover:text-red-500 flex-shrink-0 text-sm px-1"
+            className="text-muted-foreground hover:text-destructive flex-shrink-0 text-sm px-1"
             title="Delete activity"
           >
             ×
@@ -96,9 +96,9 @@ export default function ActivityRow({ activity, logframeId, activityCode }: Prop
       </div>
 
       {/* Mobile dates row */}
-      <div className="flex sm:hidden items-center gap-1 text-xs text-gray-500 px-2 pb-2" style={{ paddingLeft: '2.5rem' }}>
+      <div className="flex sm:hidden items-center gap-1 text-xs text-muted-foreground px-2 pb-2" style={{ paddingLeft: '2.5rem' }}>
         <span className="text-xs font-bold text-amber-600 mr-1">
-          {activityCode && <span className="text-gray-500 font-semibold mr-1">{activityCode}</span>}
+          {activityCode && <span className="text-muted-foreground font-semibold mr-1">{activityCode}</span>}
           Activity
         </span>
         <EditableDate

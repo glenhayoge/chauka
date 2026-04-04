@@ -75,7 +75,7 @@ export default function ActivityDetail({ activity, logframeId }: Props) {
     <div className="ml-7 mb-2 border-l-2 border-amber-300 pl-4 py-2 space-y-4">
       {/* Technical Assistance */}
       <div>
-        <h4 className="text-xs font-bold text-gray-600 uppercase tracking-wider mb-1">
+        <h4 className="text-xs font-bold text-muted-foreground uppercase tracking-wider mb-1">
           Technical Assistance
         </h4>
         <TALinesTable
@@ -89,7 +89,7 @@ export default function ActivityDetail({ activity, logframeId }: Props) {
 
       {/* Milestones */}
       <div>
-        <h4 className="text-xs font-bold text-gray-600 uppercase tracking-wider mb-1">
+        <h4 className="text-xs font-bold text-muted-foreground uppercase tracking-wider mb-1">
           Milestones
         </h4>
         <MilestonesSection
@@ -104,7 +104,7 @@ export default function ActivityDetail({ activity, logframeId }: Props) {
 
       {/* Resources */}
       <div>
-        <h4 className="text-xs font-bold text-gray-600 uppercase tracking-wider mb-1">
+        <h4 className="text-xs font-bold text-muted-foreground uppercase tracking-wider mb-1">
           Resources
         </h4>
         <ResourcesTable
@@ -117,7 +117,7 @@ export default function ActivityDetail({ activity, logframeId }: Props) {
 
       {/* Implementation Budget */}
       <div>
-        <h4 className="text-xs font-bold text-gray-600 uppercase tracking-wider mb-2">
+        <h4 className="text-xs font-bold text-muted-foreground uppercase tracking-wider mb-2">
           Implementation Budget
         </h4>
 
@@ -127,12 +127,12 @@ export default function ActivityDetail({ activity, logframeId }: Props) {
           return (
             <div key={category} className="mb-3">
               <div className="flex items-center justify-between mb-1">
-                <span className="text-xs font-semibold text-gray-500">{category}</span>
-                <span className="text-xs text-gray-400">{currency} {catTotal.toLocaleString()}</span>
+                <span className="text-xs font-semibold text-muted-foreground">{category}</span>
+                <span className="text-xs text-muted-foreground">{currency} {catTotal.toLocaleString()}</span>
               </div>
               {lines.map((line) => (
                 <div key={line.id} className="flex items-center gap-3 text-sm py-0.5 pl-3">
-                  <span className="text-gray-700 min-w-[140px]">
+                  <span className="text-foreground min-w-[140px]">
                     <EditableText
                       value={line.name}
                       onSave={(v) => saveBudgetLine(line.id, 'name', v)}
@@ -157,11 +157,11 @@ export default function ActivityDetail({ activity, logframeId }: Props) {
         })}
 
         {budgetLines.length === 0 && (
-          <p className="text-xs text-gray-400 italic mb-2">No budget lines yet.</p>
+          <p className="text-xs text-muted-foreground italic mb-2">No budget lines yet.</p>
         )}
 
         {budgetLines.length > 0 && (
-          <div className="text-sm font-medium text-gray-700 pt-1 mt-1 border-t border-gray-200">
+          <div className="text-sm font-medium text-foreground pt-1 mt-1 border-t border-border">
             Activity Total: {currency} {totalBudget.toLocaleString()}
           </div>
         )}
@@ -173,7 +173,7 @@ export default function ActivityDetail({ activity, logframeId }: Props) {
 
       {/* Status History */}
       <div>
-        <h4 className="text-xs font-bold text-gray-600 uppercase tracking-wider mb-1">
+        <h4 className="text-xs font-bold text-muted-foreground uppercase tracking-wider mb-1">
           Status History
         </h4>
         <StatusHistory
@@ -219,7 +219,7 @@ function AddBudgetLineForm({ currency, onAdd }: { currency: string; onAdd: (cate
   }
 
   return (
-    <form onSubmit={handleSubmit} className="mt-2 border rounded p-3 bg-blue-50 space-y-2">
+    <form onSubmit={handleSubmit} className="mt-2 border rounded p-3 bg-accent space-y-2">
       <div className="flex flex-wrap gap-2">
         <select
           value={category}
@@ -254,14 +254,14 @@ function AddBudgetLineForm({ currency, onAdd }: { currency: string; onAdd: (cate
         <button
           type="submit"
           disabled={saving || !category || !name.trim() || !amount}
-          className="px-3 py-1 bg-blue-600 text-white text-xs rounded hover:bg-blue-700 disabled:opacity-50"
+          className="px-3 py-1 bg-primary text-background text-xs rounded hover:bg-primary/80 disabled:opacity-50"
         >
           {saving ? 'Adding...' : 'Add'}
         </button>
         <button
           type="button"
           onClick={() => { setOpen(false); setCategory(''); setName(''); setAmount('') }}
-          className="px-3 py-1 text-gray-500 text-xs rounded border hover:bg-gray-50"
+          className="px-3 py-1 text-muted-foreground text-xs rounded border hover:bg-muted"
         >
           Cancel
         </button>
@@ -309,17 +309,17 @@ function MilestonesSection({
   return (
     <div>
       {milestones.length === 0 && !adding && (
-        <p className="text-xs text-gray-400 italic mb-1">No milestones set.</p>
+        <p className="text-xs text-muted-foreground italic mb-1">No milestones set.</p>
       )}
 
       {milestones.length > 0 && (
         <div className="overflow-x-auto">
           <table className="text-xs border-collapse w-full">
             <thead>
-              <tr className="bg-gray-50">
-                <th className="border border-gray-200 px-2 py-1 text-left font-medium text-gray-600">Period</th>
-                <th className="border border-gray-200 px-2 py-1 text-left font-medium text-gray-600">Description</th>
-                {canEdit && <th className="border border-gray-200 px-1 py-1 w-6" />}
+              <tr className="bg-muted">
+                <th className="border border-border px-2 py-1 text-left font-medium text-muted-foreground">Period</th>
+                <th className="border border-border px-2 py-1 text-left font-medium text-muted-foreground">Description</th>
+                {canEdit && <th className="border border-border px-1 py-1 w-6" />}
               </tr>
             </thead>
             <tbody>
@@ -327,15 +327,15 @@ function MilestonesSection({
                 const period = periods.find((p) => p.id === m.period_id)
                 if (!period) return null
                 return (
-                  <tr key={m.id} className="hover:bg-gray-50">
-                    <td className="border border-gray-200 px-2 py-1 whitespace-nowrap">
-                      <span className="text-blue-700">
+                  <tr key={m.id} className="hover:bg-muted">
+                    <td className="border border-border px-2 py-1 whitespace-nowrap">
+                      <span className="text-primary">
                         {displayDate(period.start_month, period.start_year)}
                         {' – '}
                         {displayDate(period.end_month, period.end_year)}
                       </span>
                     </td>
-                    <td className="border border-gray-200 px-2 py-1">
+                    <td className="border border-border px-2 py-1">
                       <EditableText
                         value={m.description}
                         onSave={(v) => onSave(m.id, 'description', v)}
@@ -345,7 +345,7 @@ function MilestonesSection({
                       />
                     </td>
                     {canEdit && (
-                      <td className="border border-gray-200 px-1 py-1 text-center">
+                      <td className="border border-border px-1 py-1 text-center">
                         <DeleteButton onClick={() => onDelete(m.id)} label="Remove" />
                       </td>
                     )}
@@ -364,7 +364,7 @@ function MilestonesSection({
       )}
 
       {adding && (
-        <div className="mt-2 border rounded p-3 bg-blue-50 space-y-2">
+        <div className="mt-2 border rounded p-3 bg-accent space-y-2">
           <div className="flex flex-wrap gap-2">
             <select
               value={selectedPeriod}
@@ -391,13 +391,13 @@ function MilestonesSection({
             <button
               onClick={handleAdd}
               disabled={saving || !selectedPeriod}
-              className="px-3 py-1 bg-blue-600 text-white text-xs rounded hover:bg-blue-700 disabled:opacity-50"
+              className="px-3 py-1 bg-primary text-background text-xs rounded hover:bg-primary/80 disabled:opacity-50"
             >
               {saving ? 'Adding...' : 'Add'}
             </button>
             <button
               onClick={() => { setAdding(false); setSelectedPeriod(''); setDescription('') }}
-              className="px-3 py-1 text-gray-500 text-xs rounded border hover:bg-gray-50"
+              className="px-3 py-1 text-muted-foreground text-xs rounded border hover:bg-muted"
             >
               Cancel
             </button>

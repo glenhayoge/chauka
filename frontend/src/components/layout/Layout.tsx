@@ -35,9 +35,9 @@ export default function Layout() {
     ?? logframes?.find((lf) => lf.id === currentLogframeId)?.name
 
   return (
-    <div className="min-h-screen flex flex-col bg-background text-foreground">
+    <div className="min-h-screen flex flex-col text-foreground">
       {/* Top header bar */}
-      <header className="bg-foreground text-background px-6">
+      <header className=" text-foreground bg-background/95 border-b border-border px-6">
         <div className="px-4 sm:px-6 py-3 flex justify-between items-center">
           <div className="flex items-center gap-4 sm:gap-6 min-w-0">
             <Link to="/app" className="text-lg sm:text-xl font-semibold hover:text-muted transition-colors flex-shrink-0">
@@ -60,19 +60,19 @@ export default function Layout() {
 
             {/* Single logframe name display */}
             {currentLogframeId && logframes && logframes.length === 1 && logframeName && (
-              <span className="text-sm text-muted truncate hidden sm:inline">{logframeName}</span>
+              <span className="text-sm text-foreground/80 truncate hidden sm:inline">{logframeName}</span>
             )}
           </div>
 
           {/* Desktop user controls */}
           <div className="hidden sm:flex items-center gap-4">
             <NotificationBell />
-            <Link to="/profile" className="text-sm text-muted hover:text-background hover:underline transition-colors">
+            <Link to="/profile" className="text-sm text-foreground hover:text-foreground/80 hover:underline transition-colors">
               {username}
             </Link>
             <button
               onClick={handleLogout}
-              className="text-sm text-muted hover:text-background underline hover:no-underline transition-colors"
+              className="text-sm text-foreground hover:text-foreground/80 underline hover:no-underline transition-colors"
             >
               Log out
             </button>
@@ -142,7 +142,7 @@ export default function Layout() {
 
             {/* User info + logout */}
             <div className="border-t border-border pt-3 flex items-center justify-between">
-              <div className="flex items-center gap-3">
+              <div className="flex items-center gap-3 text-muted">
                 <NotificationBell />
                 <Link
                   to="/profile"
@@ -164,7 +164,7 @@ export default function Layout() {
 
         {/* Desktop dashboard nav bar */}
         {currentLogframeId && (
-          <nav className="hidden sm:flex px-6 gap-1 bg-foreground/90">
+          <nav className="hidden sm:flex px-6 gap-1 bg-background/95">
             <NavButton
               to={`/app/logframes/${currentLogframeId}`}
               active={pathname === `/app/logframes/${currentLogframeId}`}
@@ -201,8 +201,8 @@ function NavButton({ to, active, children }: { to: string; active: boolean; chil
       className={clsx(
         'px-4 py-2 text-sm font-medium rounded-t transition-colors',
         active
-          ? 'bg-background text-foreground'
-          : 'text-muted hover:text-background hover:bg-foreground/80'
+          ? 'bg-background/95 text-foreground'
+          : 'text-muted hover:text-background hover:bg-background/95'
       )}
     >
       {children}

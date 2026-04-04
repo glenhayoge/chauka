@@ -9,8 +9,8 @@ export default function PeoplePage() {
   const { isLoading, error } = useBootstrap(id)
   const data = useLogframeStore((s) => s.data)
 
-  if (isLoading) return <p className="text-gray-500">Loading…</p>
-  if (error) return <p className="text-red-600">Failed to load data.</p>
+  if (isLoading) return <p className="text-muted-foreground">Loading…</p>
+  if (error) return <p className="text-destructive">Failed to load data.</p>
   if (!data) return null
 
   return (

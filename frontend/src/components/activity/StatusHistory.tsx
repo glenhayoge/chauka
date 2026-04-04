@@ -36,7 +36,7 @@ export default function StatusHistory({ statusUpdates, statusCodes, activityId, 
   }
 
   if (sorted.length === 0 && !canEdit) {
-    return <p className="text-xs text-gray-400 italic">No status updates</p>
+    return <p className="text-xs text-muted-foreground italic">No status updates</p>
   }
 
   return (
@@ -56,29 +56,29 @@ export default function StatusHistory({ statusUpdates, statusCodes, activityId, 
         <div className="overflow-x-auto">
           <table className="text-xs border-collapse w-full">
             <thead>
-              <tr className="bg-gray-50">
-                <th className="border border-gray-200 px-2 py-1 text-left font-medium text-gray-600 w-24">Date</th>
-                <th className="border border-gray-200 px-2 py-1 text-left font-medium text-gray-600 w-24">Status</th>
-                <th className="border border-gray-200 px-2 py-1 text-left font-medium text-gray-600">Description</th>
-                {canEdit && <th className="border border-gray-200 px-1 py-1 w-6" />}
+              <tr className="bg-muted">
+                <th className="border border-border px-2 py-1 text-left font-medium text-muted-foreground w-24">Date</th>
+                <th className="border border-border px-2 py-1 text-left font-medium text-muted-foreground w-24">Status</th>
+                <th className="border border-border px-2 py-1 text-left font-medium text-muted-foreground">Description</th>
+                {canEdit && <th className="border border-border px-1 py-1 w-6" />}
               </tr>
             </thead>
             <tbody>
               {displayed.map((su) => (
-                <tr key={su.id} className="hover:bg-gray-50">
-                  <td className="border border-gray-200 px-2 py-1 text-gray-600 whitespace-nowrap">
+                <tr key={su.id} className="hover:bg-muted">
+                  <td className="border border-border px-2 py-1 text-muted-foreground whitespace-nowrap">
                     {formatDate(su.date)}
                   </td>
-                  <td className="border border-gray-200 px-2 py-1">
-                    <span className="bg-blue-50 text-blue-700 px-1.5 py-0.5 rounded text-[10px] font-medium">
+                  <td className="border border-border px-2 py-1">
+                    <span className="bg-accent text-primary px-1.5 py-0.5 rounded text-[10px] font-medium">
                       {getCodeName(su.code_id)}
                     </span>
                   </td>
-                  <td className="border border-gray-200 px-2 py-1 text-gray-700">
+                  <td className="border border-border px-2 py-1 text-foreground">
                     {su.description || '—'}
                   </td>
                   {canEdit && (
-                    <td className="border border-gray-200 px-1 py-1 text-center">
+                    <td className="border border-border px-1 py-1 text-center">
                       <DeleteButton onClick={() => deleteUpdate(su.id)} label="Remove" />
                     </td>
                   )}
@@ -93,7 +93,7 @@ export default function StatusHistory({ statusUpdates, statusCodes, activityId, 
       {hasMore && (
         <button
           onClick={() => setExpanded(!expanded)}
-          className="text-[10px] text-blue-600 hover:text-blue-800 mt-1"
+          className="text-[10px] text-primary hover:text-primary/80 mt-1"
         >
           {expanded ? 'Show less' : `Show all ${sorted.length} updates`}
         </button>
@@ -142,7 +142,7 @@ function AddStatusForm({ activityId, logframeId, statusCodes, onDone }: AddFormP
   }
 
   return (
-    <form onSubmit={handleSubmit} className="border rounded p-2 mb-2 bg-blue-50 space-y-2">
+    <form onSubmit={handleSubmit} className="border rounded p-2 mb-2 bg-accent space-y-2">
       <div className="flex gap-2">
         <input
           type="date"
@@ -172,14 +172,14 @@ function AddStatusForm({ activityId, logframeId, statusCodes, onDone }: AddFormP
         <button
           type="submit"
           disabled={saving}
-          className="px-3 py-1 bg-blue-600 text-white text-xs rounded hover:bg-blue-700 disabled:opacity-50"
+          className="px-3 py-1 bg-primary text-background text-xs rounded hover:bg-primary/80 disabled:opacity-50"
         >
           {saving ? 'Saving…' : 'Save'}
         </button>
         <button
           type="button"
           onClick={onDone}
-          className="px-3 py-1 bg-white text-gray-600 text-xs rounded border hover:bg-gray-50"
+          className="px-3 py-1 bg-card text-muted-foreground text-xs rounded border hover:bg-muted"
         >
           Cancel
         </button>

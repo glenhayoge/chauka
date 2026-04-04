@@ -17,8 +17,8 @@ export default function PrintLogframePage() {
   const { isLoading, error } = useBootstrap(id)
   const data = useLogframeStore((s) => s.data)
 
-  if (isLoading) return <p className="text-gray-500 p-6">Loading logframe data...</p>
-  if (error) return <p className="text-red-600 p-6">Failed to load logframe data.</p>
+  if (isLoading) return <p className="text-muted-foreground p-6">Loading logframe data...</p>
+  if (error) return <p className="text-destructive p-6">Failed to load logframe data.</p>
   if (!data) return null
 
   return (
@@ -27,13 +27,13 @@ export default function PrintLogframePage() {
       <div className="print-toolbar print-hide">
         <Link
           to={`/app/logframes/${id}`}
-          className="text-sm text-blue-700 hover:text-blue-900 underline"
+          className="text-sm text-primary hover:text-primary/80 underline"
         >
           &larr; Back to Dashboard
         </Link>
         <button
           onClick={() => window.print()}
-          className="ml-4 px-4 py-2 bg-blue-700 text-white text-sm font-medium rounded hover:bg-blue-800"
+          className="ml-4 px-4 py-2 bg-primary text-background text-sm font-medium rounded hover:bg-primary/80"
         >
           Print
         </button>
@@ -247,10 +247,10 @@ function IndicatorRow({ indicator, data }: { indicator: Indicator; data: Bootstr
       <td>
         <div className="font-medium">{indicator.name}</div>
         {indicator.description && (
-          <div className="text-xs text-gray-600 mt-0.5">{indicator.description}</div>
+          <div className="text-xs text-muted-foreground mt-0.5">{indicator.description}</div>
         )}
         {subIndicators.length > 0 && (
-          <div className="text-xs text-gray-500 mt-0.5">
+          <div className="text-xs text-muted-foreground mt-0.5">
             Components: {subIndicators.map((s) => s.name).join(', ')}
           </div>
         )}
@@ -291,7 +291,7 @@ function ActivityRow({
       <td>
         <div className="font-medium">{activity.name}</div>
         {activity.description && (
-          <div className="text-xs text-gray-600 mt-0.5">{activity.description}</div>
+          <div className="text-xs text-muted-foreground mt-0.5">{activity.description}</div>
         )}
       </td>
       <td className="whitespace-nowrap">{formatDate(activity.start_date)}</td>
@@ -302,7 +302,7 @@ function ActivityRow({
           ? `${currency} ${total.toLocaleString('en-GB', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`
           : '\u2014'}
         {lines.length > 1 && (
-          <div className="text-xs text-gray-500 mt-0.5">
+          <div className="text-xs text-muted-foreground mt-0.5">
             {lines.map((l) => `${l.name}: ${currency} ${l.amount.toLocaleString('en-GB', { minimumFractionDigits: 2 })}`).join('; ')}
           </div>
         )}

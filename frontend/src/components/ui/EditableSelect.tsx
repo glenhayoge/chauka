@@ -33,7 +33,7 @@ export default function EditableSelect({ value, options, onSave, placeholder, di
         }}
         onBlur={() => setEditing(false)}
         autoFocus
-        className="border border-blue-400 rounded px-1 py-0.5"
+        className="border border-ring rounded px-1 py-0.5"
       >
         <option value="">{'\u2014'}</option>
         {options.map((o) => (
@@ -49,11 +49,11 @@ export default function EditableSelect({ value, options, onSave, placeholder, di
         onClick={() => !disabled && setEditing(true)}
         className={clsx(
           'rounded px-1 transition-colors duration-300',
-          !disabled && 'cursor-pointer hover:bg-yellow-50',
+          !disabled && 'cursor-pointer hover:bg-warning/10',
           disabled && 'cursor-default',
-          state === 'saving' && 'animate-pulse border border-blue-300',
-          state === 'success' && 'bg-green-50 border border-green-300',
-          state === 'error' && 'bg-red-50 border border-red-400',
+          state === 'saving' && 'animate-pulse border border-ring',
+          state === 'success' && 'bg-ok/10 border border-ok',
+          state === 'error' && 'bg-destructive/10 border border-destructive',
         )}
       >
         {label}

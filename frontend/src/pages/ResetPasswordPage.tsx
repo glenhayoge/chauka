@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react'
 import { Link, useNavigate, useParams } from 'react-router-dom'
 import { resetPassword, verifyResetToken } from '../api/auth'
 
-const inputClass = "w-full border border-gray-300 rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-1 focus:ring-gray-400 focus:border-gray-400"
+const inputClass = "w-full border border-border rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-1 focus:ring-ring focus:border-ring"
 
 export default function ResetPasswordPage() {
   const { token } = useParams<{ token: string }>()
@@ -42,18 +42,18 @@ export default function ResetPasswordPage() {
 
   if (validating) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-white">
-        <p className="text-sm text-gray-400">Validating...</p>
+      <div className="min-h-screen flex items-center justify-center bg-background">
+        <p className="text-sm text-muted-foreground">Validating...</p>
       </div>
     )
   }
 
   if (!tokenValid) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-white px-4">
+      <div className="min-h-screen flex items-center justify-center bg-background px-4">
         <div className="w-full max-w-sm">
-          <p className="text-sm text-gray-900 mb-2">This reset link is invalid or expired.</p>
-          <Link to="/forgot-password" className="text-sm text-gray-700 hover:text-gray-900">
+          <p className="text-sm text-foreground mb-2">This reset link is invalid or expired.</p>
+          <Link to="/forgot-password" className="text-sm text-foreground hover:text-foreground">
             Request a new one
           </Link>
         </div>
@@ -63,10 +63,10 @@ export default function ResetPasswordPage() {
 
   if (success) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-white px-4">
+      <div className="min-h-screen flex items-center justify-center bg-background px-4">
         <div className="w-full max-w-sm">
-          <p className="text-sm text-gray-900 mb-2">Password reset. Redirecting to sign in...</p>
-          <Link to="/login" className="text-sm text-gray-700 hover:text-gray-900">
+          <p className="text-sm text-foreground mb-2">Password reset. Redirecting to sign in...</p>
+          <Link to="/login" className="text-sm text-foreground hover:text-foreground">
             Go to sign in
           </Link>
         </div>
@@ -75,12 +75,12 @@ export default function ResetPasswordPage() {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-white px-4">
+    <div className="min-h-screen flex items-center justify-center bg-background px-4">
       <div className="w-full max-w-sm">
-        <p className="text-sm font-medium text-gray-900 mb-4">Set a new password</p>
+        <p className="text-sm font-medium text-foreground mb-4">Set a new password</p>
         <form onSubmit={handleSubmit} className="space-y-3">
           <div>
-            <label className="block text-sm text-gray-600 mb-1">New password</label>
+            <label className="block text-sm text-muted-foreground mb-1">New password</label>
             <input
               type="password"
               value={password}
@@ -91,7 +91,7 @@ export default function ResetPasswordPage() {
             />
           </div>
           <div>
-            <label className="block text-sm text-gray-600 mb-1">Confirm password</label>
+            <label className="block text-sm text-muted-foreground mb-1">Confirm password</label>
             <input
               type="password"
               value={confirmPassword}
@@ -101,11 +101,11 @@ export default function ResetPasswordPage() {
               minLength={8}
             />
           </div>
-          {error && <p className="text-sm text-red-600">{error}</p>}
+          {error && <p className="text-sm text-destructive">{error}</p>}
           <button
             type="submit"
             disabled={loading}
-            className="w-full bg-gray-900 text-white py-2 text-sm rounded-md hover:bg-gray-800 disabled:opacity-50 transition-colors"
+            className="w-full bg-foreground text-background py-2 text-sm rounded-md hover:bg-foreground/80 disabled:opacity-50 transition-colors"
           >
             {loading ? 'Resetting...' : 'Reset password'}
           </button>

@@ -17,7 +17,7 @@ interface Props {
 
 const ROLE_LABELS: Record<string, { label: string; color: string }> = {
   admin: { label: 'Admin', color: 'bg-purple-50 text-purple-700' },
-  member: { label: 'Member', color: 'bg-gray-100 text-gray-700' },
+  member: { label: 'Member', color: 'bg-muted text-foreground' },
 }
 
 export default function MembersPanel({ canEdit: _canEdit, userRole, orgId: orgIdProp }: Props) {
@@ -71,7 +71,7 @@ export default function MembersPanel({ canEdit: _canEdit, userRole, orgId: orgId
 
   if (!orgIdProp && !projectId) {
     return (
-      <p className="text-sm text-gray-400 italic">
+      <p className="text-sm text-muted-foreground italic">
         This logframe is not linked to an organisation. Member management is only
         available for organisation-linked logframes.
       </p>
@@ -79,7 +79,7 @@ export default function MembersPanel({ canEdit: _canEdit, userRole, orgId: orgId
   }
 
   if (membersLoading || (!orgIdProp && !orgContext)) {
-    return <p className="text-gray-500 text-sm">Loading members...</p>
+    return <p className="text-muted-foreground text-sm">Loading members...</p>
   }
 
   const isAdmin = userRole === 'admin'
@@ -117,8 +117,8 @@ export default function MembersPanel({ canEdit: _canEdit, userRole, orgId: orgId
 
   return (
     <div className="space-y-6">
-      <div className="bg-white border rounded-lg p-4">
-        <h3 className="text-sm font-semibold text-gray-700 uppercase tracking-wide mb-3">
+      <div className="bg-card border rounded-lg p-4">
+        <h3 className="text-sm font-semibold text-foreground uppercase tracking-wide mb-3">
           Organisation Members
         </h3>
 
@@ -131,18 +131,18 @@ export default function MembersPanel({ canEdit: _canEdit, userRole, orgId: orgId
         <div className="overflow-x-auto">
           <table className="text-sm border-collapse w-full">
             <thead>
-              <tr className="bg-gray-50">
-                <th className="border border-gray-200 px-3 py-2 text-left font-medium text-gray-600">
+              <tr className="bg-muted">
+                <th className="border border-border px-3 py-2 text-left font-medium text-muted-foreground">
                   Name
                 </th>
-                <th className="border border-gray-200 px-3 py-2 text-left font-medium text-gray-600">
+                <th className="border border-border px-3 py-2 text-left font-medium text-muted-foreground">
                   Username
                 </th>
-                <th className="border border-gray-200 px-3 py-2 text-center font-medium text-gray-600">
+                <th className="border border-border px-3 py-2 text-center font-medium text-muted-foreground">
                   Role
                 </th>
                 {isAdmin && (
-                  <th className="border border-gray-200 px-3 py-2 text-center font-medium text-gray-600 w-24">
+                  <th className="border border-border px-3 py-2 text-center font-medium text-muted-foreground w-24">
                     Actions
                   </th>
                 )}
@@ -150,19 +150,19 @@ export default function MembersPanel({ canEdit: _canEdit, userRole, orgId: orgId
             </thead>
             <tbody>
               {memberList.map((m) => (
-                <tr key={m.id} className="hover:bg-gray-50">
-                  <td className="border border-gray-200 px-3 py-2 font-medium text-gray-900">
+                <tr key={m.id} className="hover:bg-muted">
+                  <td className="border border-border px-3 py-2 font-medium text-foreground">
                     {getDisplayName(m.user_id)}
                   </td>
-                  <td className="border border-gray-200 px-3 py-2 text-gray-500">
+                  <td className="border border-border px-3 py-2 text-muted-foreground">
                     {getUsername(m.user_id)}
                   </td>
-                  <td className="border border-gray-200 px-3 py-2 text-center">
+                  <td className="border border-border px-3 py-2 text-center">
                     {isAdmin ? (
                       <select
                         value={m.role}
                         onChange={(e) => handleRoleChange(m, e.target.value as OrgRole)}
-                        className="text-xs border border-gray-300 rounded px-2 py-1"
+                        className="text-xs border border-border rounded px-2 py-1"
                       >
                         <option value="admin">Admin</option>
                         <option value="member">Member</option>
@@ -172,10 +172,10 @@ export default function MembersPanel({ canEdit: _canEdit, userRole, orgId: orgId
                     )}
                   </td>
                   {isAdmin && (
-                    <td className="border border-gray-200 px-3 py-2 text-center">
+                    <td className="border border-border px-3 py-2 text-center">
                       <button
                         onClick={() => handleRemove(m.id)}
-                        className="text-xs text-red-600 hover:text-red-800"
+                        className="text-xs text-destructive hover:text-destructive/80"
                       >
                         Remove
                       </button>
@@ -187,7 +187,7 @@ export default function MembersPanel({ canEdit: _canEdit, userRole, orgId: orgId
                 <tr>
                   <td
                     colSpan={isAdmin ? 4 : 3}
-                    className="border border-gray-200 px-3 py-4 text-center text-gray-400 italic"
+                    className="border border-border px-3 py-4 text-center text-muted-foreground italic"
                   >
                     No members yet
                   </td>
@@ -263,7 +263,7 @@ function UserSearchAdd({ orgId, addRole, setAddRole, memberUserIds, onAdded, err
 
   return (
     <div className="mt-4 border-t pt-4">
-      <p className="text-xs font-medium text-gray-500 uppercase tracking-wide mb-2">Add Member</p>
+      <p className="text-xs font-medium text-muted-foreground uppercase tracking-wide mb-2">Add Member</p>
       <div className="flex gap-2 max-w-md">
         <input
           type="text"
@@ -271,12 +271,12 @@ function UserSearchAdd({ orgId, addRole, setAddRole, memberUserIds, onAdded, err
           onChange={(e) => setQuery(e.target.value)}
           onKeyDown={(e) => { if (e.key === 'Enter') { e.preventDefault(); handleSearch() } }}
           placeholder="Search by username or email..."
-          className="flex-1 text-sm border border-gray-300 rounded px-3 py-1.5 focus:outline-none focus:ring-1 focus:ring-blue-400"
+          className="flex-1 text-sm border border-border rounded px-3 py-1.5 focus:outline-none focus:ring-1 focus:ring-ring"
         />
         <select
           value={addRole}
           onChange={(e) => setAddRole(e.target.value as OrgRole)}
-          className="text-sm border border-gray-300 rounded px-2 py-1.5"
+          className="text-sm border border-border rounded px-2 py-1.5"
         >
           <option value="member">Member</option>
           <option value="admin">Admin</option>
@@ -284,24 +284,24 @@ function UserSearchAdd({ orgId, addRole, setAddRole, memberUserIds, onAdded, err
         <button
           onClick={handleSearch}
           disabled={query.trim().length < 2 || searching}
-          className="text-sm px-3 py-1.5 bg-blue-600 text-white rounded hover:bg-blue-700 disabled:opacity-50"
+          className="text-sm px-3 py-1.5 bg-primary text-background rounded hover:bg-primary/80 disabled:opacity-50"
         >
           {searching ? 'Searching...' : 'Search'}
         </button>
       </div>
-      {error && <p className="text-xs text-red-600 mt-1">{error}</p>}
+      {error && <p className="text-xs text-destructive mt-1">{error}</p>}
       {results.length > 0 && (
         <div className="mt-2 border rounded max-w-md">
           {results.map((u) => (
-            <div key={u.id} className="flex items-center justify-between px-3 py-2 hover:bg-gray-50 text-sm border-b last:border-b-0">
+            <div key={u.id} className="flex items-center justify-between px-3 py-2 hover:bg-muted text-sm border-b last:border-b-0">
               <div>
                 <span className="font-medium">{displayName(u)}</span>
-                <span className="text-gray-400 ml-2">{u.username}</span>
+                <span className="text-muted-foreground ml-2">{u.username}</span>
               </div>
               <button
                 onClick={() => handleAdd(u.id)}
                 disabled={adding}
-                className="text-xs px-2 py-1 bg-blue-600 text-white rounded hover:bg-blue-700 disabled:opacity-50"
+                className="text-xs px-2 py-1 bg-primary text-background rounded hover:bg-primary/80 disabled:opacity-50"
               >
                 Add
               </button>
@@ -310,7 +310,7 @@ function UserSearchAdd({ orgId, addRole, setAddRole, memberUserIds, onAdded, err
         </div>
       )}
       {results.length === 0 && query.length >= 2 && !searching && (
-        <p className="text-xs text-gray-400 mt-2">No users found. Try inviting them by email above.</p>
+        <p className="text-xs text-muted-foreground mt-2">No users found. Try inviting them by email above.</p>
       )}
     </div>
   )
@@ -362,8 +362,8 @@ function InviteSection({ orgId }: { orgId: number }) {
   }
 
   return (
-    <div className="mb-4 p-3 bg-blue-50 border border-blue-200 rounded-lg">
-      <h4 className="text-xs font-medium text-gray-600 uppercase tracking-wide mb-2">
+    <div className="mb-4 p-3 bg-accent border border-primary/20 rounded-lg">
+      <h4 className="text-xs font-medium text-muted-foreground uppercase tracking-wide mb-2">
         Invite by Email
       </h4>
       <form onSubmit={handleInvite} className="flex flex-col sm:flex-row gap-2">
@@ -373,12 +373,12 @@ function InviteSection({ orgId }: { orgId: number }) {
           onChange={(e) => setEmail(e.target.value)}
           placeholder="colleague@example.com"
           required
-          className="flex-1 border border-gray-300 rounded px-3 py-1.5 text-sm focus:outline-none focus:ring-1 focus:ring-blue-400"
+          className="flex-1 border border-border rounded px-3 py-1.5 text-sm focus:outline-none focus:ring-1 focus:ring-ring"
         />
         <select
           value={role}
           onChange={(e) => setRole(e.target.value)}
-          className="border border-gray-300 rounded px-2 py-1.5 text-sm"
+          className="border border-border rounded px-2 py-1.5 text-sm"
         >
           <option value="member">Member</option>
           <option value="admin">Admin</option>
@@ -386,31 +386,31 @@ function InviteSection({ orgId }: { orgId: number }) {
         <button
           type="submit"
           disabled={sending || !email.trim()}
-          className="px-4 py-1.5 bg-blue-600 text-white text-sm rounded hover:bg-blue-700 disabled:opacity-50 whitespace-nowrap"
+          className="px-4 py-1.5 bg-primary text-background text-sm rounded hover:bg-primary/80 disabled:opacity-50 whitespace-nowrap"
         >
           {sending ? 'Sending...' : 'Send Invite'}
         </button>
       </form>
-      {inviteError && <p className="text-xs text-red-600 mt-1">{inviteError}</p>}
+      {inviteError && <p className="text-xs text-destructive mt-1">{inviteError}</p>}
 
       {/* Pending invitations */}
       {pending.length > 0 && (
         <div className="mt-3">
-          <p className="text-xs text-gray-500 font-medium mb-1">Pending Invitations</p>
+          <p className="text-xs text-muted-foreground font-medium mb-1">Pending Invitations</p>
           <div className="space-y-1">
             {pending.map((inv: Invitation) => (
-              <div key={inv.id} className="flex items-center gap-2 text-xs text-gray-600 bg-white rounded px-2 py-1.5">
+              <div key={inv.id} className="flex items-center gap-2 text-xs text-muted-foreground bg-card rounded px-2 py-1.5">
                 <span className="flex-1 truncate">{inv.email}</span>
-                <span className="text-gray-400">{inv.role}</span>
+                <span className="text-muted-foreground">{inv.role}</span>
                 <button
                   onClick={() => copyLink(inv)}
-                  className="text-blue-600 hover:text-blue-800 whitespace-nowrap"
+                  className="text-primary hover:text-primary/80 whitespace-nowrap"
                 >
                   {copiedId === inv.id ? 'Copied!' : 'Copy link'}
                 </button>
                 <button
                   onClick={() => handleRevoke(inv.id)}
-                  className="text-red-500 hover:text-red-700"
+                  className="text-destructive hover:text-destructive/80"
                 >
                   Revoke
                 </button>
@@ -424,7 +424,7 @@ function InviteSection({ orgId }: { orgId: number }) {
 }
 
 function RoleBadge({ role }: { role: string }) {
-  const config = ROLE_LABELS[role] ?? { label: role, color: 'bg-gray-100 text-gray-600' }
+  const config = ROLE_LABELS[role] ?? { label: role, color: 'bg-muted text-muted-foreground' }
   return (
     <span
       className={clsx(

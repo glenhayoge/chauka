@@ -33,32 +33,32 @@ export default function LoginPage() {
       <Navbar />
       <div className="flex-1 flex items-center justify-center px-4 ">
         <div className="w-full max-w-sm">
-          <p className="text-lg font-medium text-gray-900 mb-6">Sign in to Chauka</p>
+          <p className="text-lg font-medium text-foreground mb-6">Sign in to Chauka</p>
           <form onSubmit={handleSubmit} className="space-y-3">
             <div>
-              <label className="block text-sm text-gray-600 mb-1">Username</label>
+              <label className="block text-sm text-muted-foreground mb-1">Username</label>
               <input
                 type="text"
                 value={username}
                 onChange={(e) => setUsername(e.target.value)}
-                className="w-full border border-gray-300 rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-1 focus:ring-gray-400 focus:border-gray-400"
+                className="w-full border border-border rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-1 focus:ring-ring focus:border-ring"
                 required
               />
             </div>
             <div>
               <div className="flex items-center justify-between mb-1">
-                <label className="text-sm text-gray-600">Password</label>
-                <Link to="/forgot-password" className="text-xs text-gray-500 hover:text-gray-700">Forgot password?</Link>
+                <label className="text-sm text-muted-foreground">Password</label>
+                <Link to="/forgot-password" className="text-xs text-muted-foreground hover:text-foreground">Forgot password?</Link>
               </div>
               <input
                 type="password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                className="w-full border border-gray-300 rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-1 focus:ring-gray-400 focus:border-gray-400"
+                className="w-full border border-border rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-1 focus:ring-ring focus:border-ring"
                 required
               />
             </div>
-            {error && <p className="text-sm text-red-600">{error}</p>}
+            {error && <p className="text-sm text-destructive">{error}</p>}
             <button
               type="submit"
               disabled={loading}
@@ -67,9 +67,9 @@ export default function LoginPage() {
               {loading ? 'Signing in\u2026' : 'Sign in'}
             </button>
           </form>
-          <p className="text-sm text-gray-500 mt-4">
+          <p className="text-sm text-muted-foreground mt-4">
             No account?{' '}
-            <Link to="/register" className="text-gray-700 hover:text-gray-900">Create one</Link>
+            <Link to="/register" className="text-foreground hover:text-foreground">Create one</Link>
           </p>
         </div>
       </div>

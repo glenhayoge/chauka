@@ -33,8 +33,8 @@ export default function SettingsPage() {
     navigate(`/app/logframes/${id}/settings?tab=${key}`, { replace: true })
   }
 
-  if (isLoading) return <p className="text-gray-500">Loading…</p>
-  if (error) return <p className="text-red-600">Failed to load data.</p>
+  if (isLoading) return <p className="text-muted-foreground">Loading…</p>
+  if (error) return <p className="text-destructive">Failed to load data.</p>
   if (!data) return null
 
   return (
@@ -42,7 +42,7 @@ export default function SettingsPage() {
       <h2 className="text-lg font-semibold mb-4">Settings</h2>
 
       {/* Tab bar */}
-      <div className="flex overflow-x-auto border-b border-gray-200 mb-6 -mx-3 px-3 sm:mx-0 sm:px-0">
+      <div className="flex overflow-x-auto border-b border-border mb-6 -mx-3 px-3 sm:mx-0 sm:px-0">
         {TABS.map(({ key, label }) => (
           <button
             key={key}
@@ -50,8 +50,8 @@ export default function SettingsPage() {
             className={clsx(
               'px-4 sm:px-6 py-2.5 text-sm font-medium border-b-2 -mb-px whitespace-nowrap',
               activeTab === key
-                ? 'border-blue-600 text-blue-600'
-                : 'border-transparent text-gray-600 hover:text-gray-900',
+                ? 'border-primary text-primary'
+                : 'border-transparent text-muted-foreground hover:text-foreground',
             )}
           >
             {label}
@@ -77,7 +77,7 @@ export default function SettingsPage() {
             <p className="mt-4 text-sm">
               <a
                 href={`/organisations/${data.orgContext.organisation.id}/settings?tab=members`}
-                className="text-blue-600 hover:underline"
+                className="text-primary hover:underline"
               >
                 Manage organisation settings &rarr;
               </a>
@@ -99,7 +99,7 @@ function LogframeSettingsPanel({ logframeId, canEdit }: { logframeId: number; ca
   const queryClient = useQueryClient()
 
   if (!data?.settings) {
-    return <p className="text-sm text-gray-400 italic">No logframe settings configured.</p>
+    return <p className="text-sm text-muted-foreground italic">No logframe settings configured.</p>
   }
 
   const settings = data.settings
@@ -113,8 +113,8 @@ function LogframeSettingsPanel({ logframeId, canEdit }: { logframeId: number; ca
   return (
     <div className="space-y-6">
       {/* Logframe configuration */}
-      <div className="bg-white border rounded-lg p-4">
-        <h3 className="text-sm font-semibold text-gray-700 uppercase tracking-wide mb-3">
+      <div className="bg-card border rounded-lg p-4">
+        <h3 className="text-sm font-semibold text-foreground uppercase tracking-wide mb-3">
           Logframe Configuration
         </h3>
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -170,11 +170,11 @@ function LogframeSettingsPanel({ logframeId, canEdit }: { logframeId: number; ca
       </div>
 
       {/* Hierarchy structure */}
-      <div className="bg-white border rounded-lg p-4">
-        <h3 className="text-sm font-semibold text-gray-700 uppercase tracking-wide mb-3">
+      <div className="bg-card border rounded-lg p-4">
+        <h3 className="text-sm font-semibold text-foreground uppercase tracking-wide mb-3">
           Results Hierarchy
         </h3>
-        <p className="text-xs text-gray-500 mb-3">
+        <p className="text-xs text-muted-foreground mb-3">
           Configure the level names for your logframe hierarchy. Activities attach under the deepest level.
         </p>
         <LevelEditor
@@ -211,7 +211,7 @@ function SettingField({ label, value, type = 'text', options, onSave, canEdit }:
 
   return (
     <div>
-      <label className="block text-xs font-medium text-gray-500 mb-1">{label}</label>
+      <label className="block text-xs font-medium text-muted-foreground mb-1">{label}</label>
       {editing ? (
         type === 'select' ? (
           <select
@@ -219,7 +219,7 @@ function SettingField({ label, value, type = 'text', options, onSave, canEdit }:
             value={draft}
             onChange={(e) => { setDraft(e.target.value); }}
             onBlur={handleSave}
-            className="w-full border border-blue-400 rounded px-3 py-1.5 text-sm focus:outline-none"
+            className="w-full border border-ring rounded px-3 py-1.5 text-sm focus:outline-none"
           >
             {options?.map((o) => (
               <option key={o.value} value={o.value}>{o.label}</option>
@@ -236,15 +236,15 @@ function SettingField({ label, value, type = 'text', options, onSave, canEdit }:
               if (e.key === 'Enter') (e.target as HTMLInputElement).blur()
               if (e.key === 'Escape') { setDraft(value); setEditing(false) }
             }}
-            className="w-full border border-blue-400 rounded px-3 py-1.5 text-sm focus:outline-none"
+            className="w-full border border-ring rounded px-3 py-1.5 text-sm focus:outline-none"
           />
         )
       ) : (
         <div
           onClick={() => canEdit && setEditing(true)}
-          className={`text-sm px-3 py-1.5 rounded border border-gray-200 ${
-            canEdit ? 'cursor-pointer hover:bg-yellow-50 active:bg-yellow-100' : ''
-          } ${saving ? 'text-gray-400' : 'text-gray-800'}`}
+          className={`text-sm px-3 py-1.5 rounded border border-border ${
+            canEdit ? 'cursor-pointer hover:bg-warning/10 active:bg-warning/10' : ''
+          } ${saving ? 'text-muted-foreground' : 'text-foreground'}`}
         >
           {type === 'select' ? (options?.find((o) => o.value === value)?.label ?? value) : value}
         </div>
@@ -330,7 +330,7 @@ function LevelEditor({ levels, logframeId, canEdit }: {
       <div className="space-y-2 mb-3">
         {drafts.map((d, i) => (
           <div key={i} className="flex items-center gap-2">
-            <span className="text-xs text-gray-400 w-5 text-right flex-shrink-0">{i + 1}</span>
+            <span className="text-xs text-muted-foreground w-5 text-right flex-shrink-0">{i + 1}</span>
             <div
               className="w-2 h-2 rounded-full flex-shrink-0"
               style={{ marginLeft: `${i * 8}px` }}
@@ -342,18 +342,18 @@ function LevelEditor({ levels, logframeId, canEdit }: {
                 onChange={(e) => handleRename(i, e.target.value)}
                 onBlur={() => handleBlur(i)}
                 onKeyDown={(e) => { if (e.key === 'Enter') (e.target as HTMLInputElement).blur() }}
-                className="border border-gray-200 rounded px-2 py-1 text-sm flex-1 min-w-[120px] focus:border-blue-400 focus:outline-none"
+                className="border border-border rounded px-2 py-1 text-sm flex-1 min-w-[120px] focus:border-ring focus:outline-none"
                 disabled={saving}
               />
             ) : (
-              <span className="text-sm text-gray-700 flex-1">{d.name}</span>
+              <span className="text-sm text-foreground flex-1">{d.name}</span>
             )}
             {canEdit && (
               <div className="flex gap-0.5 flex-shrink-0">
                 <button
                   onClick={() => moveLevel(i, -1)}
                   disabled={i === 0 || saving}
-                  className="text-gray-400 hover:text-gray-600 disabled:opacity-30 px-1 text-xs"
+                  className="text-muted-foreground hover:text-foreground disabled:opacity-30 px-1 text-xs"
                   title="Move up"
                 >
                   ▲
@@ -361,7 +361,7 @@ function LevelEditor({ levels, logframeId, canEdit }: {
                 <button
                   onClick={() => moveLevel(i, 1)}
                   disabled={i === drafts.length - 1 || saving}
-                  className="text-gray-400 hover:text-gray-600 disabled:opacity-30 px-1 text-xs"
+                  className="text-muted-foreground hover:text-foreground disabled:opacity-30 px-1 text-xs"
                   title="Move down"
                 >
                   ▼
@@ -369,7 +369,7 @@ function LevelEditor({ levels, logframeId, canEdit }: {
                 <button
                   onClick={() => removeLevel(i)}
                   disabled={drafts.length <= 1 || saving}
-                  className="text-red-400 hover:text-red-600 disabled:opacity-30 px-1 text-xs font-bold"
+                  className="text-destructive hover:text-destructive/80 disabled:opacity-30 px-1 text-xs font-bold"
                   title="Remove level"
                 >
                   ×
@@ -386,7 +386,7 @@ function LevelEditor({ levels, logframeId, canEdit }: {
             style={{ marginLeft: `${drafts.length * 8}px` }}
           />
           <span className="text-xs text-amber-700">Activity</span>
-          <span className="text-[10px] text-gray-400">(under {drafts[drafts.length - 1]?.name ?? 'deepest level'} only)</span>
+          <span className="text-[10px] text-muted-foreground">(under {drafts[drafts.length - 1]?.name ?? 'deepest level'} only)</span>
         </div>
       </div>
 
@@ -394,7 +394,7 @@ function LevelEditor({ levels, logframeId, canEdit }: {
         <button
           onClick={addLevel}
           disabled={saving}
-          className="text-sm text-blue-600 hover:text-blue-800 disabled:opacity-50"
+          className="text-sm text-primary hover:text-primary/80 disabled:opacity-50"
         >
           + Add level
         </button>
