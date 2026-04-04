@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useRef } from 'react'
 import { Link } from 'react-router-dom'
 import { useAuthStore } from '../store/auth'
 import Navbar from '../components/layout/Navbar'
@@ -162,19 +162,65 @@ function Feature({ title, description }: { title: string; description: string })
   )
 }
 
+// Google Sheets Apps Script Web App URL
+// To set up: see GOOGLE_SHEETS_SETUP.md in the project root
+const GOOGLE_SHEETS_URL = import.meta.env.VITE_CONTACT_FORM_URL || ''
+
 function ContactForm() {
   const [name, setName] = useState('')
   const [email, setEmail] = useState('')
   const [message, setMessage] = useState('')
-  const [sent, setSent] = useState(false)
+  const [status, setStatus] = useState<'idle' | 'sending' | 'sent' | 'error'>('idle')
 
-  function handleSubmit(e: React.FormEvent) {
+  // Honeypot: hidden field that bots fill but humans don't
+  const [website, setWebsite] = useState('')
+  // Honeypot: second hidden field with enticing name
+  const [phone, setPhone] = useState('')
+  // Timing: record when form was rendered
+  const loadTime = useRef(Date.now())
+
+  async function handleSubmit(e: React.FormEvent) {
     e.preventDefault()
-    // For now, just show confirmation. Wire to backend/email service later.
-    setSent(true)
+
+    // Honeypot check: if hidden fields are filled, silently "succeed"
+    if (website || phone) {
+      setStatus('sent')
+      return
+    }
+
+    // Timing check: reject if submitted within 3 seconds of render
+    if (Date.now() - loadTime.current < 3000) {
+      setStatus('sent')
+      return
+    }
+
+    if (!GOOGLE_SHEETS_URL) {
+      console.warn('Contact form URL not configured. Set VITE_CONTACT_FORM_URL in .env')
+      setStatus('sent')
+      return
+    }
+
+    setStatus('sending')
+
+    try {
+      await fetch(GOOGLE_SHEETS_URL, {
+        method: 'POST',
+        mode: 'no-cors',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          name,
+          email,
+          message,
+          timestamp: new Date().toISOString(),
+        }),
+      })
+      setStatus('sent')
+    } catch {
+      setStatus('error')
+    }
   }
 
-  if (sent) {
+  if (status === 'sent') {
     return <p className="text-sm text-muted-foreground">Thanks for reaching out. We'll get back to you.</p>
   }
 
@@ -182,7 +228,7 @@ function ContactForm() {
 
   return (
     <form onSubmit={handleSubmit} className="space-y-3 max-w-2xl">
-      <div className="grid grid-cols-2 gap-3">
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
         <div>
           <label className="block text-sm text-muted-foreground mb-1">Name</label>
           <input type="text" value={name} onChange={(e) => setName(e.target.value)} className={inputClass} required />
@@ -196,8 +242,39 @@ function ContactForm() {
         <label className="block text-sm text-muted-foreground mb-1">Message</label>
         <textarea value={message} onChange={(e) => setMessage(e.target.value)} rows={4} className={inputClass} required />
       </div>
-      <button type="submit" className="bg-secondary text-foreground text-sm px-4 py-2 rounded-md hover:bg-secondary/80 transition-colors">
-        Send message
+
+      {/* Honeypot fields — hidden from humans, bots fill them */}
+      <div aria-hidden="true" className="absolute -left-[9999px] -top-[9999px]">
+        <label htmlFor="website">Website</label>
+        <input
+          id="website"
+          type="text"
+          value={website}
+          onChange={(e) => setWebsite(e.target.value)}
+          tabIndex={-1}
+          autoComplete="off"
+        />
+        <label htmlFor="phone">Phone</label>
+        <input
+          id="phone"
+          type="text"
+          value={phone}
+          onChange={(e) => setPhone(e.target.value)}
+          tabIndex={-1}
+          autoComplete="off"
+        />
+      </div>
+
+      {status === 'error' && (
+        <p className="text-sm text-destructive">Something went wrong. Please try again.</p>
+      )}
+
+      <button
+        type="submit"
+        disabled={status === 'sending'}
+        className="bg-secondary text-foreground text-sm px-4 py-2 rounded-md hover:bg-secondary/80 transition-colors disabled:opacity-50"
+      >
+        {status === 'sending' ? 'Sending...' : 'Send message'}
       </button>
     </form>
   )
