@@ -10,7 +10,7 @@ import ProgramsPanel from '../components/settings/ProgramsPanel'
 const TABS = [
   { key: 'general', label: 'General' },
   { key: 'members', label: 'Members' },
-  { key: 'programs', label: 'Programs' },
+  { key: 'programs', label: 'Programs & Projects' },
 ] as const
 
 type TabKey = (typeof TABS)[number]['key']
@@ -51,27 +51,27 @@ export default function OrgSettingsPage() {
     navigate('/login')
   }
 
-  if (isLoading) return <p className="text-gray-500 p-6">Loading...</p>
-  if (error || !org) return <p className="text-red-600 p-6">Organisation not found.</p>
+  if (isLoading) return <p className="text-muted-foreground p-6">Loading...</p>
+  if (error || !org) return <p className="text-destructive p-6">Organisation not found.</p>
 
   return (
-    <div className="min-h-screen flex flex-col bg-gray-50">
-      {/* Lightweight header */}
-      <header className="bg-blue-700 text-white px-4 sm:px-6 py-3 flex items-center justify-between">
+    <div className="min-h-screen flex flex-col bg-background">
+      {/* Header */}
+      <header className="bg-foreground text-primary-foreground px-4 sm:px-6 py-3 flex items-center justify-between">
         <div className="flex items-center gap-4">
-          <Link to="/app" className="text-lg font-semibold hover:text-blue-100">
+          <Link to="/app" className="text-lg font-semibold hover:opacity-80">
             Chauka
           </Link>
-          <span className="text-blue-300">/</span>
-          <span className="text-sm text-blue-200 truncate">{org.name}</span>
-          <span className="text-blue-300">/</span>
-          <span className="text-sm text-blue-100">Settings</span>
+          <span className="opacity-30">/</span>
+          <span className="text-sm opacity-50 truncate">{org.name}</span>
+          <span className="opacity-30">/</span>
+          <span className="text-sm opacity-80">Settings</span>
         </div>
         <div className="flex items-center gap-4">
-          <span className="text-sm text-blue-200 hidden sm:inline">{username}</span>
+          <span className="text-sm opacity-70 hidden sm:inline">{username}</span>
           <button
             onClick={handleLogout}
-            className="text-sm text-blue-200 hover:text-white underline hover:no-underline"
+            className="text-sm opacity-70 hover:opacity-100 underline hover:no-underline"
           >
             Log out
           </button>
@@ -79,15 +79,14 @@ export default function OrgSettingsPage() {
       </header>
 
       <main className="flex-1 p-3 sm:p-6 max-w-4xl mx-auto w-full">
-        {/* Back link */}
-        <Link to="/app" className="text-sm text-gray-500 hover:underline mb-4 inline-block">
+        <Link to="/app" className="text-sm text-muted-foreground hover:underline mb-4 inline-block">
           &larr; Back to organisations
         </Link>
 
-        <h2 className="text-lg font-semibold mb-4">Organisation Settings</h2>
+        <h2 className="text-lg font-semibold text-foreground mb-4">Organisation Settings</h2>
 
         {/* Tab bar */}
-        <div className="flex overflow-x-auto border-b border-gray-200 mb-6">
+        <div className="flex overflow-x-auto border-b border-border mb-6">
           {TABS.map(({ key, label }) => (
             <button
               key={key}
@@ -95,8 +94,8 @@ export default function OrgSettingsPage() {
               className={clsx(
                 'px-4 sm:px-6 py-2.5 text-sm font-medium border-b-2 -mb-px whitespace-nowrap',
                 activeTab === key
-                  ? 'border-blue-600 text-blue-600'
-                  : 'border-transparent text-gray-600 hover:text-gray-900',
+                  ? 'border-primary text-primary'
+                  : 'border-transparent text-muted-foreground hover:text-foreground',
               )}
             >
               {label}
@@ -112,7 +111,7 @@ export default function OrgSettingsPage() {
           <MembersPanel canEdit={isAdmin} userRole={userRole} orgId={id} />
         )}
         {activeTab === 'programs' && (
-          <ProgramsPanel orgId={id} />
+          <ProgramsPanel orgId={id} canEdit={isAdmin} />
         )}
       </main>
     </div>

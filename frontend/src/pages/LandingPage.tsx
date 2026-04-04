@@ -73,7 +73,7 @@ export default function LandingPage() {
         <div className="border-t border-gray-100 mt-12 pt-10">
           <p className="text-2xl font-bold text-foreground mb-3">Built for</p>
           <div className="flex flex-wrap gap-2">
-            {['NGOs', 'Government agencies', 'Donor-funded programs', 'M&E teams', 'Project managers', 'Field organisations', 'Agriculture Programs', 'Program Managers', 'M&E Specialists'].map((tag) => (
+            {['NGOs', 'Government agencies', 'Donor-funded programs', 'M&E teams', 'Project managers', 'Field organisations', 'Agriculture & Rural Development Programs', 'Program Managers', 'M&E Specialists'].map((tag) => (
               <span key={tag} className="text-xs text-gray-500 border border-gray-200 rounded-md px-6 py-3">{tag}</span>
             ))}
           </div>
@@ -102,13 +102,13 @@ export default function LandingPage() {
 
           {/* Name origin */}
           <div className="mt-8 flex flex-col sm:flex-row gap-6 items-start">
-            <div className="flex-shrink-0">
+            <div className="flex-shrink-0 items-center justify-center text-center">
               <img
                 src="https://upload.wikimedia.org/wikipedia/commons/thumb/f/fd/Philemon_albitorques.jpg/500px-Philemon_albitorques.jpg"
                 alt="The Chauka bird (Philemon albitorques) from Manus Island, Papua New Guinea"
                 className="w-full sm:w-56 rounded-lg object-cover border border-gray-200"
               />
-              <p className="text-xs text-gray-400 mt-1.5">
+              <p className="text-xs text-gray-400 mt-1.5 ">
                 Picture: <a href="https://en.wikipedia.org/wiki/Manus_friarbird" target="_blank" rel="noopener noreferrer" className="underline hover:text-gray-500">Manus friarbird</a> via Wikimedia Commons
               </p>
             </div>

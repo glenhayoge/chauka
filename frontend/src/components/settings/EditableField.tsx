@@ -28,7 +28,7 @@ export default function EditableField({ label, value, onSave, canEdit }: Props) 
 
   return (
     <div>
-      <label className="block text-xs font-medium text-gray-500 mb-1">{label}</label>
+      <label className="block text-xs font-medium text-muted-foreground mb-1">{label}</label>
       {editing ? (
         <input
           autoFocus
@@ -39,15 +39,15 @@ export default function EditableField({ label, value, onSave, canEdit }: Props) 
             if (e.key === 'Enter') (e.target as HTMLInputElement).blur()
             if (e.key === 'Escape') { setDraft(value); setEditing(false) }
           }}
-          className="w-full border border-blue-400 rounded px-3 py-1.5 text-sm focus:outline-none"
+          className="w-full border border-ring rounded-[var(--radius)] px-3 py-1.5 text-sm bg-background text-foreground focus:outline-none"
         />
       ) : (
         <div
           onClick={() => canEdit && setEditing(true)}
-          className={`text-sm px-3 py-1.5 rounded ${
-            canEdit ? 'cursor-pointer hover:bg-yellow-50 active:bg-yellow-100' : ''
-          } ${saving ? 'text-gray-400' : 'text-gray-800'} ${
-            !value ? 'text-gray-400 italic' : ''
+          className={`text-sm px-3 py-1.5 rounded-[var(--radius)] ${
+            canEdit ? 'cursor-pointer hover:bg-accent active:bg-accent/80' : ''
+          } ${saving ? 'text-muted-foreground' : 'text-foreground'} ${
+            !value ? 'text-muted-foreground italic' : ''
           }`}
         >
           {value || 'Click to edit'}

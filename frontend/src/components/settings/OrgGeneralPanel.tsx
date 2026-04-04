@@ -37,8 +37,8 @@ export default function OrgGeneralPanel({ org, canEdit }: Props) {
         canEdit={canEdit}
       />
 
-      <div className="bg-white border rounded-lg p-4">
-        <h3 className="text-sm font-semibold text-gray-700 uppercase tracking-wide mb-3">
+      <div className="bg-card border border-border rounded-[var(--radius)] p-4">
+        <h3 className="text-sm font-semibold text-foreground uppercase tracking-wide mb-3">
           Organisation Profile
         </h3>
         <div className="space-y-3">
@@ -78,12 +78,12 @@ function SelectField({ label, value, options, onChange, disabled }: {
 }) {
   return (
     <div>
-      <label className="block text-xs font-medium text-gray-500 mb-1">{label}</label>
+      <label className="block text-xs font-medium text-muted-foreground mb-1">{label}</label>
       <select
         value={value}
         onChange={(e) => onChange(e.target.value)}
         disabled={disabled}
-        className="w-full border border-gray-300 rounded px-3 py-1.5 text-sm focus:outline-none focus:ring-1 focus:ring-blue-400 disabled:bg-gray-50 disabled:text-gray-500"
+        className="w-full border border-input rounded-[var(--radius)] px-3 py-1.5 text-sm bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-ring disabled:bg-muted disabled:text-muted-foreground"
       >
         <option value="">Select {label.toLowerCase()}</option>
         {options.map((opt) => (

@@ -17,11 +17,11 @@ interface Props {
 
 export default function SettingsSection({ title, fields, onSave, canEdit, isPlaceholder }: Props) {
   return (
-    <div className="bg-white border rounded-lg p-4">
+    <div className="bg-card border border-border rounded-[var(--radius)] p-4">
       <div className="flex items-center gap-2 mb-3">
-        <h3 className="text-sm font-semibold text-gray-700 uppercase tracking-wide">{title}</h3>
+        <h3 className="text-sm font-semibold text-foreground uppercase tracking-wide">{title}</h3>
         {isPlaceholder && (
-          <span className="text-[10px] bg-amber-50 text-amber-700 px-2 py-0.5 rounded font-medium">
+          <span className="text-[10px] bg-accent text-accent-foreground px-2 py-0.5 rounded font-medium">
             Needs update
           </span>
         )}
