@@ -6,6 +6,7 @@ import { useQueryClient } from '@tanstack/react-query'
 import { apiClient } from '../api/client'
 import clsx from 'clsx'
 import KoboSettings from '../components/integrations/KoboSettings'
+import GoogleSheetsSettings from '../components/integrations/GoogleSheetsSettings'
 import MembersPanel from '../components/settings/MembersPanel'
 import OrgSettingsPanel from '../components/settings/OrgSettingsPanel'
 
@@ -88,6 +89,7 @@ export default function SettingsPage() {
       {activeTab === 'integrations' && (
         <div className="space-y-6">
           <KoboSettings logframeId={id} canEdit={data.canEdit} />
+          <GoogleSheetsSettings logframeId={id} canEdit={data.canEdit} />
         </div>
       )}
     </div>

@@ -12,6 +12,7 @@ from app.models.logframe import (
     Expense, Resource,
 )
 from app.models.kobo import KoboConnection, KoboFieldMapping, KoboSyncLog
+from app.models.gsheets import GoogleSheetsConnection, GoogleSheetsColumnMapping, GoogleSheetsSyncLog
 from app.models.notification import Notification
 from app.models.audit import AuditLog
 
@@ -24,5 +25,6 @@ __all__ = [
     "Milestone", "StatusCode", "Tag", "IndicatorTag", "Period", "ReportingPeriod",
     "Target", "TALine", "Expense", "Resource",
     "KoboConnection", "KoboFieldMapping", "KoboSyncLog",
+    "GoogleSheetsConnection", "GoogleSheetsColumnMapping", "GoogleSheetsSyncLog",
     "Notification", "AuditLog",
 ]

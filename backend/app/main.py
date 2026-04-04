@@ -32,6 +32,7 @@ from app.routers.expenses import router as expenses_router
 from app.routers.resources import router as resources_router
 from app.routers.users import router as users_router
 from app.routers.kobo import router as kobo_router
+from app.routers.gsheets import router as gsheets_router
 from app.routers.organisations import router as organisations_router
 from app.routers.programs import router as programs_router
 from app.routers.projects import router as projects_router
@@ -94,6 +95,7 @@ app.include_router(statusupdates_router)
 app.include_router(talines_router)
 app.include_router(users_router)
 app.include_router(kobo_router)
+app.include_router(gsheets_router)
 
 
 @app.get("/health")

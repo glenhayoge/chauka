@@ -430,3 +430,48 @@ export interface KoboSyncLog {
   entries_updated: number
   error_message: string | null
 }
+
+// --- Google Sheets integration types ---
+
+export interface GoogleSheetsConnection {
+  id: number
+  logframe_id: number
+  spreadsheet_id: string
+  sheet_name: string | null
+  is_active: boolean
+  created_at: string | null
+}
+
+export interface GoogleSheetsColumnMapping {
+  id: number
+  connection_id: number
+  sheet_column: string
+  subindicator_id: number
+  column_id: number | null
+  auto_create_column: boolean
+  aggregation: string
+  is_active: boolean
+}
+
+export interface GoogleSheetsSheetInfo {
+  title: string
+  index: number
+  row_count: number
+  column_count: number
+}
+
+export interface GoogleSheetsColumnInfo {
+  letter: string
+  header: string
+}
+
+export interface GoogleSheetsSyncLog {
+  id: number
+  connection_id: number
+  synced_at: string | null
+  status: string
+  rows_fetched: number
+  entries_created: number
+  entries_updated: number
+  error_message: string | null
+}
