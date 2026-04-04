@@ -40,7 +40,7 @@ export default function Layout() {
       <header className=" text-foreground bg-background/95 border-b border-border px-6">
         <div className="px-4 sm:px-6 py-3 flex justify-between items-center">
           <div className="flex items-center gap-4 sm:gap-6 min-w-0">
-            <Link to="/app" className="text-lg sm:text-xl font-semibold hover:text-muted transition-colors flex-shrink-0">
+            <Link to="/app" className="text-lg sm:text-xl font-semibold hover:text-foreground/80 transition-colors flex-shrink-0">
               Chauka
             </Link>
 
@@ -201,8 +201,8 @@ function NavButton({ to, active, children }: { to: string; active: boolean; chil
       className={clsx(
         'px-4 py-2 text-sm font-medium rounded-t transition-colors',
         active
-          ? 'bg-background/95 text-foreground'
-          : 'text-muted hover:text-background hover:bg-background/95'
+          ? 'bg-secondary/95 text-secondary-foreground'
+          : 'text-foreground-muted hover:text-foreground/80 hover:bg-secondary/95'
       )}
     >
       {children}
