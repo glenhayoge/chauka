@@ -23,10 +23,10 @@ export default function LandingPage() {
         </p>
         {!isLoggedIn && (
           <div className="flex gap-3 mb-16">
-            <Link to="/register" className="bg-foreground text-accent text-sm px-4 py-3 rounded-md hover:bg-gray-800 transition-colors">
+            <Link to="/register" className="bg-secondary text-foreground text-sm px-4 py-3 rounded-md hover:bg-secondary/80 transition-colors">
               Create an account
             </Link>
-            <Link to="/login" className="border border-gray-300 text-gray-700 text-sm px-4 py-3 rounded-md hover:bg-gray-50 transition-colors">
+            <Link to="/login" className="border border-gray-300 text-gray-700 text-sm px-4 py-3 rounded-md hover:bg-secondary/30 transition-colors">
               Sign in
             </Link>
           </div>
@@ -196,7 +196,7 @@ function ContactForm() {
         <label className="block text-sm text-gray-600 mb-1">Message</label>
         <textarea value={message} onChange={(e) => setMessage(e.target.value)} rows={4} className={inputClass} required />
       </div>
-      <button type="submit" className="bg-foreground text-accent text-sm px-4 py-2 rounded-md hover:bg-gray-800 transition-colors">
+      <button type="submit" className="bg-secondary text-foreground text-sm px-4 py-2 rounded-md hover:bg-secondary/80 transition-colors">
         Send message
       </button>
     </form>

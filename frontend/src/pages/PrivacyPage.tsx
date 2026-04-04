@@ -7,9 +7,8 @@ export default function PrivacyPage() {
       <Navbar />
       <div className="flex-1 px-4 py-12">
         <div className="max-w-4xl mx-auto">
-          <p className="text-sm font-medium text-gray-900 mb-1">Privacy policy</p>
+          <p className="text-xl font-bold text-foreground mb-1">Privacy policy</p>
           <p className="text-xs text-gray-400 mb-8">Last updated March 2026</p>
-
           <div className="space-y-6 text-sm text-gray-600 leading-relaxed">
             <Section title="1. Information we collect">
               <p className="mb-2">When you use Chauka, we collect:</p>
@@ -20,7 +19,6 @@ export default function PrivacyPage() {
                 <li>Usage data — login timestamps and basic activity logs</li>
               </ul>
             </Section>
-
             <Section title="2. How we use your information">
               <p className="mb-2">Your information is used to:</p>
               <ul className="list-disc pl-5 space-y-1 text-gray-500">

@@ -7,7 +7,7 @@ export default function TermsPage() {
       <Navbar />
       <div className="flex-1 px-4 py-12">
         <div className="max-w-4xl mx-auto">
-          <p className="text-sm font-medium text-gray-900 mb-1">Terms and conditions</p>
+          <p className="text-xl font-bold text-foreground mb-1">Terms and conditions</p>
           <p className="text-xs text-gray-400 mb-8">Last updated March 2026</p>
 
           <div className="space-y-6 text-sm text-gray-600 leading-relaxed">
