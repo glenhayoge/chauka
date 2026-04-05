@@ -1,4 +1,5 @@
 from datetime import date as date_type
+from uuid import UUID
 
 from pydantic import BaseModel, ConfigDict, field_validator
 
@@ -14,6 +15,7 @@ class LogframeBase(BaseModel):
 class LogframeRead(LogframeBase):
     model_config = ConfigDict(from_attributes=True)
     id: int
+    public_id: UUID
 
 
 class ResultBase(BaseModel):

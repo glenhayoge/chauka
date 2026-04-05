@@ -34,7 +34,7 @@ export default function LandingPage() {
 
         {/* Features */}
         <p className="text-2xl font-bold text-foreground mb-3">Features</p>
-        <div id="features" className="grid grid-cols-1 sm:grid-cols-2 gap-x-12 gap-y-6 border-t border-border pt-10">
+        <div id="features" className="grid grid-cols-1 sm:grid-cols-2 gap-x-12 gap-y-6 pt-10">
           <Feature
             title="Logframe design"
             description="Build results hierarchies — Impact, Outcome, Output, Activity with indicators, baselines and targets."
@@ -70,7 +70,7 @@ export default function LandingPage() {
         </div>
 
         {/* Built for */}
-        <div className="border-t border-border mt-12 pt-10">
+        <div className="mt-12 pt-10">
           <p className="text-2xl font-bold text-foreground mb-3">Built for</p>
           <div className="flex flex-wrap gap-2">
             {['NGOs', 'Government agencies', 'Donor-funded programs', 'M&E teams', 'Project managers', 'Field organisations', 'Agriculture & Rural Development Programs', 'Program Managers', 'M&E Specialists'].map((tag) => (
@@ -80,7 +80,7 @@ export default function LandingPage() {
         </div>
 
         {/* About */}
-        <div id="about" className="border-t border-border mt-12 pt-10">
+        <div id="about" className="mt-12 pt-10">
           <p className="text-2xl font-bold text-foreground mb-2">About Chauka</p>
           <div className="text-sm text-muted-foreground leading-relaxed space-y-3">
             <p>
@@ -115,7 +115,7 @@ export default function LandingPage() {
             <div className="text-sm text-muted-foreground leading-relaxed space-y-3">
               <p className="text-lg text-foreground font-medium">Why "Chauka"?</p>
               <p>
-                The Chauka is a bird from Manus Island, Papua New Guinea. In Manus
+                The Chauka - pronounced: chow-kah - is a bird from Manus Island, Papua New Guinea. In Manus
                 folklore, the Chauka is known as a guide, a time-keeper and a voice
                 of caution and forewarning, calling out at key moments to mark the
                 rhythm of the day and warn of what lies ahead.
@@ -130,7 +130,7 @@ export default function LandingPage() {
         </div>
 
         {/* Open source */}
-        <div className="border-t border-border mt-12 pt-10">
+        <div className="mt-12 pt-10">
           <p className="text-2xl font-bold text-foreground mb-2">Open source</p>
           <p className="text-sm text-muted-foreground leading-relaxed">
             Chauka is free to use and open source. Self-host it for your organisation
@@ -139,7 +139,7 @@ export default function LandingPage() {
         </div>
 
         {/* Contact */}
-        <div id="contact" className="border-t border-border mt-12 pt-10 bg-background ">
+        <div id="contact" className="mt-12 pt-10 bg-background ">
           <p className="text-2xl font-bold text-foreground mb-2">Get in touch</p>
           <p className="text-sm text-foreground mb-4">
             Questions, feedback or partnership enquiries, we'd like to hear from you.

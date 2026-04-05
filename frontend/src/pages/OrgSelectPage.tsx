@@ -149,14 +149,14 @@ export default function OrgSelectPage() {
                     </button>
                     <div className="flex gap-3 mt-3 pt-3 border-t border-border">
                       <Link
-                        to={`/organisations/${org.id}/dashboard`}
+                        to={`/organisations/${org.public_id}/dashboard`}
                         onClick={(e) => e.stopPropagation()}
                         className="text-xs text-muted-foreground hover:text-foreground"
                       >
                         Dashboard
                       </Link>
                       <Link
-                        to={`/organisations/${org.id}/settings`}
+                        to={`/organisations/${org.public_id}/settings`}
                         onClick={(e) => e.stopPropagation()}
                         className="text-xs text-muted-foreground hover:text-foreground"
                       >
@@ -271,7 +271,7 @@ export default function OrgSelectPage() {
                     const prog = await createProgram(selectedOrgId, { name: 'Untitled Program' })
                     const proj = await createProject(selectedOrgId, prog.id, { name: 'Untitled Project' })
                     const lf = await createLogframe(selectedOrgId, prog.id, proj.id, { name: 'Untitled Logframe' })
-                    navigate(`/app/logframes/${lf.id}`)
+                    navigate(`/app/logframes/${lf.public_id}`)
                   } finally {
                     setSkipping(false)
                   }
@@ -296,13 +296,13 @@ export default function OrgSelectPage() {
             A logframe is where you define your results chain, indicators, and activities.
           </p>
           {standaloneLogframes && standaloneLogframes.length === 1 && (
-            <Navigate to={`/app/logframes/${standaloneLogframes[0].id}`} replace />
+            <Navigate to={`/app/logframes/${standaloneLogframes[0].public_id}`} replace />
           )}
           <div className="grid gap-3 max-w-md">
             {standaloneLogframes?.map((lf) => (
               <Link
                 key={lf.id}
-                to={`/app/logframes/${lf.id}`}
+                to={`/app/logframes/${lf.public_id}`}
                 className="block border rounded-lg p-4 hover:bg-muted transition-colors"
               >
                 <span className="font-medium">{lf.name}</span>
@@ -314,7 +314,7 @@ export default function OrgSelectPage() {
             onSubmit={async (values) => {
               const lf = await createOrgProjectLogframe(selectedOrgId!, standaloneProjectId, { name: values.name })
               queryClient.invalidateQueries({ queryKey: ['standalone-project-logframes', selectedOrgId, standaloneProjectId] })
-              navigate(`/app/logframes/${lf.id}`)
+              navigate(`/app/logframes/${lf.public_id}`)
             }}
           />
         </div>
@@ -368,7 +368,7 @@ export default function OrgSelectPage() {
                   try {
                     const proj = await createProject(selectedOrgId!, selectedProgramId!, { name: 'Untitled Project' })
                     const lf = await createLogframe(selectedOrgId!, selectedProgramId!, proj.id, { name: 'Untitled Logframe' })
-                    navigate(`/app/logframes/${lf.id}`)
+                    navigate(`/app/logframes/${lf.public_id}`)
                   } finally {
                     setSkipping(false)
                   }
@@ -395,13 +395,13 @@ export default function OrgSelectPage() {
               : 'Configure the reporting periods and currency for your logframe. These can be adjusted later in Settings.'}
           </p>
           {logframes && logframes.length === 1 && (
-            <Navigate to={`/app/logframes/${logframes[0].id}`} replace />
+            <Navigate to={`/app/logframes/${logframes[0].public_id}`} replace />
           )}
           <div className="grid gap-3 max-w-md">
             {logframes?.map((lf) => (
               <Link
                 key={lf.id}
-                to={`/app/logframes/${lf.id}`}
+                to={`/app/logframes/${lf.public_id}`}
                 className="block border rounded-lg p-4 hover:bg-muted transition-colors"
               >
                 <span className="font-medium">{lf.name}</span>
@@ -413,7 +413,7 @@ export default function OrgSelectPage() {
             onSubmit={async (values) => {
               const lf = await createLogframe(selectedOrgId!, selectedProgramId!, selectedProjectId!, values)
               queryClient.invalidateQueries({ queryKey: ['project-logframes', selectedOrgId, selectedProgramId, selectedProjectId] })
-              navigate(`/app/logframes/${lf.id}`)
+              navigate(`/app/logframes/${lf.public_id}`)
             }}
           />
         </div>

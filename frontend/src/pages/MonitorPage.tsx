@@ -1,18 +1,21 @@
 import { Link, useParams, useSearchParams } from 'react-router-dom'
 import { useBootstrap } from '../hooks/useBootstrap'
 import { useLogframeStore } from '../store/logframe'
+import { useResolveLogframeId } from '../hooks/useResolveIds'
 import TabNav from '../components/layout/TabNav'
 import ActualsGrid from '../components/monitor/ActualsGrid'
 import EmptyState from '../components/ui/EmptyState'
 
 export default function MonitorPage() {
-  const { logframeId } = useParams<{ logframeId: string }>()
-  const id = Number(logframeId)
-  const { isLoading, error } = useBootstrap(id)
+  const { logframeId: publicId } = useParams<{ logframeId: string }>()
+  const { id: resolvedId, isLoading: resolving, notFound } = useResolveLogframeId(publicId)
+  const { isLoading, error } = useBootstrap(resolvedId ?? 0)
   const data = useLogframeStore((s) => s.data)
   const [searchParams] = useSearchParams()
   const filterResultId = searchParams.get('result')
 
+  if (resolving) return <p className="text-muted-foreground">Loading…</p>
+  if (notFound) return <p className="text-destructive">Logframe not found.</p>
   if (isLoading) return <p className="text-muted-foreground">Loading…</p>
   if (error) return <p className="text-destructive">Failed to load data.</p>
   if (!data) return null
@@ -28,7 +31,7 @@ export default function MonitorPage() {
         <h2 className="text-lg font-semibold">Monitor</h2>
         {filterResultId && (
           <Link
-            to={`/app/logframes/${id}/monitor`}
+            to={`/app/logframes/${publicId}/monitor`}
             className="text-sm text-primary hover:text-primary/80"
           >
             &larr; Show all results
@@ -71,7 +74,7 @@ export default function MonitorPage() {
                   columns={data.columns}
                   dataEntries={data.dataEntries}
                   reportingPeriods={data.reportingPeriods}
-                  logframeId={id}
+                  logframeId={resolvedId!}
                   canEdit={data.canEdit}
                 />
               )

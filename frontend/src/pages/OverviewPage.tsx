@@ -2,6 +2,7 @@ import { useEffect, useMemo } from 'react'
 import { useParams } from 'react-router-dom'
 import { useBootstrap } from '../hooks/useBootstrap'
 import { useLogframeStore } from '../store/logframe'
+import { useResolveLogframeId } from '../hooks/useResolveIds'
 import { useUIStore } from '../store/ui'
 import TabNav from '../components/layout/TabNav'
 import ExportControls from '../components/overview/ExportControls'
@@ -100,9 +101,9 @@ function computeVisibleResults(
 }
 
 export default function OverviewPage() {
-  const { logframeId } = useParams<{ logframeId: string }>()
-  const id = Number(logframeId)
-  const { isLoading, error } = useBootstrap(id)
+  const { logframeId: publicId } = useParams<{ logframeId: string }>()
+  const { id: resolvedId, isLoading: resolving, notFound } = useResolveLogframeId(publicId)
+  const { isLoading, error } = useBootstrap(resolvedId ?? 0)
   const data = useLogframeStore((s) => s.data)
   const initExpandedResults = useUIStore((s) => s.initExpandedResults)
   const filters = useUIStore((s) => s.filters)
@@ -128,6 +129,8 @@ export default function OverviewPage() {
     )
   }, [data, filters.dateFrom, filters.dateTo, filters.leadId, hasActiveFilters])
 
+  if (resolving) return <p className="text-muted-foreground">Loading&hellip;</p>
+  if (notFound) return <p className="text-destructive">Logframe not found.</p>
   if (isLoading) return <p className="text-muted-foreground">Loading&hellip;</p>
   if (error) return <p className="text-destructive">Failed to load data.</p>
   if (!data) return null
@@ -151,7 +154,7 @@ export default function OverviewPage() {
             key={result.id}
             result={result}
             allResults={data.results}
-            logframeId={id}
+            logframeId={resolvedId!}
             visibleResultIds={visibleResultIds}
             resultCodes={resultCodes}
             activityCodes={activityCodes}
@@ -173,11 +176,11 @@ export default function OverviewPage() {
 
         {/* Add new top-level result */}
         {data.canEdit && (
-          <AddResultRow logframeId={id} />
+          <AddResultRow logframeId={resolvedId!} />
         )}
       </div>
       <ExportControls
-        logframeId={id}
+        logframeId={resolvedId!}
         periods={data.periods}
         settings={data.settings}
       />

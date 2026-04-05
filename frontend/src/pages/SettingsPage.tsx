@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { useParams, useSearchParams, useNavigate, Link } from 'react-router-dom'
 import { useBootstrap } from '../hooks/useBootstrap'
 import { useLogframeStore } from '../store/logframe'
+import { useResolveLogframeId } from '../hooks/useResolveIds'
 import { useQueryClient } from '@tanstack/react-query'
 import { apiClient } from '../api/client'
 import clsx from 'clsx'
@@ -16,9 +17,9 @@ const TABS = [
 type TabKey = (typeof TABS)[number]['key']
 
 export default function SettingsPage() {
-  const { logframeId } = useParams<{ logframeId: string }>()
-  const id = Number(logframeId)
-  const { isLoading, error } = useBootstrap(id)
+  const { logframeId: publicId } = useParams<{ logframeId: string }>()
+  const { id: resolvedId, isLoading: resolving, notFound } = useResolveLogframeId(publicId)
+  const { isLoading, error } = useBootstrap(resolvedId ?? 0)
   const data = useLogframeStore((s) => s.data)
   const [searchParams] = useSearchParams()
   const navigate = useNavigate()
@@ -27,9 +28,11 @@ export default function SettingsPage() {
   const activeTab: TabKey = TABS.some((t) => t.key === tabParam) ? tabParam! : 'logframe'
 
   function setTab(key: TabKey) {
-    navigate(`/app/logframes/${id}/settings?tab=${key}`, { replace: true })
+    navigate(`/app/logframes/${publicId}/settings?tab=${key}`, { replace: true })
   }
 
+  if (resolving) return <p className="text-muted-foreground">Loading…</p>
+  if (notFound) return <p className="text-destructive">Logframe not found.</p>
   if (isLoading) return <p className="text-muted-foreground">Loading…</p>
   if (error) return <p className="text-destructive">Failed to load data.</p>
   if (!data) return null
@@ -60,7 +63,7 @@ export default function SettingsPage() {
       {data.orgContext && (
         <div className="mb-6 text-right">
           <Link
-            to={`/organisations/${data.orgContext.organisation.id}/settings?tab=programs`}
+            to={`/organisations/${data.orgContext.organisation.public_id}/settings?tab=programs`}
             className="inline-flex items-center gap-1.5 text-sm text-primary hover:underline"
           >
             <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -74,12 +77,12 @@ export default function SettingsPage() {
 
       {/* Tab content */}
       {activeTab === 'logframe' && (
-        <LogframeSettingsPanel logframeId={id} canEdit={data.canEdit} />
+        <LogframeSettingsPanel logframeId={resolvedId!} canEdit={data.canEdit} />
       )}
       {activeTab === 'integrations' && (
         <div className="space-y-6">
-          <KoboSettings logframeId={id} canEdit={data.canEdit} />
-          <GoogleSheetsSettings logframeId={id} canEdit={data.canEdit} />
+          <KoboSettings logframeId={resolvedId!} canEdit={data.canEdit} />
+          <GoogleSheetsSettings logframeId={resolvedId!} canEdit={data.canEdit} />
         </div>
       )}
     </div>

@@ -3,8 +3,9 @@ import { Link } from 'react-router-dom'
 export default function Footer() {
   return (
     <footer className="border-t border-border px-6 py-6">
-      <div className="max-w-5xl mx-auto flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+      <div className="max-w-7xl mx-auto flex px-6 flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
         <Link to="/" className="text-sm text-muted-foreground">Chauka - MEL Information System</Link>
+        <div><p className="text-xs">Built with 🤎 from 🇵🇬 </p></div>
         <div className="flex flex-wrap gap-2">
           <Link to="/#features" className="text-xs text-muted-foreground hover:text-foreground">Features</Link>
           <Link to="/#about" className="text-xs text-muted-foreground hover:text-foreground">About</Link>

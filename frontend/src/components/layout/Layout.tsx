@@ -30,9 +30,9 @@ export default function Layout() {
     if (newId) navigate(`/app/logframes/${newId}`)
   }
 
-  const currentLogframeId = logframeId ? Number(logframeId) : null
+  const currentLogframeId = logframeId ?? null
   const logframeName = currentData?.logframe?.name
-    ?? logframes?.find((lf) => lf.id === currentLogframeId)?.name
+    ?? logframes?.find((lf) => lf.public_id === currentLogframeId)?.name
 
   return (
     <div className="min-h-screen text-foreground">
@@ -54,7 +54,7 @@ export default function Layout() {
                 >
                   <option value="" disabled>Select logframe</option>
                   {logframes.map((lf) => (
-                    <option key={lf.id} value={lf.id}>{lf.name}</option>
+                    <option key={lf.id} value={lf.public_id}>{lf.name}</option>
                   ))}
                 </select>
               )}
@@ -114,7 +114,7 @@ export default function Layout() {
                 >
                   <option value="" disabled>Select logframe</option>
                   {logframes.map((lf) => (
-                    <option key={lf.id} value={lf.id}>{lf.name}</option>
+                    <option key={lf.id} value={lf.public_id}>{lf.name}</option>
                   ))}
                 </select>
               )}

@@ -2,9 +2,11 @@ from __future__ import annotations
 
 import enum
 import secrets
+import uuid
 from datetime import date, datetime
 
 from sqlalchemy import Boolean, Date, DateTime, Enum, ForeignKey, Integer, String, Text, UniqueConstraint, func
+from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app.database import Base
@@ -25,6 +27,9 @@ class Organisation(Base):
     __tablename__ = "org_organisation"
 
     id: Mapped[int] = mapped_column(Integer, primary_key=True)
+    public_id: Mapped[uuid.UUID] = mapped_column(
+        UUID(as_uuid=True), default=uuid.uuid4, unique=True, index=True
+    )
     name: Mapped[str] = mapped_column(String(255))
     slug: Mapped[str] = mapped_column(String(255), unique=True)
     description: Mapped[str] = mapped_column(Text, default="")
@@ -53,6 +58,9 @@ class Program(Base):
     __tablename__ = "org_program"
 
     id: Mapped[int] = mapped_column(Integer, primary_key=True)
+    public_id: Mapped[uuid.UUID] = mapped_column(
+        UUID(as_uuid=True), default=uuid.uuid4, unique=True, index=True
+    )
     name: Mapped[str] = mapped_column(String(255))
     description: Mapped[str] = mapped_column(Text, default="")
     organisation_id: Mapped[int] = mapped_column(
@@ -76,6 +84,9 @@ class Project(Base):
     __tablename__ = "org_project"
 
     id: Mapped[int] = mapped_column(Integer, primary_key=True)
+    public_id: Mapped[uuid.UUID] = mapped_column(
+        UUID(as_uuid=True), default=uuid.uuid4, unique=True, index=True
+    )
     name: Mapped[str] = mapped_column(String(255))
     description: Mapped[str] = mapped_column(Text, default="")
     program_id: Mapped[int | None] = mapped_column(

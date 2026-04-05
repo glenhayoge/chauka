@@ -3,6 +3,7 @@ import { Link, useNavigate, useParams, useSearchParams } from 'react-router-dom'
 import { useQueryClient } from '@tanstack/react-query'
 import { useBootstrap } from '../hooks/useBootstrap'
 import { useLogframeStore } from '../store/logframe'
+import { useResolveLogframeId } from '../hooks/useResolveIds'
 import ConfirmDialog from '../components/ui/ConfirmDialog'
 import { apiClient } from '../api/client'
 import TabNav from '../components/layout/TabNav'
@@ -16,9 +17,9 @@ import AddButton from '../components/ui/AddButton'
 import { buildResultCodeMap } from '../utils/resultCodes'
 
 export default function ResultDesignPage() {
-  const { logframeId } = useParams<{ logframeId: string }>()
-  const id = Number(logframeId)
-  const { isLoading, error } = useBootstrap(id)
+  const { logframeId: publicId } = useParams<{ logframeId: string }>()
+  const { id: resolvedId, isLoading: resolving, notFound } = useResolveLogframeId(publicId)
+  const { isLoading, error } = useBootstrap(resolvedId ?? 0)
   const data = useLogframeStore((s) => s.data)
   const [searchParams] = useSearchParams()
   const filterResultId = searchParams.get('result')
@@ -26,6 +27,8 @@ export default function ResultDesignPage() {
   const navigate = useNavigate()
   const [confirmDelete, setConfirmDelete] = useState(false)
 
+  if (resolving) return <p className="text-muted-foreground">Loading…</p>
+  if (notFound) return <p className="text-destructive">Logframe not found.</p>
   if (isLoading) return <p className="text-muted-foreground">Loading…</p>
   if (error) return <p className="text-destructive">Failed to load data.</p>
   if (!data) return null
@@ -43,11 +46,11 @@ export default function ResultDesignPage() {
     const resultId = result.id
     const indicators = data.indicators.filter((i) => i.result_id === resultId)
     const assumptions = data.assumptions.filter((a) => a.result_id === resultId)
-    const resultBase = `/logframes/${id}/results/${resultId}`
+    const resultBase = `/logframes/${resolvedId!}/results/${resultId}`
 
     async function saveResultField(field: string, value: unknown) {
       await apiClient.patch(resultBase, { [field]: value })
-      queryClient.invalidateQueries({ queryKey: ['bootstrap', id] })
+      queryClient.invalidateQueries({ queryKey: ['bootstrap', resolvedId!] })
     }
 
     async function addIndicator() {
@@ -57,13 +60,13 @@ export default function ResultDesignPage() {
         source_of_verification: '',
         result_id: resultId,
       })
-      queryClient.invalidateQueries({ queryKey: ['bootstrap', id] })
+      queryClient.invalidateQueries({ queryKey: ['bootstrap', resolvedId!] })
     }
 
     async function deleteResult() {
       await apiClient.delete(resultBase)
-      queryClient.invalidateQueries({ queryKey: ['bootstrap', id] })
-      navigate(`/app/logframes/${id}/design`)
+      queryClient.invalidateQueries({ queryKey: ['bootstrap', resolvedId!] })
+      navigate(`/app/logframes/${publicId}/design`)
     }
 
     const riskRatingOptions = data.riskRatings.map((r) => ({ value: r.id, label: r.name }))
@@ -77,7 +80,7 @@ export default function ResultDesignPage() {
         {/* Header */}
         <div className="flex items-center gap-3 mb-4">
           <Link
-            to={`/app/logframes/${id}/design`}
+            to={`/app/logframes/${publicId}/design`}
             className="text-sm text-primary hover:text-primary/80"
           >
             &larr; All results
@@ -149,7 +152,7 @@ export default function ResultDesignPage() {
             <IndicatorEditor
               key={indicator.id}
               indicator={indicator}
-              logframeId={id}
+              logframeId={resolvedId!}
               periods={data.periods}
               targets={data.targets ?? []}
             />
@@ -166,7 +169,7 @@ export default function ResultDesignPage() {
             assumptions={assumptions}
             riskRatings={data.riskRatings}
             resultId={result.id}
-            logframeId={id}
+            logframeId={resolvedId!}
             canEdit={canEdit}
           />
         </div>
@@ -212,7 +215,7 @@ export default function ResultDesignPage() {
                 </span>
               )}
               <Link
-                to={`/app/logframes/${id}/design?result=${r.id}`}
+                to={`/app/logframes/${publicId}/design?result=${r.id}`}
                 className="font-medium text-primary hover:text-primary/80"
               >
                 {r.name || '(unnamed result)'}

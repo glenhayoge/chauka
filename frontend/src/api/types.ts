@@ -13,6 +13,7 @@ export interface UserSummary {
 
 export interface Organisation {
   id: number
+  public_id: string
   name: string
   slug: string
   description: string
@@ -37,6 +38,7 @@ export interface OrganisationCreate {
 
 export interface Program {
   id: number
+  public_id: string
   name: string
   description: string
   organisation_id: number
@@ -53,6 +55,7 @@ export interface ProgramCreate {
 
 export interface Project {
   id: number
+  public_id: string
   name: string
   description: string
   program_id: number | null
@@ -72,6 +75,7 @@ export interface ProjectCreate {
 
 export interface Logframe {
   id: number
+  public_id: string
   name: string
   project_id: number | null
   program_id: number | null

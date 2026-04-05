@@ -1,16 +1,19 @@
 import { useParams, Link } from 'react-router-dom'
 import { useBootstrap } from '../hooks/useBootstrap'
 import { useLogframeStore } from '../store/logframe'
+import { useResolveLogframeId } from '../hooks/useResolveIds'
 import TabNav from '../components/layout/TabNav'
 
 const PLACEHOLDER_NAMES = ['Untitled Program', 'Untitled Project', 'Untitled Logframe']
 
 export default function DashboardPage() {
-  const { logframeId } = useParams<{ logframeId: string }>()
-  const id = Number(logframeId)
-  const { isLoading, error } = useBootstrap(id)
+  const { logframeId: publicId } = useParams<{ logframeId: string }>()
+  const { id: resolvedId, isLoading: resolving, notFound } = useResolveLogframeId(publicId)
+  const { isLoading, error } = useBootstrap(resolvedId ?? 0)
   const data = useLogframeStore((s) => s.data)
 
+  if (resolving) return <p className="text-muted-foreground">Loading…</p>
+  if (notFound) return <p className="text-destructive">Logframe not found.</p>
   if (isLoading) return <p className="text-muted-foreground">Loading…</p>
   if (error) return <p className="text-destructive">Failed to load data.</p>
   if (!data) return null
@@ -35,7 +38,7 @@ export default function DashboardPage() {
       <div className="flex items-center justify-between mb-4">
         <h2 className="text-lg font-semibold">{data.logframe.name}</h2>
         <Link
-          to={`/app/logframes/${id}/print`}
+          to={`/app/logframes/${publicId}/print`}
           target="_blank"
           rel="noopener noreferrer"
           className="inline-flex items-center gap-1.5 px-3 py-1.5 text-sm font-medium text-foreground bg-card border border-border rounded-md hover:bg-muted"
@@ -57,7 +60,7 @@ export default function DashboardPage() {
             </p>
           </div>
           <Link
-            to={`/app/logframes/${id}/settings?tab=organisation`}
+            to={`/app/logframes/${publicId}/settings?tab=organisation`}
             className="text-sm font-medium text-amber-700 hover:text-amber-900 underline whitespace-nowrap"
           >
             Update in Settings

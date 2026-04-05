@@ -2,6 +2,7 @@ import { useState, useMemo } from 'react'
 import { useParams } from 'react-router-dom'
 import { useBootstrap } from '../hooks/useBootstrap'
 import { useLogframeStore } from '../store/logframe'
+import { useResolveLogframeId } from '../hooks/useResolveIds'
 import TabNav from '../components/layout/TabNav'
 import clsx from 'clsx'
 import { type MonthKey, getMonthsBetween, activityOverlapsMonth, getBarPosition } from '../utils/timeline'
@@ -20,9 +21,9 @@ interface StaffAllocation {
 }
 
 export default function WorkloadPage() {
-  const { logframeId } = useParams<{ logframeId: string }>()
-  const id = Number(logframeId)
-  const { isLoading, error } = useBootstrap(id)
+  const { logframeId: publicId } = useParams<{ logframeId: string }>()
+  const { id: resolvedId, isLoading: resolving, notFound } = useResolveLogframeId(publicId)
+  const { isLoading, error } = useBootstrap(resolvedId ?? 0)
   const data = useLogframeStore((s) => s.data)
   const [view, setView] = useState<ViewMode>('table')
 
@@ -61,6 +62,8 @@ export default function WorkloadPage() {
     return [...new Set(allocations.map((a) => a.person))].sort()
   }, [allocations])
 
+  if (resolving) return <p className="text-muted-foreground">Loading...</p>
+  if (notFound) return <p className="text-destructive">Logframe not found.</p>
   if (isLoading) return <p className="text-muted-foreground">Loading...</p>
   if (error) return <p className="text-destructive">Failed to load data.</p>
   if (!data) return null

@@ -13,7 +13,7 @@ export default function LogframeSelectPage() {
 
   // Auto-redirect if single logframe
   if (logframes?.length === 1) {
-    return <Navigate to={`/app/logframes/${logframes[0].id}`} replace />
+    return <Navigate to={`/app/logframes/${logframes[0].public_id}`} replace />
   }
 
   return (
@@ -23,7 +23,7 @@ export default function LogframeSelectPage() {
         {logframes?.map((lf) => (
           <Link
             key={lf.id}
-            to={`/app/logframes/${lf.id}`}
+            to={`/app/logframes/${lf.public_id}`}
             className="block border rounded-lg p-4 hover:border-ring hover:shadow-sm transition-shadow"
           >
             <span className="font-medium">{lf.name}</span>

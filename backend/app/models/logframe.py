@@ -1,8 +1,10 @@
 from __future__ import annotations
 
+import uuid
 from datetime import date
 
 from sqlalchemy import Boolean, Date, Float, ForeignKey, Integer, String, Text
+from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app.database import Base
@@ -12,6 +14,9 @@ class Logframe(Base):
     __tablename__ = "logframe_logframe"
 
     id: Mapped[int] = mapped_column(Integer, primary_key=True)
+    public_id: Mapped[uuid.UUID] = mapped_column(
+        UUID(as_uuid=True), default=uuid.uuid4, unique=True, index=True
+    )
     name: Mapped[str] = mapped_column(String(255))
     project_id: Mapped[int | None] = mapped_column(
         Integer, ForeignKey("org_project.id"), nullable=True

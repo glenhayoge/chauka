@@ -1,4 +1,5 @@
 from datetime import date as date_type, datetime
+from uuid import UUID
 
 from pydantic import BaseModel, ConfigDict
 
@@ -38,6 +39,7 @@ class OrganisationUpdate(BaseModel):
 class OrganisationRead(OrganisationBase):
     model_config = ConfigDict(from_attributes=True)
     id: int
+    public_id: UUID
     owner_id: int
     created_at: datetime
     updated_at: datetime
@@ -70,6 +72,7 @@ class ProgramUpdate(BaseModel):
 class ProgramRead(ProgramBase):
     model_config = ConfigDict(from_attributes=True)
     id: int
+    public_id: UUID
 
 
 # --- Project ---
@@ -103,6 +106,7 @@ class ProjectUpdate(BaseModel):
 class ProjectRead(ProjectBase):
     model_config = ConfigDict(from_attributes=True)
     id: int
+    public_id: UUID
 
 
 # --- Organisation Membership ---

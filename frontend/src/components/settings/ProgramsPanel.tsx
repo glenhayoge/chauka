@@ -404,7 +404,7 @@ function LogframeRow({ logframe, onDelete, onRename, canEdit }: { logframe: Logf
         <InlineEdit value={logframe.name} onSave={onRename} canEdit={canEdit} className="text-xs text-foreground" />
       </div>
       <Link
-        to={`/app/logframes/${logframe.id}`}
+        to={`/app/logframes/${logframe.public_id}`}
         className="text-[10px] text-primary hover:underline flex-shrink-0"
       >
         Open

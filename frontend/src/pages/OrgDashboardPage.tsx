@@ -3,21 +3,23 @@ import { useQuery } from '@tanstack/react-query'
 import { useAuthStore } from '../store/auth'
 import { getOrganisation } from '../api/organisations'
 import { getOrgDashboard } from '../api/organisations'
+import { useResolveOrgId } from '../hooks/useResolveIds'
 
 export default function OrgDashboardPage() {
-  const { orgId } = useParams<{ orgId: string }>()
-  const id = Number(orgId)
+  const { orgId: publicId } = useParams<{ orgId: string }>()
+  const { id: resolvedOrgId, isLoading: resolving, notFound } = useResolveOrgId(publicId)
   const navigate = useNavigate()
   const { username, logout } = useAuthStore()
 
   const { data: org, isLoading: orgLoading, error: orgError } = useQuery({
-    queryKey: ['organisation', id],
-    queryFn: () => getOrganisation(id),
+    queryKey: ['organisation', resolvedOrgId],
+    queryFn: () => getOrganisation(resolvedOrgId!),
+    enabled: resolvedOrgId !== null,
   })
 
   const { data: dashboard, isLoading: dashLoading } = useQuery({
-    queryKey: ['org-dashboard', id],
-    queryFn: () => getOrgDashboard(id),
+    queryKey: ['org-dashboard', resolvedOrgId],
+    queryFn: () => getOrgDashboard(resolvedOrgId!),
     enabled: !!org,
   })
 
@@ -26,8 +28,8 @@ export default function OrgDashboardPage() {
     navigate('/login')
   }
 
-  if (orgLoading || dashLoading) return <p className="text-muted-foreground p-6">Loading dashboard...</p>
-  if (orgError || !org) return <p className="text-destructive p-6">Organisation not found.</p>
+  if (resolving || orgLoading || dashLoading) return <p className="text-muted-foreground p-6">Loading dashboard...</p>
+  if (notFound || orgError || !org) return <p className="text-destructive p-6">Organisation not found.</p>
 
   const healthTotal =
     (dashboard?.indicator_health.on_track ?? 0) +
@@ -77,7 +79,7 @@ export default function OrgDashboardPage() {
             &larr; Back to organisations
           </Link>
           <Link
-            to={`/organisations/${id}/settings`}
+            to={`/organisations/${publicId}/settings`}
             className="text-sm text-muted-foreground hover:text-foreground"
           >
             Settings

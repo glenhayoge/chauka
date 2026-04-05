@@ -1,6 +1,7 @@
 import { useParams, Link } from 'react-router-dom'
 import { useBootstrap } from '../hooks/useBootstrap'
 import { useLogframeStore } from '../store/logframe'
+import { useResolveLogframeId } from '../hooks/useResolveIds'
 import type {
   BootstrapData,
   Result,
@@ -12,11 +13,13 @@ import type {
 } from '../api/types'
 
 export default function PrintLogframePage() {
-  const { logframeId } = useParams<{ logframeId: string }>()
-  const id = Number(logframeId)
-  const { isLoading, error } = useBootstrap(id)
+  const { logframeId: publicId } = useParams<{ logframeId: string }>()
+  const { id: resolvedId, isLoading: resolving, notFound } = useResolveLogframeId(publicId)
+  const { isLoading, error } = useBootstrap(resolvedId ?? 0)
   const data = useLogframeStore((s) => s.data)
 
+  if (resolving) return <p className="text-muted-foreground p-6">Loading logframe data...</p>
+  if (notFound) return <p className="text-destructive p-6">Logframe not found.</p>
   if (isLoading) return <p className="text-muted-foreground p-6">Loading logframe data...</p>
   if (error) return <p className="text-destructive p-6">Failed to load logframe data.</p>
   if (!data) return null
@@ -26,7 +29,7 @@ export default function PrintLogframePage() {
       {/* Screen-only toolbar */}
       <div className="print-toolbar print-hide">
         <Link
-          to={`/app/logframes/${id}`}
+          to={`/app/logframes/${publicId}`}
           className="text-sm text-primary hover:text-primary/80 underline"
         >
           &larr; Back to Dashboard

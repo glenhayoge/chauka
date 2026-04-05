@@ -2,6 +2,7 @@ import { useParams, useSearchParams, useNavigate, Link } from 'react-router-dom'
 import { useQuery } from '@tanstack/react-query'
 import { useAuthStore } from '../store/auth'
 import { getOrganisation, getMembers } from '../api/organisations'
+import { useResolveOrgId } from '../hooks/useResolveIds'
 import clsx from 'clsx'
 import OrgGeneralPanel from '../components/settings/OrgGeneralPanel'
 import MembersPanel from '../components/settings/MembersPanel'
@@ -16,8 +17,8 @@ const TABS = [
 type TabKey = (typeof TABS)[number]['key']
 
 export default function OrgSettingsPage() {
-  const { orgId } = useParams<{ orgId: string }>()
-  const id = Number(orgId)
+  const { orgId: publicId } = useParams<{ orgId: string }>()
+  const { id: resolvedOrgId, isLoading: resolving, notFound } = useResolveOrgId(publicId)
   const [searchParams] = useSearchParams()
   const navigate = useNavigate()
   const { username, userId, logout } = useAuthStore()
@@ -26,13 +27,14 @@ export default function OrgSettingsPage() {
   const activeTab: TabKey = TABS.some((t) => t.key === tabParam) ? tabParam! : 'general'
 
   const { data: org, isLoading, error } = useQuery({
-    queryKey: ['organisation', id],
-    queryFn: () => getOrganisation(id),
+    queryKey: ['organisation', resolvedOrgId],
+    queryFn: () => getOrganisation(resolvedOrgId!),
+    enabled: resolvedOrgId !== null,
   })
 
   const { data: members } = useQuery({
-    queryKey: ['org-members', id],
-    queryFn: () => getMembers(id),
+    queryKey: ['org-members', resolvedOrgId],
+    queryFn: () => getMembers(resolvedOrgId!),
     enabled: !!org,
   })
 
@@ -43,7 +45,7 @@ export default function OrgSettingsPage() {
   const userRole = isAdmin ? 'admin' : (currentMembership?.role ?? null)
 
   function setTab(key: TabKey) {
-    navigate(`/organisations/${id}/settings?tab=${key}`, { replace: true })
+    navigate(`/organisations/${publicId}/settings?tab=${key}`, { replace: true })
   }
 
   function handleLogout() {
@@ -51,8 +53,8 @@ export default function OrgSettingsPage() {
     navigate('/login')
   }
 
-  if (isLoading) return <p className="text-muted-foreground p-6">Loading...</p>
-  if (error || !org) return <p className="text-destructive p-6">Organisation not found.</p>
+  if (resolving || isLoading) return <p className="text-muted-foreground p-6">Loading...</p>
+  if (notFound || error || !org) return <p className="text-destructive p-6">Organisation not found.</p>
 
   return (
     <div className="min-h-screen bg-background">
@@ -111,10 +113,10 @@ export default function OrgSettingsPage() {
           <OrgGeneralPanel org={org} canEdit={isAdmin} />
         )}
         {activeTab === 'members' && (
-          <MembersPanel canEdit={isAdmin} userRole={userRole} orgId={id} />
+          <MembersPanel canEdit={isAdmin} userRole={userRole} orgId={resolvedOrgId!} />
         )}
         {activeTab === 'programs' && (
-          <ProgramsPanel orgId={id} canEdit={isAdmin} />
+          <ProgramsPanel orgId={resolvedOrgId!} canEdit={isAdmin} />
         )}
       </main>
     </div>
