@@ -475,3 +475,100 @@ export interface GoogleSheetsSyncLog {
   entries_updated: number
   error_message: string | null
 }
+
+// --- Admin Portal types ---
+
+export interface AdminUser {
+  id: number
+  username: string
+  first_name: string
+  last_name: string
+  email: string
+  is_staff: boolean
+  is_superuser: boolean
+  is_active: boolean
+  date_joined: string | null
+  last_login: string | null
+  org_count: number
+}
+
+export interface AdminUserCreate {
+  username: string
+  email: string
+  password: string
+  first_name?: string
+  last_name?: string
+  is_staff?: boolean
+  is_superuser?: boolean
+}
+
+export interface AdminUserUpdate {
+  first_name?: string
+  last_name?: string
+  email?: string
+  is_staff?: boolean
+  is_superuser?: boolean
+  is_active?: boolean
+}
+
+export interface PaginatedUsers {
+  items: AdminUser[]
+  total: number
+  page: number
+  page_size: number
+}
+
+export interface OrgBreakdownItem {
+  name: string
+  member_count: number
+  logframe_count: number
+}
+
+export interface PlatformDashboard {
+  user_count: number
+  active_user_count: number
+  org_count: number
+  logframe_count: number
+  project_count: number
+  program_count: number
+  total_budget: number
+  total_spent: number
+  recent_signups: AdminUser[]
+  recent_audit_entries: AuditLogEntry[]
+  org_breakdown: OrgBreakdownItem[]
+}
+
+export interface AdminOrg {
+  id: number
+  name: string
+  slug: string
+  description: string
+  country: string
+  org_type: string
+  sector: string
+  owner_id: number
+  owner_username: string | null
+  created_at: string | null
+  member_count: number
+  logframe_count: number
+}
+
+export interface PaginatedOrgs {
+  items: AdminOrg[]
+  total: number
+  page: number
+  page_size: number
+}
+
+export interface PermissionDef {
+  id: number
+  codename: string
+  name: string
+  description: string
+  category: string
+}
+
+export interface RolePermissionSummary {
+  role: string
+  permissions: string[]
+}

@@ -15,6 +15,7 @@ from app.models.kobo import KoboConnection, KoboFieldMapping, KoboSyncLog
 from app.models.gsheets import GoogleSheetsConnection, GoogleSheetsColumnMapping, GoogleSheetsSyncLog
 from app.models.notification import Notification
 from app.models.audit import AuditLog
+from app.models.permission import Permission, RolePermission
 
 __all__ = [
     "User", "Settings",
@@ -27,4 +28,5 @@ __all__ = [
     "KoboConnection", "KoboFieldMapping", "KoboSyncLog",
     "GoogleSheetsConnection", "GoogleSheetsColumnMapping", "GoogleSheetsSyncLog",
     "Notification", "AuditLog",
+    "Permission", "RolePermission",
 ]

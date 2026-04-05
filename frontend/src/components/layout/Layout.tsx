@@ -66,6 +66,11 @@ export default function Layout() {
 
           {/* Desktop user controls */}
           <div className="hidden sm:flex items-center gap-4">
+            {useAuthStore((s) => s.isStaff) && (
+              <Link to="/admin" className="text-sm text-muted hover:text-foreground transition-colors">
+                Admin
+              </Link>
+            )}
             <NotificationBell />
             <Link to="/profile" className="text-sm text-foreground hover:text-foreground/80 hover:underline transition-colors">
               {username}

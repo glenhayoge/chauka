@@ -41,6 +41,10 @@ from app.routers.project_roles import router as project_roles_router
 from app.routers.invitations import router as invitations_router
 from app.routers.notifications import router as notifications_router
 from app.routers.audit import router as audit_router
+from app.routers.admin_dashboard import router as admin_dashboard_router
+from app.routers.admin_users import router as admin_users_router
+from app.routers.admin_orgs import router as admin_orgs_router
+from app.routers.admin_rbac import router as admin_rbac_router
 from app.security.headers import SecurityHeadersMiddleware
 
 @asynccontextmanager
@@ -96,6 +100,12 @@ app.include_router(talines_router)
 app.include_router(users_router)
 app.include_router(kobo_router)
 app.include_router(gsheets_router)
+
+# Admin portal routers
+app.include_router(admin_dashboard_router)
+app.include_router(admin_users_router)
+app.include_router(admin_orgs_router)
+app.include_router(admin_rbac_router)
 
 
 @app.get("/health")

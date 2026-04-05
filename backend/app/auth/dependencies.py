@@ -81,6 +81,18 @@ async def require_logframe_editor(
     )
 
 
+async def require_superuser(
+    current_user: User = Depends(get_current_user),
+) -> User:
+    """Require user to be a platform superuser or staff."""
+    if current_user.is_superuser or current_user.is_staff:
+        return current_user
+    raise HTTPException(
+        status_code=status.HTTP_403_FORBIDDEN,
+        detail="Platform admin access required.",
+    )
+
+
 async def require_org_admin(
     request: Request,
     current_user: User = Depends(get_current_user),

@@ -12,7 +12,7 @@ export default function LandingPage() {
       <Navbar />
 
       {/* Main */}
-      <div className="max-w-4xl mx-auto px-6 pt-16 pb-24">
+      <div className="max-w-5xl mx-auto px-6 pt-16 pb-24">
         <p className="text-4xl text-foreground font-bold leading-snug mb-4">
           Plan, monitor and report on development programs using logical frameworks.
         </p>
@@ -23,7 +23,7 @@ export default function LandingPage() {
         </p>
         {!isLoggedIn && (
           <div className="flex gap-3 mb-16">
-            <Link to="/register" className="bg-secondary text-foreground text-sm px-4 py-3 rounded-md hover:bg-secondary/80 transition-colors">
+            <Link to="/register" className="bg-secondary font-bold text-foreground text-sm px-4 py-3 rounded-md hover:bg-secondary/80 transition-colors">
               Create an account
             </Link>
             <Link to="/login" className="border border-border text-foreground text-sm px-4 py-3 rounded-md hover:bg-secondary/30 transition-colors">
@@ -272,7 +272,7 @@ function ContactForm() {
       <button
         type="submit"
         disabled={status === 'sending'}
-        className="bg-secondary text-foreground text-sm px-4 py-2 rounded-md hover:bg-secondary/80 transition-colors disabled:opacity-50"
+        className="bg-secondary text-foreground font-medium text-sm px-4 py-2 rounded-md hover:bg-secondary/80 transition-colors disabled:opacity-50"
       >
         {status === 'sending' ? 'Sending...' : 'Send message'}
       </button>

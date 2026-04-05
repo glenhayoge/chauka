@@ -33,6 +33,14 @@ const OrgSettingsPage = lazy(() => import('./pages/OrgSettingsPage'))
 const PrintLogframePage = lazy(() => import('./pages/PrintLogframePage'))
 const OrgDashboardPage = lazy(() => import('./pages/OrgDashboardPage'))
 const LandingPage = lazy(() => import('./pages/LandingPage'))
+const AdminLayout = lazy(() => import('./components/admin/AdminLayout'))
+const RequireAdmin = lazy(() => import('./components/admin/RequireAdmin'))
+const AdminDashboardPage = lazy(() => import('./pages/admin/AdminDashboardPage'))
+const AdminUsersPage = lazy(() => import('./pages/admin/AdminUsersPage'))
+const AdminOrgsPage = lazy(() => import('./pages/admin/AdminOrgsPage'))
+const AdminRBACPage = lazy(() => import('./pages/admin/AdminRBACPage'))
+const AdminMicroAppsPage = lazy(() => import('./pages/admin/AdminMicroAppsPage'))
+const AdminFilesPage = lazy(() => import('./pages/admin/AdminFilesPage'))
 
 function RequireAuth({ children }: { children: React.ReactNode }) {
   const token = useAuthStore((s) => s.token)
@@ -74,6 +82,16 @@ export default function App() {
           <Route path="/organisations/:orgId/settings" element={<RequireAuth><OrgSettingsPage /></RequireAuth>} />
           <Route path="/organisations/:orgId/dashboard" element={<RequireAuth><OrgDashboardPage /></RequireAuth>} />
           <Route path="/app/logframes/:logframeId/print" element={<RequireAuth><PrintLogframePage /></RequireAuth>} />
+
+          {/* Admin portal */}
+          <Route path="/admin" element={<RequireAdmin><AdminLayout /></RequireAdmin>}>
+            <Route index element={<AdminDashboardPage />} />
+            <Route path="users" element={<AdminUsersPage />} />
+            <Route path="organisations" element={<AdminOrgsPage />} />
+            <Route path="rbac" element={<AdminRBACPage />} />
+            <Route path="micro-apps" element={<AdminMicroAppsPage />} />
+            <Route path="files" element={<AdminFilesPage />} />
+          </Route>
 
           {/* Authenticated app */}
           <Route
