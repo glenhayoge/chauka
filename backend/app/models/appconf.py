@@ -20,3 +20,7 @@ class Settings(Base):
     open_result_level: Mapped[int] = mapped_column(SmallInteger, default=0)
     use_components: Mapped[bool] = mapped_column(Boolean, default=False)
     level_labels: Mapped[dict | None] = mapped_column(JSON, nullable=True, default=None)
+    # Phase 3: Contribution analysis
+    contribution_analysis_enabled: Mapped[bool] = mapped_column(Boolean, default=False)
+    # Phase 4: Dynamic logframe builder
+    custom_level_config: Mapped[dict | None] = mapped_column(JSON, nullable=True, default=None)

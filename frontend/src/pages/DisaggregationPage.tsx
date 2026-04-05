@@ -1,0 +1,94 @@
+import { useState } from 'react'
+import { useQuery } from '@tanstack/react-query'
+import { useLogframeStore } from '../store/logframe'
+import { apiClient } from '../api/client'
+import DisaggregationChart from '../components/analytics/DisaggregationChart'
+
+export default function DisaggregationPage() {
+  const data = useLogframeStore((s) => s.data)
+  const categories = data?.disaggregationCategories ?? []
+  const columns = data?.columns ?? []
+
+  const [categoryId, setCategoryId] = useState<number | null>(categories[0]?.id ?? null)
+  const [columnId, setColumnId] = useState<number | null>(null)
+  const [metric, setMetric] = useState<'total' | 'average'>('total')
+
+  const logframeId = data?.logframe?.id
+
+  const { data: breakdown, isLoading } = useQuery({
+    queryKey: ['disaggregation-breakdown', logframeId, categoryId, columnId],
+    queryFn: async () => {
+      const params: Record<string, any> = { category_id: categoryId }
+      if (columnId) params.column_id = columnId
+      const { data } = await apiClient.get(`/logframes/${logframeId}/analytics/disaggregation`, { params })
+      return data
+    },
+    enabled: !!logframeId && !!categoryId,
+  })
+
+  if (categories.length === 0) {
+    return (
+      <div className="max-w-3xl">
+        <h1 className="text-xl font-semibold">Disaggregation Analysis</h1>
+        <div className="mt-6 border border-dashed border-border rounded-lg p-8 text-center">
+          <p className="text-sm text-muted">No disaggregation categories defined.</p>
+          <p className="text-xs text-muted/60 mt-1">
+            Go to Settings to create categories like Gender, Age Group, or District, then tag sub-indicators with values.
+          </p>
+        </div>
+      </div>
+    )
+  }
+
+  return (
+    <div className="max-w-4xl space-y-6">
+      <div>
+        <h1 className="text-xl font-semibold">Disaggregation Analysis</h1>
+        <p className="text-sm text-muted mt-1">View indicator data broken down by disaggregation categories.</p>
+      </div>
+
+      {/* Filters */}
+      <div className="flex flex-wrap gap-3 items-center">
+        <select
+          value={categoryId ?? ''}
+          onChange={(e) => setCategoryId(Number(e.target.value))}
+          className="rounded border border-border bg-background px-3 py-1.5 text-sm focus:outline-none focus:ring-1 focus:ring-ring"
+        >
+          {categories.map((cat) => (
+            <option key={cat.id} value={cat.id}>{cat.name}</option>
+          ))}
+        </select>
+
+        <select
+          value={columnId ?? ''}
+          onChange={(e) => setColumnId(e.target.value ? Number(e.target.value) : null)}
+          className="rounded border border-border bg-background px-3 py-1.5 text-sm focus:outline-none focus:ring-1 focus:ring-ring"
+        >
+          <option value="">All measurements</option>
+          {columns.map((col) => (
+            <option key={col.id} value={col.id}>{col.name}</option>
+          ))}
+        </select>
+
+        <select
+          value={metric}
+          onChange={(e) => setMetric(e.target.value as 'total' | 'average')}
+          className="rounded border border-border bg-background px-3 py-1.5 text-sm focus:outline-none focus:ring-1 focus:ring-ring"
+        >
+          <option value="total">Total</option>
+          <option value="average">Average</option>
+        </select>
+      </div>
+
+      {/* Chart */}
+      {isLoading && <p className="text-sm text-muted">Loading breakdown...</p>}
+      {breakdown && (
+        <DisaggregationChart
+          category={breakdown.category}
+          groups={breakdown.groups}
+          metric={metric}
+        />
+      )}
+    </div>
+  )
+}

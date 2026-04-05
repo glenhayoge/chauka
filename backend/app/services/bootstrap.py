@@ -4,10 +4,12 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from app.models.appconf import Settings
 from app.models.contacts import User
 from app.models.logframe import (
-    Activity, Assumption, BudgetLine, Column, DataEntry, Expense,
+    Activity, Assumption, BudgetLine, Column, DataEntry, DisaggregationCategory, Expense,
     Indicator, IndicatorTag, Logframe, Milestone, Period,
     Rating, ReportingPeriod, Resource, Result, RiskRating, StatusCode, StatusUpdate, SubIndicator, TALine, Tag, Target,
 )
+from app.services.computation import compute_all_indicators
+from app.services.contribution import compute_contribution_scores
 from app.models.org import Organisation, Program, Project
 from app.services.rbac import can_edit_logframe, get_effective_role
 
@@ -128,6 +130,9 @@ async def get_bootstrap_data(logframe_id: int, db: AsyncSession, current_user: U
         if rp.subindicator_id in subindicator_ids and rp.period_id in period_ids
     ]
 
+    # Disaggregation categories
+    disaggregation_categories = await fetch(DisaggregationCategory, logframe_id=logframe_id)
+
     settings_result = await db.execute(
         select(Settings).where(Settings.logframe_id == logframe_id)
     )
@@ -189,14 +194,41 @@ async def get_bootstrap_data(logframe_id: int, db: AsyncSession, current_user: U
             "project": _row(project) if project else None,
         }
 
+    # Serialize base data
+    indicators_data = [_row(i) for i in indicators]
+    subindicators_data = [_row(s) for s in subindicators]
+    data_entries_data = [_row(d) for d in data_entries]
+    targets_data = [
+        _row(t) for t in targets
+    ]
+    columns_data = [_row(c) for c in columns]
+    periods_data = [_row(p) for p in periods]
+    results_data = [_row(r) for r in results]
+
+    # Phase 2: Compute formula-based indicator values
+    computed_entries = compute_all_indicators(
+        indicators_data, subindicators_data, data_entries_data,
+        targets_data, columns_data, periods_data,
+    )
+    data_entries_data.extend(computed_entries)
+
+    # Phase 3: Contribution analysis
+    contribution_enabled = getattr(settings, 'contribution_analysis_enabled', False) if settings else False
+    contribution_scores = []
+    if contribution_enabled:
+        contribution_scores = compute_contribution_scores(
+            results_data, indicators_data, subindicators_data,
+            data_entries_data, targets_data, periods_data,
+        )
+
     return {
         "logframe": _row(logframe),
-        "results": [_row(r) for r in results],
-        "indicators": [_row(i) for i in indicators],
-        "subIndicators": [_row(s) for s in subindicators],
+        "results": results_data,
+        "indicators": indicators_data,
+        "subIndicators": subindicators_data,
         "activities": [_row(a) for a in activities],
-        "columns": [_row(c) for c in columns],
-        "dataEntries": [_row(d) for d in data_entries],
+        "columns": columns_data,
+        "dataEntries": data_entries_data,
         "ratings": [_row(r) for r in ratings],
         "riskRatings": [_row(r) for r in risk_ratings],
         "assumptions": [_row(a) for a in assumptions],
@@ -205,13 +237,15 @@ async def get_bootstrap_data(logframe_id: int, db: AsyncSession, current_user: U
         "expenses": [_row(e) for e in expenses],
         "resources": [_row(r) for r in resources],
         "milestones": [_row(m) for m in milestones],
-        "targets": [_row(t) for t in targets],
+        "targets": targets_data,
         "statusUpdates": [_row(su) for su in status_updates],
         "statusCodes": [_row(s) for s in status_codes],
         "tags": [_row(t) for t in tags],
         "indicatorTags": [_row(it) for it in indicator_tags],
-        "periods": [_row(p) for p in periods],
+        "periods": periods_data,
         "reportingPeriods": [_row(rp) for rp in reporting_periods],
+        "disaggregationCategories": [_row(dc) for dc in disaggregation_categories],
+        "contributionScores": contribution_scores,
         "settings": _row(settings) if settings else None,
         "levels": levels,
         "conf": conf,

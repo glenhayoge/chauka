@@ -9,7 +9,7 @@ from app.models.logframe import (
     Logframe, Result, Indicator, SubIndicator, Activity,
     Column, DataEntry, RiskRating, Assumption, BudgetLine,
     Milestone, StatusCode, Tag, IndicatorTag, Period, ReportingPeriod, Target, TALine,
-    Expense, Resource,
+    Expense, Resource, DisaggregationCategory,
 )
 from app.models.kobo import KoboConnection, KoboFieldMapping, KoboSyncLog
 from app.models.gsheets import GoogleSheetsConnection, GoogleSheetsColumnMapping, GoogleSheetsSyncLog
@@ -27,6 +27,7 @@ __all__ = [
     "Target", "TALine", "Expense", "Resource",
     "KoboConnection", "KoboFieldMapping", "KoboSyncLog",
     "GoogleSheetsConnection", "GoogleSheetsColumnMapping", "GoogleSheetsSyncLog",
+    "DisaggregationCategory",
     "Notification", "AuditLog",
     "Permission", "RolePermission",
 ]

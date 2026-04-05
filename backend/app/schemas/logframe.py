@@ -70,6 +70,10 @@ class IndicatorBase(BaseModel):
     result_id: int
     source_of_verification: str = ""
     needs_baseline: bool = True
+    formula_config: dict | None = None
+    is_computed: bool = False
+    measurement_type: str = "numeric"
+    unit: str = ""
 
 
 class IndicatorCreate(IndicatorBase):
@@ -85,6 +89,10 @@ class IndicatorUpdate(BaseModel):
     order: int | None = None
     source_of_verification: str | None = None
     needs_baseline: bool | None = None
+    formula_config: dict | None = None
+    is_computed: bool | None = None
+    measurement_type: str | None = None
+    unit: str | None = None
 
     @field_validator("description", mode="before")
     @classmethod
@@ -101,6 +109,8 @@ class SubIndicatorBase(BaseModel):
     name: str = ""
     order: int = 0
     indicator_id: int
+    disaggregation_category_id: int | None = None
+    disaggregation_value: str = ""
 
 
 class SubIndicatorCreate(SubIndicatorBase):
@@ -110,11 +120,31 @@ class SubIndicatorCreate(SubIndicatorBase):
 class SubIndicatorUpdate(BaseModel):
     name: str | None = None
     order: int | None = None
+    disaggregation_category_id: int | None = None
+    disaggregation_value: str | None = None
 
 
 class SubIndicatorRead(SubIndicatorBase):
     model_config = ConfigDict(from_attributes=True)
     id: int
+
+
+class DisaggregationCategoryCreate(BaseModel):
+    name: str
+    order: int = 0
+
+
+class DisaggregationCategoryUpdate(BaseModel):
+    name: str | None = None
+    order: int | None = None
+
+
+class DisaggregationCategoryRead(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
+    id: int
+    logframe_id: int
+    name: str
+    order: int
 
 
 class ActivityBase(BaseModel):

@@ -41,6 +41,8 @@ const AdminOrgsPage = lazy(() => import('./pages/admin/AdminOrgsPage'))
 const AdminRBACPage = lazy(() => import('./pages/admin/AdminRBACPage'))
 const AdminMicroAppsPage = lazy(() => import('./pages/admin/AdminMicroAppsPage'))
 const AdminFilesPage = lazy(() => import('./pages/admin/AdminFilesPage'))
+const DisaggregationPage = lazy(() => import('./pages/DisaggregationPage'))
+const ContributionPage = lazy(() => import('./pages/ContributionPage'))
 
 function RequireAuth({ children }: { children: React.ReactNode }) {
   const token = useAuthStore((s) => s.token)
@@ -113,6 +115,8 @@ export default function App() {
             <Route path="logframes/:logframeId/workload" element={<WorkloadPage />} />
             <Route path="logframes/:logframeId/people" element={<PeoplePage />} />
             <Route path="logframes/:logframeId/settings" element={<SettingsPage />} />
+            <Route path="logframes/:logframeId/disaggregation" element={<DisaggregationPage />} />
+            <Route path="logframes/:logframeId/contribution" element={<ContributionPage />} />
           </Route>
         </Routes>
       </Suspense>

@@ -3,7 +3,7 @@ from __future__ import annotations
 import uuid
 from datetime import date
 
-from sqlalchemy import Boolean, Date, Float, ForeignKey, Integer, String, Text
+from sqlalchemy import Boolean, Date, Float, ForeignKey, Integer, JSON, String, Text
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
@@ -58,6 +58,17 @@ class Result(Base):
     rating: Mapped[Rating | None] = relationship("Rating", back_populates="results")
 
 
+class DisaggregationCategory(Base):
+    """Logframe-scoped disaggregation category (e.g. Gender, Age Group, District)."""
+
+    __tablename__ = "logframe_disaggregation_category"
+
+    id: Mapped[int] = mapped_column(Integer, primary_key=True)
+    logframe_id: Mapped[int] = mapped_column(Integer, ForeignKey("logframe_logframe.id"))
+    name: Mapped[str] = mapped_column(String(255))
+    order: Mapped[int] = mapped_column(Integer, default=0)
+
+
 class Indicator(Base):
     __tablename__ = "logframe_indicator"
 
@@ -68,6 +79,12 @@ class Indicator(Base):
     result_id: Mapped[int] = mapped_column(Integer, ForeignKey("logframe_result.id"))
     source_of_verification: Mapped[str] = mapped_column(String(255), default="")
     needs_baseline: Mapped[bool] = mapped_column(Boolean, default=True)
+    # Phase 2: Formula support
+    formula_config: Mapped[dict | None] = mapped_column(JSON, nullable=True, default=None)
+    is_computed: Mapped[bool] = mapped_column(Boolean, default=False)
+    # Phase 4: Dynamic builder
+    measurement_type: Mapped[str] = mapped_column(String(50), default="numeric")
+    unit: Mapped[str] = mapped_column(String(50), default="")
 
     result: Mapped[Result] = relationship("Result", back_populates="indicators")
     subindicators: Mapped[list[SubIndicator]] = relationship(
@@ -86,8 +103,14 @@ class SubIndicator(Base):
     name: Mapped[str] = mapped_column(String(255), default="")
     order: Mapped[int] = mapped_column(Integer, default=0)
     indicator_id: Mapped[int] = mapped_column(Integer, ForeignKey("logframe_indicator.id"))
+    # Phase 1: Disaggregation
+    disaggregation_category_id: Mapped[int | None] = mapped_column(
+        Integer, ForeignKey("logframe_disaggregation_category.id"), nullable=True
+    )
+    disaggregation_value: Mapped[str] = mapped_column(String(255), default="")
 
     indicator: Mapped[Indicator] = relationship("Indicator", back_populates="subindicators")
+    disaggregation_category: Mapped[DisaggregationCategory | None] = relationship("DisaggregationCategory")
     data_entries: Mapped[list[DataEntry]] = relationship(
         "DataEntry", back_populates="subindicator", cascade="all, delete-orphan",
     )
@@ -147,6 +170,8 @@ class DataEntry(Base):
     data: Mapped[str | None] = mapped_column(String(255), nullable=True)
     subindicator_id: Mapped[int] = mapped_column(Integer, ForeignKey("logframe_subindicator.id"))
     column_id: Mapped[int] = mapped_column(Integer, ForeignKey("logframe_column.id"))
+    # Phase 2: Distinguishes formula-generated from hand-entered values
+    is_computed: Mapped[bool] = mapped_column(Boolean, default=False)
 
     subindicator: Mapped[SubIndicator] = relationship("SubIndicator", back_populates="data_entries")
     column: Mapped[Column] = relationship("Column", back_populates="data_entries")

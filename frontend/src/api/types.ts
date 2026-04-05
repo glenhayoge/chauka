@@ -93,6 +93,15 @@ export interface Result {
   contribution_weighting: number
 }
 
+export interface FormulaConfig {
+  type: 'percentage' | 'progress' | 'aggregation' | 'cross_aggregation'
+  numerator_indicator_id?: number
+  denominator_indicator_id?: number
+  source?: string
+  method?: 'sum' | 'average' | 'min' | 'max' | 'weighted_average'
+  source_indicator_ids?: number[]
+}
+
 export interface Indicator {
   id: number
   name: string
@@ -101,6 +110,10 @@ export interface Indicator {
   result_id: number
   source_of_verification: string
   needs_baseline: boolean
+  formula_config: FormulaConfig | null
+  is_computed: boolean
+  measurement_type: string
+  unit: string
 }
 
 export interface SubIndicator {
@@ -108,6 +121,15 @@ export interface SubIndicator {
   name: string
   order: number
   indicator_id: number
+  disaggregation_category_id: number | null
+  disaggregation_value: string
+}
+
+export interface DisaggregationCategory {
+  id: number
+  logframe_id: number
+  name: string
+  order: number
 }
 
 export interface Activity {
@@ -133,6 +155,7 @@ export interface DataEntry {
   data: string | null
   subindicator_id: number
   column_id: number
+  is_computed: boolean
 }
 
 export interface Rating {
@@ -354,6 +377,8 @@ export interface BootstrapData {
   settings: AppSettings | null
   levels: Record<string, string>
   conf: BootstrapConf
+  disaggregationCategories: DisaggregationCategory[]
+  contributionScores: ContributionScore[]
   canEdit: boolean
   userRole: 'admin' | 'lead' | 'collector' | 'viewer' | null
   orgContext: {
@@ -361,6 +386,19 @@ export interface BootstrapData {
     program: Program | null
     project: Project | null
   } | null
+}
+
+export interface ContributionChildScore {
+  result_id: number
+  name: string
+  weight: number
+  progress: number
+}
+
+export interface ContributionScore {
+  result_id: number
+  score: number
+  children: ContributionChildScore[]
 }
 
 // --- Audit Log types ---
