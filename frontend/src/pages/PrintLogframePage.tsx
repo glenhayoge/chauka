@@ -77,7 +77,14 @@ function PrintHeader({ data }: { data: BootstrapData }) {
         )}
         {settings && (
           <>
-            <MetaItem label="Period" value={`${settings.start_year} \u2013 ${settings.end_year}`} />
+            <MetaItem
+              label="Period"
+              value={
+                settings.start_year === settings.end_year
+                  ? String(settings.start_year)
+                  : `${settings.start_year} \u2013 ${settings.end_year}`
+              }
+            />
             <MetaItem label="Currency" value={settings.currency} />
           </>
         )}
@@ -149,7 +156,10 @@ function ResultBlock({
       </div>
 
       {result.description && (
-        <p className="print-result-desc">{result.description}</p>
+        <div
+          className="print-result-desc"
+          dangerouslySetInnerHTML={{ __html: result.description }}
+        />
       )}
 
       {/* Indicators */}
@@ -208,7 +218,7 @@ function ResultBlock({
                 : null
               return (
                 <li key={a.id} className="print-assumption">
-                  <span>{a.description}</span>
+                  <span dangerouslySetInnerHTML={{ __html: a.description }} />
                   {risk && <span className="print-risk-badge">{risk.name}</span>}
                 </li>
               )
@@ -294,7 +304,10 @@ function ActivityRow({
       <td>
         <div className="font-medium">{activity.name}</div>
         {activity.description && (
-          <div className="text-xs text-muted-foreground mt-0.5">{activity.description}</div>
+          <div
+            className="text-xs text-muted-foreground mt-0.5"
+            dangerouslySetInnerHTML={{ __html: activity.description }}
+          />
         )}
       </td>
       <td className="whitespace-nowrap">{formatDate(activity.start_date)}</td>

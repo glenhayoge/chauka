@@ -38,8 +38,8 @@ export default function Layout() {
     <div className="min-h-screen text-foreground">
       {/* Top header bar */}
       <div className='max-w-7xl mx-auto'>
-        <header className="text-foreground bg-background/95 px-6">
-          <div className="px-3 sm:px-6 py-3 flex justify-between items-center">
+        <header className="text-foreground bg-background/95 px-4">
+          <div className=" py-3 flex justify-between items-center">
             <div className="flex items-center gap-4 sm:gap-6 min-w-0">
               <Link to="/app" className="text-lg sm:text-xl font-semibold hover:text-foreground/80 transition-colors py-3 flex-shrink-0">
                 Chauka

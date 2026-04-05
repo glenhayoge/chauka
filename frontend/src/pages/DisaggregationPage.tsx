@@ -47,13 +47,16 @@ export default function DisaggregationPage() {
 
   if (categories.length === 0) {
     return (
-      <div className="max-w-3xl mx-auto">
-        <h1 className="text-xl font-semibold">Disaggregation Analysis</h1>
-        <div className="mt-6 border border-dashed border-border rounded-lg p-8 text-center">
-          <p className="text-sm text-muted">No disaggregation categories defined.</p>
-          <p className="text-xs text-muted/60 mt-1">
-            Go to Settings &gt; Disaggregation to create categories like Gender, Age Group, or District, then tag sub-indicators with values.
-          </p>
+
+      <div className="max-w-2xl">
+        <div className='px-12'>
+          <h1 className="text-xl font-semibold">Disaggregation Analysis</h1>
+          <div className="mt-6 border border-dashed border-border rounded-lg p-8 text-center">
+            <p className="text-sm text-muted">No disaggregation categories defined.</p>
+            <p className="text-xs text-muted/60 mt-1">
+              Go to Settings &gt; Disaggregation to create categories like Gender, Age Group, or District, then tag sub-indicators with values.
+            </p>
+          </div>
         </div>
       </div>
     )
