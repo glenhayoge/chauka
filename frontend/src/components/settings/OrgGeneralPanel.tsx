@@ -25,7 +25,7 @@ export default function OrgGeneralPanel({ org, canEdit }: Props) {
   }
 
   return (
-    <div className="space-y-6">
+    <div className="border border-border rounded-md p-4 grid grid-cols-1 lg:grid-cols-2 gap-6">
       <SettingsSection
         title="Organisation Details"
         fields={[
@@ -37,9 +37,8 @@ export default function OrgGeneralPanel({ org, canEdit }: Props) {
         canEdit={canEdit}
       />
 
-      <div className="bg-card border border-border rounded-[var(--radius)] p-4">
+      <div>
         <h3 className="text-sm font-semibold text-foreground uppercase tracking-wide mb-3">
-          Organisation Profile
         </h3>
         <div className="space-y-3">
           <SelectField

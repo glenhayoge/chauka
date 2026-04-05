@@ -55,29 +55,32 @@ export default function OrgSettingsPage() {
   if (error || !org) return <p className="text-destructive p-6">Organisation not found.</p>
 
   return (
-    <div className="min-h-screen flex flex-col bg-background">
+    <div className="min-h-screen bg-background">
       {/* Header */}
-      <header className="bg-background/95 text-foreground px-4 sm:px-6 py-3 flex items-center justify-between">
-        <div className="flex items-center gap-4">
-          <Link to="/app" className="text-lg font-semibold hover:opacity-80">
-            Chauka
-          </Link>
-          <span className="opacity-30">/</span>
-          <span className="text-sm opacity-50 truncate">{org.name}</span>
-          <span className="opacity-30">/</span>
-          <span className="text-sm opacity-80">Settings</span>
-        </div>
-        <div className="flex items-center gap-4">
-          <span className="text-sm opacity-70 hidden sm:inline">{username}</span>
-          <button
-            onClick={handleLogout}
-            className="text-sm opacity-70 hover:opacity-100 underline hover:no-underline"
-          >
-            Log out
-          </button>
-        </div>
-      </header>
+      <div className="mx-auto max-w-7xl">
+        <header className="bg-background/95 text-foreground px-4 sm:px-6 py-3 flex items-center justify-between">
 
+          <div className="flex items-center gap-4">
+            <Link to="/app" className="text-lg font-semibold hover:opacity-80">
+              Chauka
+            </Link>
+            <span className="opacity-30">/</span>
+            <span className="text-sm opacity-50 truncate">{org.name}</span>
+            <span className="opacity-30">/</span>
+            <span className="text-sm opacity-80">Settings</span>
+          </div>
+          <div className="flex items-center gap-4">
+            <span className="text-sm opacity-70 hidden sm:inline">{username}</span>
+            <button
+              onClick={handleLogout}
+              className="text-sm opacity-70 hover:opacity-100 underline hover:no-underline"
+            >
+              Log out
+            </button>
+          </div>
+
+        </header>
+      </div>
       <main className="flex-1 p-3 sm:p-6 max-w-7xl mx-auto w-full">
         <Link to="/app" className="text-sm text-muted-foreground hover:underline mb-4 inline-block">
           &larr; Back to organisations
