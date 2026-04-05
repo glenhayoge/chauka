@@ -1,21 +1,35 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
+import { useParams } from 'react-router-dom'
 import { useQuery } from '@tanstack/react-query'
+import { useBootstrap } from '../hooks/useBootstrap'
 import { useLogframeStore } from '../store/logframe'
+import { useResolveLogframeId } from '../hooks/useResolveIds'
 import { apiClient } from '../api/client'
 import DisaggregationChart from '../components/analytics/DisaggregationChart'
 
 export default function DisaggregationPage() {
+  const { logframeId: publicId } = useParams<{ logframeId: string }>()
+  const { id: resolvedId, isLoading: resolving, notFound } = useResolveLogframeId(publicId)
+  const { isLoading, error } = useBootstrap(resolvedId ?? 0)
   const data = useLogframeStore((s) => s.data)
+
   const categories = data?.disaggregationCategories ?? []
   const columns = data?.columns ?? []
 
-  const [categoryId, setCategoryId] = useState<number | null>(categories[0]?.id ?? null)
+  const [categoryId, setCategoryId] = useState<number | null>(null)
   const [columnId, setColumnId] = useState<number | null>(null)
   const [metric, setMetric] = useState<'total' | 'average'>('total')
 
+  // Set initial category when categories load
+  useEffect(() => {
+    if (categories.length > 0 && categoryId === null) {
+      setCategoryId(categories[0].id)
+    }
+  }, [categories, categoryId])
+
   const logframeId = data?.logframe?.id
 
-  const { data: breakdown, isLoading } = useQuery({
+  const { data: breakdown, isLoading: breakdownLoading } = useQuery({
     queryKey: ['disaggregation-breakdown', logframeId, categoryId, columnId],
     queryFn: async () => {
       const params: Record<string, any> = { category_id: categoryId }
@@ -26,14 +40,19 @@ export default function DisaggregationPage() {
     enabled: !!logframeId && !!categoryId,
   })
 
+  if (resolving || isLoading) return <p className="text-sm text-muted">Loading...</p>
+  if (notFound) return <p className="text-sm text-destructive">Logframe not found.</p>
+  if (error) return <p className="text-sm text-destructive">Failed to load data.</p>
+  if (!data) return null
+
   if (categories.length === 0) {
     return (
-      <div className="max-w-3xl">
+      <div className="max-w-3xl mx-auto">
         <h1 className="text-xl font-semibold">Disaggregation Analysis</h1>
         <div className="mt-6 border border-dashed border-border rounded-lg p-8 text-center">
           <p className="text-sm text-muted">No disaggregation categories defined.</p>
           <p className="text-xs text-muted/60 mt-1">
-            Go to Settings to create categories like Gender, Age Group, or District, then tag sub-indicators with values.
+            Go to Settings &gt; Disaggregation to create categories like Gender, Age Group, or District, then tag sub-indicators with values.
           </p>
         </div>
       </div>
@@ -44,7 +63,7 @@ export default function DisaggregationPage() {
     <div className="max-w-4xl space-y-6">
       <div>
         <h1 className="text-xl font-semibold">Disaggregation Analysis</h1>
-        <p className="text-sm text-muted mt-1">View indicator data broken down by disaggregation categories.</p>
+        <p className="text-sm text-foreground/50 mt-1">View indicator data broken down by disaggregation categories.</p>
       </div>
 
       {/* Filters */}
@@ -81,7 +100,7 @@ export default function DisaggregationPage() {
       </div>
 
       {/* Chart */}
-      {isLoading && <p className="text-sm text-muted">Loading breakdown...</p>}
+      {breakdownLoading && <p className="text-sm text-muted">Loading breakdown...</p>}
       {breakdown && (
         <DisaggregationChart
           category={breakdown.category}

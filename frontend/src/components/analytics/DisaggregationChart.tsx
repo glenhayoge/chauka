@@ -19,7 +19,7 @@ export default function DisaggregationChart({ category, groups, metric = 'total'
   if (groups.length === 0) {
     return (
       <div className="border border-dashed border-border rounded-lg p-8 text-center">
-        <p className="text-sm text-muted">No data available for this category.</p>
+        <p className="text-sm text-foreground/50">No data available for this category.</p>
       </div>
     )
   }

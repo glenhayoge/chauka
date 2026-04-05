@@ -130,6 +130,20 @@ export default function Layout() {
                     Dashboard
                   </MobileNavLink>
                   <MobileNavLink
+                    to={`/app/logframes/${currentLogframeId}/disaggregation`}
+                    active={pathname.startsWith(`/app/logframes/${currentLogframeId}/disaggregation`)}
+                    onClick={() => setMobileMenuOpen(false)}
+                  >
+                    Disaggregation
+                  </MobileNavLink>
+                  <MobileNavLink
+                    to={`/app/logframes/${currentLogframeId}/contribution`}
+                    active={pathname.startsWith(`/app/logframes/${currentLogframeId}/contribution`)}
+                    onClick={() => setMobileMenuOpen(false)}
+                  >
+                    Contribution
+                  </MobileNavLink>
+                  <MobileNavLink
                     to={`/app/logframes/${currentLogframeId}/people`}
                     active={pathname.startsWith(`/app/logframes/${currentLogframeId}/people`)}
                     onClick={() => setMobileMenuOpen(false)}
@@ -176,6 +190,18 @@ export default function Layout() {
                 active={pathname === `/app/logframes/${currentLogframeId}`}
               >
                 Dashboard
+              </NavButton>
+              <NavButton
+                to={`/app/logframes/${currentLogframeId}/disaggregation`}
+                active={pathname.startsWith(`/app/logframes/${currentLogframeId}/disaggregation`)}
+              >
+                Disaggregation
+              </NavButton>
+              <NavButton
+                to={`/app/logframes/${currentLogframeId}/contribution`}
+                active={pathname.startsWith(`/app/logframes/${currentLogframeId}/contribution`)}
+              >
+                Contribution
               </NavButton>
               <NavButton
                 to={`/app/logframes/${currentLogframeId}/people`}

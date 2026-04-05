@@ -8,9 +8,11 @@ import { apiClient } from '../api/client'
 import clsx from 'clsx'
 import KoboSettings from '../components/integrations/KoboSettings'
 import GoogleSheetsSettings from '../components/integrations/GoogleSheetsSettings'
+import DisaggregationSettings from '../components/settings/DisaggregationSettings'
 
 const TABS = [
   { key: 'logframe', label: 'Logframe' },
+  { key: 'disaggregation', label: 'Disaggregation' },
   { key: 'integrations', label: 'Integrations' },
 ] as const
 
@@ -78,6 +80,11 @@ export default function SettingsPage() {
       {/* Tab content */}
       {activeTab === 'logframe' && (
         <LogframeSettingsPanel logframeId={resolvedId!} canEdit={data.canEdit} />
+      )}
+      {activeTab === 'disaggregation' && (
+        <div className="bg-card border rounded-lg p-4">
+          <DisaggregationSettings />
+        </div>
       )}
       {activeTab === 'integrations' && (
         <div className="space-y-6">

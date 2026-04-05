@@ -20,12 +20,17 @@ export default function DisaggregationSettings() {
     enabled: !!logframeId,
   })
 
+  function invalidateAll() {
+    queryClient.invalidateQueries({ queryKey: ['disaggregation-categories', logframeId] })
+    queryClient.invalidateQueries({ queryKey: ['bootstrap', logframeId] })
+  }
+
   const createMutation = useMutation({
     mutationFn: async () => {
       await apiClient.post(`/logframes/${logframeId}/disaggregation-categories/`, { name: newName })
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['disaggregation-categories', logframeId] })
+      invalidateAll()
       setNewName('')
     },
   })
@@ -35,7 +40,7 @@ export default function DisaggregationSettings() {
       await apiClient.patch(`/logframes/${logframeId}/disaggregation-categories/${id}`, { name: editName })
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['disaggregation-categories', logframeId] })
+      invalidateAll()
       setEditId(null)
     },
   })
@@ -45,7 +50,7 @@ export default function DisaggregationSettings() {
       await apiClient.delete(`/logframes/${logframeId}/disaggregation-categories/${id}`)
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['disaggregation-categories', logframeId] })
+      invalidateAll()
     },
   })
 
@@ -53,7 +58,7 @@ export default function DisaggregationSettings() {
     <div className="space-y-4">
       <div>
         <h3 className="text-sm font-medium">Disaggregation Categories</h3>
-        <p className="text-xs text-muted mt-1">
+        <p className="text-xs text-foreground/50 mt-1">
           Define categories like Gender, Age Group, or District to tag sub-indicators for automatic breakdown analysis.
         </p>
       </div>
@@ -95,7 +100,7 @@ export default function DisaggregationSettings() {
           </div>
         ))}
         {categories.length === 0 && (
-          <p className="text-xs text-muted py-2">No categories defined yet.</p>
+          <p className="text-xs text-foreground/50 py-2">No categories defined yet.</p>
         )}
       </div>
 

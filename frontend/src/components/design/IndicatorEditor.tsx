@@ -7,6 +7,7 @@ import DeleteButton from '../ui/DeleteButton'
 import AddButton from '../ui/AddButton'
 import ConfirmDialog from '../ui/ConfirmDialog'
 import TargetsTable from './TargetsTable'
+import DisaggregationPicker from './DisaggregationPicker'
 import { apiClient } from '../../api/client'
 import { useQueryClient } from '@tanstack/react-query'
 
@@ -33,8 +34,8 @@ export default function IndicatorEditor({ indicator, logframeId, periods, target
     queryClient.invalidateQueries({ queryKey: ['bootstrap', logframeId] })
   }
 
-  async function saveSubindicator(subId: number, name: string) {
-    await apiClient.patch(`${base}/subindicators/${subId}`, { name })
+  async function saveSubindicator(subId: number, fields: Record<string, unknown>) {
+    await apiClient.patch(`${base}/subindicators/${subId}`, fields)
     queryClient.invalidateQueries({ queryKey: ['bootstrap', logframeId] })
   }
 
@@ -93,18 +94,44 @@ export default function IndicatorEditor({ indicator, logframeId, periods, target
       {/* Sub-indicators */}
       <div className="mt-2 ml-2">
         <p className="text-xs font-medium text-muted-foreground uppercase tracking-wide mb-1">Sub-indicators</p>
-        {subindicators.map((sub) => (
-          <div key={sub.id} className="flex items-center gap-2 text-sm py-0.5">
-            <span className="text-muted-foreground">{'\u2192'}</span>
-            <EditableText
-              value={sub.name}
-              onSave={(v) => saveSubindicator(sub.id, v)}
-              placeholder="Sub-indicator name"
-              disabled={!canEdit}
-            />
-            {canEdit && <DeleteButton onClick={() => setDeleteSubId(sub.id)} label="Remove" />}
-          </div>
-        ))}
+        {subindicators.map((sub) => {
+          const categoryName = data.disaggregationCategories?.find(
+            (c) => c.id === sub.disaggregation_category_id
+          )?.name
+          return (
+            <div key={sub.id} className="py-1">
+              <div className="flex items-center gap-2 text-sm">
+                <span className="text-muted-foreground">{'\u2192'}</span>
+                <EditableText
+                  value={sub.name}
+                  onSave={(v) => saveSubindicator(sub.id, { name: v })}
+                  placeholder="Sub-indicator name"
+                  disabled={!canEdit}
+                />
+                {categoryName && (
+                  <span className="text-[10px] bg-primary/10 text-primary px-1.5 py-0.5 rounded flex-shrink-0">
+                    {categoryName}: {sub.disaggregation_value || '—'}
+                  </span>
+                )}
+                {canEdit && <DeleteButton onClick={() => setDeleteSubId(sub.id)} label="Remove" />}
+              </div>
+              {canEdit && (
+                <div className="ml-5">
+                  <DisaggregationPicker
+                    categoryId={sub.disaggregation_category_id}
+                    value={sub.disaggregation_value}
+                    onChange={(catId, val) =>
+                      saveSubindicator(sub.id, {
+                        disaggregation_category_id: catId,
+                        disaggregation_value: val,
+                      })
+                    }
+                  />
+                </div>
+              )}
+            </div>
+          )
+        })}
         {canEdit && <AddButton onClick={addSubindicator} label="Add sub-indicator" />}
       </div>
 

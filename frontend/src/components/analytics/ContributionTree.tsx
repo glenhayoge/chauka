@@ -23,8 +23,8 @@ export default function ContributionTree({ scores, results }: Props) {
   if (scores.length === 0) {
     return (
       <div className="border border-dashed border-border rounded-lg p-8 text-center">
-        <p className="text-sm text-muted">No contribution data available.</p>
-        <p className="text-xs text-muted/60 mt-1">Enable contribution analysis in logframe settings and ensure indicators have targets and actual data.</p>
+        <p className="text-sm text-foreground/50">No contribution data available.</p>
+        <p className="text-xs text-foreground/50 mt-1">Enable contribution analysis in logframe settings and ensure indicators have targets and actual data.</p>
       </div>
     )
   }

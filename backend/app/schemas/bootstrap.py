@@ -35,6 +35,8 @@ class BootstrapData(BaseModel):
     settings: dict | None
     levels: dict[str, str]
     conf: BootstrapConf
+    disaggregationCategories: list[dict]
+    contributionScores: list[dict]
     canEdit: bool
     userRole: str | None = None
     orgContext: dict | None = None
