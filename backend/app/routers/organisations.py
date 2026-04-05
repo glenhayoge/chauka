@@ -15,6 +15,7 @@ from app.schemas.org import (
     OrgDashboardRead,
     ProjectCreate,
     ProjectRead,
+    ProjectUpdate,
 )
 from app.services.dashboard import get_org_dashboard
 from app.services.rbac import is_org_member
@@ -205,6 +206,54 @@ async def create_org_project(
     await db.commit()
     await db.refresh(obj)
     return obj
+
+
+@router.patch("/{organisation_id}/projects/{project_id}", response_model=ProjectRead)
+async def update_org_project(
+    organisation_id: int,
+    project_id: int,
+    body: ProjectUpdate,
+    db: AsyncSession = Depends(get_db),
+    current_user: User = Depends(get_current_user),
+):
+    """Update a standalone org project."""
+    result = await db.execute(
+        select(Project).where(
+            Project.id == project_id,
+            Project.organisation_id == organisation_id,
+            Project.program_id.is_(None),
+        )
+    )
+    obj = result.scalar_one_or_none()
+    if not obj:
+        raise HTTPException(status_code=404, detail="Project not found")
+    for field, value in body.model_dump(exclude_unset=True).items():
+        setattr(obj, field, value)
+    await db.commit()
+    await db.refresh(obj)
+    return obj
+
+
+@router.delete("/{organisation_id}/projects/{project_id}", status_code=204)
+async def delete_org_project(
+    organisation_id: int,
+    project_id: int,
+    db: AsyncSession = Depends(get_db),
+    current_user: User = Depends(get_current_user),
+):
+    """Delete a standalone org project."""
+    result = await db.execute(
+        select(Project).where(
+            Project.id == project_id,
+            Project.organisation_id == organisation_id,
+            Project.program_id.is_(None),
+        )
+    )
+    obj = result.scalar_one_or_none()
+    if not obj:
+        raise HTTPException(status_code=404, detail="Project not found")
+    await db.delete(obj)
+    await db.commit()
 
 
 @router.get("/{organisation_id}/projects/{project_id}/logframes", response_model=list[LogframeRead])

@@ -164,6 +164,22 @@ export async function createOrgProjectLogframe(
   return data
 }
 
+export async function updateOrgProject(
+  orgId: number,
+  projectId: number,
+  body: Partial<ProjectCreate>,
+): Promise<Project> {
+  const { data } = await apiClient.patch<Project>(
+    `/organisations/${orgId}/projects/${projectId}`,
+    body,
+  )
+  return data
+}
+
+export async function deleteOrgProject(orgId: number, projectId: number): Promise<void> {
+  await apiClient.delete(`/organisations/${orgId}/projects/${projectId}`)
+}
+
 // --- Delete operations ---
 
 export async function deleteProgram(orgId: number, programId: number): Promise<void> {

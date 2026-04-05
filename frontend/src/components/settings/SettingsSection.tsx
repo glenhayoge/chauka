@@ -17,7 +17,7 @@ interface Props {
 
 export default function SettingsSection({ title, fields, onSave, canEdit, isPlaceholder }: Props) {
   return (
-    <div className="bg-card border border-border rounded-[var(--radius)] p-4">
+    <div>
       <div className="flex items-center gap-2 mb-3">
         <h3 className="text-sm font-semibold text-foreground uppercase tracking-wide">{title}</h3>
         {isPlaceholder && (

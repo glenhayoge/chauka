@@ -6,6 +6,8 @@ import {
   getProjects, createProject, deleteProject, updateProject,
   getProjectLogframes, createLogframe, deleteLogframe, updateLogframe,
   getProgramLogframes, createProgramLogframe,
+  getOrgProjects, createOrgProject, deleteOrgProject, updateOrgProject,
+  getOrgProjectLogframes, createOrgProjectLogframe,
 } from '../../api/organisations'
 import type { Program, Project, Logframe } from '../../api/types'
 import clsx from 'clsx'
@@ -20,6 +22,11 @@ export default function ProgramsPanel({ orgId, canEdit }: Props) {
   const { data: programs, isLoading } = useQuery({
     queryKey: ['programs', orgId],
     queryFn: () => getPrograms(orgId),
+  })
+
+  const { data: standaloneProjects } = useQuery({
+    queryKey: ['org-projects', orgId],
+    queryFn: () => getOrgProjects(orgId),
   })
 
   const [newProgName, setNewProgName] = useState('')
@@ -42,7 +49,8 @@ export default function ProgramsPanel({ orgId, canEdit }: Props) {
   return (
     <div className="space-y-4">
       <p className="text-sm text-muted-foreground">
-        Manage your programs, projects, and logframes. Programs contain projects, and projects contain logframes.
+        Manage your programs, projects, and logframes. Logframes can be organised under a program,
+        under a project within a program, or under a standalone project.
       </p>
 
       {programs?.map((prog) => (
@@ -75,6 +83,11 @@ export default function ProgramsPanel({ orgId, canEdit }: Props) {
           </button>
         </div>
       )}
+
+      {/* Standalone projects (directly under org, no program) */}
+      <div className="border-t border-border pt-4 mt-4">
+        <StandaloneProjectsSection orgId={orgId} projects={standaloneProjects ?? []} canEdit={canEdit} />
+      </div>
     </div>
   )
 }
@@ -404,6 +417,187 @@ function LogframeRow({ logframe, onDelete, onRename, canEdit }: { logframe: Logf
           onCancel={() => setConfirmDelete(false)}
           size="sm"
         />
+      )}
+    </div>
+  )
+}
+
+// --- Standalone org projects (no program) ---
+
+function StandaloneProjectsSection({ orgId, projects, canEdit }: { orgId: number; projects: Project[]; canEdit: boolean }) {
+  const queryClient = useQueryClient()
+  const [newName, setNewName] = useState('')
+  const [adding, setAdding] = useState(false)
+
+  async function handleAdd() {
+    if (!newName.trim()) return
+    setAdding(true)
+    try {
+      await createOrgProject(orgId, { name: newName.trim() })
+      setNewName('')
+      queryClient.invalidateQueries({ queryKey: ['org-projects', orgId] })
+    } finally {
+      setAdding(false)
+    }
+  }
+
+  return (
+    <div className="space-y-3">
+      <p className="text-xs font-medium text-muted-foreground uppercase tracking-wider">Standalone Projects</p>
+      <p className="text-xs text-muted-foreground">
+        Projects not under any program. Logframes created here follow the Org &rarr; Project &rarr; Logframe path.
+      </p>
+
+      {projects.map((proj) => (
+        <StandaloneProjectCard key={proj.id} project={proj} orgId={orgId} canEdit={canEdit} />
+      ))}
+
+      {projects.length === 0 && (
+        <p className="text-xs text-muted-foreground/60 italic">No standalone projects.</p>
+      )}
+
+      {canEdit && (
+        <div className="flex gap-2 max-w-md">
+          <input
+            type="text"
+            value={newName}
+            onChange={(e) => setNewName(e.target.value)}
+            onKeyDown={(e) => { if (e.key === 'Enter') { e.preventDefault(); handleAdd() } }}
+            placeholder="New project name"
+            className="flex-1 text-sm border border-input rounded-[var(--radius)] px-3 py-1.5 bg-background text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring"
+          />
+          <button
+            onClick={handleAdd}
+            disabled={adding || !newName.trim()}
+            className="text-sm px-4 py-1.5 bg-primary text-primary-foreground rounded-[var(--radius)] hover:opacity-90 disabled:opacity-50"
+          >
+            {adding ? 'Adding...' : 'Add Project'}
+          </button>
+        </div>
+      )}
+    </div>
+  )
+}
+
+function StandaloneProjectCard({ project, orgId, canEdit }: { project: Project; orgId: number; canEdit: boolean }) {
+  const queryClient = useQueryClient()
+  const [expanded, setExpanded] = useState(false)
+  const [confirmDelete, setConfirmDelete] = useState(false)
+
+  const { data: logframes } = useQuery({
+    queryKey: ['org-project-logframes', orgId, project.id],
+    queryFn: () => getOrgProjectLogframes(orgId, project.id),
+    enabled: expanded,
+  })
+
+  async function handleDelete() {
+    await deleteOrgProject(orgId, project.id)
+    queryClient.invalidateQueries({ queryKey: ['org-projects', orgId] })
+    setConfirmDelete(false)
+  }
+
+  async function handleUpdateName(value: string) {
+    await updateOrgProject(orgId, project.id, { name: value })
+    queryClient.invalidateQueries({ queryKey: ['org-projects', orgId] })
+  }
+
+  const statusStyles: Record<string, string> = {
+    active: 'bg-[#16a34a]/10 text-[#16a34a]',
+    completed: 'bg-muted text-muted-foreground',
+    archived: 'bg-muted text-muted-foreground',
+  }
+
+  return (
+    <div className="bg-card border border-border rounded-[var(--radius)] overflow-hidden shadow-xs">
+      <div className="flex items-center gap-2 px-4 py-3">
+        <button
+          onClick={() => setExpanded(!expanded)}
+          className="text-muted-foreground text-xs w-5 hover:text-foreground"
+        >
+          {expanded ? '\u25BC' : '\u25B6'}
+        </button>
+        <span className="text-[10px] font-medium text-secondary-foreground bg-secondary/30 px-1.5 py-0.5 rounded">
+          Project
+        </span>
+        <div className="flex-1 min-w-0">
+          <InlineEdit value={project.name} onSave={handleUpdateName} canEdit={canEdit} className="text-sm font-medium text-foreground" />
+        </div>
+        <span className={clsx('text-[10px] px-1.5 py-0.5 rounded font-medium', statusStyles[project.status] ?? statusStyles.active)}>
+          {project.status}
+        </span>
+        {canEdit && (
+          <DeleteControl
+            confirmDelete={confirmDelete}
+            onRequestDelete={() => setConfirmDelete(true)}
+            onConfirm={handleDelete}
+            onCancel={() => setConfirmDelete(false)}
+          />
+        )}
+      </div>
+
+      {expanded && (
+        <div className="border-t border-border px-4 py-3 bg-muted/30">
+          <StandaloneLogframesList orgId={orgId} projectId={project.id} logframes={logframes ?? []} canEdit={canEdit} />
+        </div>
+      )}
+    </div>
+  )
+}
+
+function StandaloneLogframesList({ orgId, projectId, logframes, canEdit }: { orgId: number; projectId: number; logframes: Logframe[]; canEdit: boolean }) {
+  const queryClient = useQueryClient()
+  const [newName, setNewName] = useState('')
+  const [adding, setAdding] = useState(false)
+
+  async function handleAdd() {
+    if (!newName.trim()) return
+    setAdding(true)
+    try {
+      await createOrgProjectLogframe(orgId, projectId, { name: newName.trim() })
+      setNewName('')
+      queryClient.invalidateQueries({ queryKey: ['org-project-logframes', orgId, projectId] })
+    } finally {
+      setAdding(false)
+    }
+  }
+
+  async function handleDelete(lfId: number) {
+    await deleteLogframe(lfId)
+    queryClient.invalidateQueries({ queryKey: ['org-project-logframes', orgId, projectId] })
+  }
+
+  async function handleRename(lfId: number, name: string) {
+    await updateLogframe(lfId, { name })
+    queryClient.invalidateQueries({ queryKey: ['org-project-logframes', orgId, projectId] })
+  }
+
+  return (
+    <div className="space-y-1.5">
+      <p className="text-[10px] font-medium text-muted-foreground uppercase tracking-wider">Logframes</p>
+      {logframes.map((lf) => (
+        <LogframeRow key={lf.id} logframe={lf} onDelete={() => handleDelete(lf.id)} onRename={(name) => handleRename(lf.id, name)} canEdit={canEdit} />
+      ))}
+      {logframes.length === 0 && (
+        <p className="text-xs text-muted-foreground/60 italic">No logframes yet.</p>
+      )}
+      {canEdit && (
+        <div className="flex gap-1.5">
+          <input
+            type="text"
+            value={newName}
+            onChange={(e) => setNewName(e.target.value)}
+            onKeyDown={(e) => { if (e.key === 'Enter') { e.preventDefault(); handleAdd() } }}
+            placeholder="New logframe name"
+            className="flex-1 text-xs border border-input rounded-[var(--radius)] px-2 py-1 bg-background text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring"
+          />
+          <button
+            onClick={handleAdd}
+            disabled={adding || !newName.trim()}
+            className="text-xs px-2.5 py-1 bg-primary text-primary-foreground rounded-[var(--radius)] hover:opacity-90 disabled:opacity-50"
+          >
+            Add
+          </button>
+        </div>
       )}
     </div>
   )

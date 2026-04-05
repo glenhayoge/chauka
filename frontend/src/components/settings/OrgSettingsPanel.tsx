@@ -51,80 +51,93 @@ export default function OrgSettingsPanel({ logframeId, canEdit }: Props) {
 
   return (
     <div className="space-y-6">
-      <SettingsSection
-        title="Organisation"
-        fields={[
-          { label: 'Name', value: organisation.name, entity: 'org', field: 'name' },
-          { label: 'Slug', value: organisation.slug, entity: 'org', field: 'slug' },
-          { label: 'Description', value: organisation.description, entity: 'org', field: 'description' },
-        ]}
-        onSave={saveField}
-        canEdit={canEdit}
-      />
+      {/* Organisation details + profile in one row */}
+      <div className="border border-border rounded-md p-4 grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <SettingsSection
+          title="Organisation"
+          fields={[
+            { label: 'Name', value: organisation.name, entity: 'org', field: 'name' },
+            { label: 'Slug', value: organisation.slug, entity: 'org', field: 'slug' },
+            { label: 'Description', value: organisation.description, entity: 'org', field: 'description' },
+          ]}
+          onSave={saveField}
+          canEdit={canEdit}
+        />
 
-      {/* Organisation profile selects */}
-      <div className="bg-card border rounded-lg p-4">
-        <h3 className="text-sm font-semibold text-foreground uppercase tracking-wide mb-3">
-          Organisation Profile
-        </h3>
-        <div className="space-y-3">
-          <SelectField
-            label="Country"
-            value={organisation.country}
-            options={COUNTRIES}
-            onChange={(v) => handleOrgSelectChange('country', v)}
-            disabled={!canEdit}
-          />
-          <SelectField
-            label="Organisation Type"
-            value={organisation.org_type}
-            options={ORG_TYPES}
-            onChange={(v) => handleOrgSelectChange('org_type', v)}
-            disabled={!canEdit}
-          />
-          <SelectField
-            label="Sector"
-            value={organisation.sector}
-            options={SECTORS}
-            onChange={(v) => handleOrgSelectChange('sector', v)}
-            disabled={!canEdit}
-          />
+        <div>
+          <div className="flex items-center gap-2 mb-3">
+            {/* <h3 className="text-sm font-semibold text-foreground uppercase tracking-wide">
+              Organisation Profile
+            </h3> */}
+          </div>
+          <div className="space-y-3">
+            <SelectField
+              label="Country"
+              value={organisation.country}
+              options={COUNTRIES}
+              onChange={(v) => handleOrgSelectChange('country', v)}
+              disabled={!canEdit}
+            />
+            <SelectField
+              label="Organisation Type"
+              value={organisation.org_type}
+              options={ORG_TYPES}
+              onChange={(v) => handleOrgSelectChange('org_type', v)}
+              disabled={!canEdit}
+            />
+            <SelectField
+              label="Sector"
+              value={organisation.sector}
+              options={SECTORS}
+              onChange={(v) => handleOrgSelectChange('sector', v)}
+              disabled={!canEdit}
+            />
+          </div>
         </div>
       </div>
 
-      {program && (
+      {/* Program + Project in one row */}
+      {(program || project) && (
+        <div className="border border-border rounded-md p-4 grid grid-cols-1 lg:grid-cols-2 gap-6">
+          {program && (
+            <SettingsSection
+              title="Program"
+              fields={[
+                { label: 'Name', value: program.name, entity: 'program', field: 'name' },
+                { label: 'Description', value: program.description, entity: 'program', field: 'description' },
+              ]}
+              onSave={saveField}
+              canEdit={canEdit}
+              isPlaceholder={program.name === 'Untitled Program'}
+            />
+          )}
+          {project && (
+            <SettingsSection
+              title="Project"
+              fields={[
+                { label: 'Name', value: project.name, entity: 'project', field: 'name' },
+                { label: 'Description', value: project.description, entity: 'project', field: 'description' },
+              ]}
+              onSave={saveField}
+              canEdit={canEdit}
+              isPlaceholder={project.name === 'Untitled Project'}
+            />
+          )}
+        </div>
+      )}
+
+      {/* Logframe */}
+      <div className="border border-border rounded-md p-4 grid grid-cols-1 lg:grid-cols-2 gap-6">
         <SettingsSection
-          title="Program"
+          title="Logframe"
           fields={[
-            { label: 'Name', value: program.name, entity: 'program', field: 'name' },
-            { label: 'Description', value: program.description, entity: 'program', field: 'description' },
+            { label: 'Name', value: logframe.name, entity: 'logframe', field: 'name' },
           ]}
           onSave={saveField}
           canEdit={canEdit}
-          isPlaceholder={program.name === 'Untitled Program'}
+          isPlaceholder={logframe.name === 'Untitled Logframe'}
         />
-      )}
-      {project && (
-        <SettingsSection
-          title="Project"
-          fields={[
-            { label: 'Name', value: project.name, entity: 'project', field: 'name' },
-            { label: 'Description', value: project.description, entity: 'project', field: 'description' },
-          ]}
-          onSave={saveField}
-          canEdit={canEdit}
-          isPlaceholder={project.name === 'Untitled Project'}
-        />
-      )}
-      <SettingsSection
-        title="Logframe"
-        fields={[
-          { label: 'Name', value: logframe.name, entity: 'logframe', field: 'name' },
-        ]}
-        onSave={saveField}
-        canEdit={canEdit}
-        isPlaceholder={logframe.name === 'Untitled Logframe'}
-      />
+      </div>
     </div>
   )
 }

@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { useParams, useSearchParams, useNavigate } from 'react-router-dom'
+import { useParams, useSearchParams, useNavigate, Link } from 'react-router-dom'
 import { useBootstrap } from '../hooks/useBootstrap'
 import { useLogframeStore } from '../store/logframe'
 import { useQueryClient } from '@tanstack/react-query'
@@ -7,13 +7,9 @@ import { apiClient } from '../api/client'
 import clsx from 'clsx'
 import KoboSettings from '../components/integrations/KoboSettings'
 import GoogleSheetsSettings from '../components/integrations/GoogleSheetsSettings'
-import MembersPanel from '../components/settings/MembersPanel'
-import OrgSettingsPanel from '../components/settings/OrgSettingsPanel'
 
 const TABS = [
-  { key: 'organisation', label: 'Organisation' },
   { key: 'logframe', label: 'Logframe' },
-  { key: 'members', label: 'Members' },
   { key: 'integrations', label: 'Integrations' },
 ] as const
 
@@ -28,7 +24,7 @@ export default function SettingsPage() {
   const navigate = useNavigate()
 
   const tabParam = searchParams.get('tab') as TabKey | null
-  const activeTab: TabKey = TABS.some((t) => t.key === tabParam) ? tabParam! : 'organisation'
+  const activeTab: TabKey = TABS.some((t) => t.key === tabParam) ? tabParam! : 'logframe'
 
   function setTab(key: TabKey) {
     navigate(`/app/logframes/${id}/settings?tab=${key}`, { replace: true })
@@ -60,31 +56,21 @@ export default function SettingsPage() {
         ))}
       </div>
 
-      {/* Tab content */}
-      {activeTab === 'organisation' && (
-        <OrgSettingsPanel logframeId={id} canEdit={data.canEdit} />
+      {/* Link to org settings */}
+      {data.orgContext && (
+        <div className="mb-6">
+          <Link
+            to={`/organisations/${data.orgContext.organisation.id}/settings?tab=programs`}
+            className="text-sm text-primary hover:underline"
+          >
+            Manage programs &amp; projects ({data.orgContext.organisation.name}) &rarr;
+          </Link>
+        </div>
       )}
+
+      {/* Tab content */}
       {activeTab === 'logframe' && (
         <LogframeSettingsPanel logframeId={id} canEdit={data.canEdit} />
-      )}
-      {activeTab === 'members' && (
-        <div>
-          <MembersPanel
-            canEdit={data.canEdit}
-            userRole={data.userRole}
-            orgId={data.orgContext?.organisation.id}
-          />
-          {data.orgContext && (
-            <p className="mt-4 text-sm">
-              <a
-                href={`/organisations/${data.orgContext.organisation.id}/settings?tab=members`}
-                className="text-primary hover:underline"
-              >
-                Manage organisation settings &rarr;
-              </a>
-            </p>
-          )}
-        </div>
       )}
       {activeTab === 'integrations' && (
         <div className="space-y-6">
@@ -105,6 +91,7 @@ function LogframeSettingsPanel({ logframeId, canEdit }: { logframeId: number; ca
   }
 
   const settings = data.settings
+  const logframe = data.logframe
 
   async function saveSetting(field: string, value: string | number) {
     if (!canEdit) return
@@ -112,8 +99,28 @@ function LogframeSettingsPanel({ logframeId, canEdit }: { logframeId: number; ca
     queryClient.invalidateQueries({ queryKey: ['bootstrap', logframeId] })
   }
 
+  async function saveLogframeName(value: string) {
+    if (!canEdit || !value.trim()) return
+    await apiClient.patch(`/logframes/${logframeId}`, { name: value.trim() })
+    queryClient.invalidateQueries({ queryKey: ['bootstrap', logframeId] })
+    queryClient.invalidateQueries({ queryKey: ['logframes'] })
+  }
+
   return (
     <div className="space-y-6">
+      {/* Logframe name */}
+      <div className="border border-border rounded-md p-4">
+        <h3 className="text-sm font-semibold text-foreground uppercase tracking-wide mb-3">
+          Logframe
+        </h3>
+        <SettingField
+          label="Name"
+          value={logframe.name}
+          onSave={saveLogframeName}
+          canEdit={canEdit}
+        />
+      </div>
+
       {/* Logframe configuration */}
       <div className="bg-card border rounded-lg p-4">
         <h3 className="text-sm font-semibold text-foreground uppercase tracking-wide mb-3">
