@@ -7,17 +7,17 @@ import type {
   KoboSyncLog,
 } from './types'
 
-const base = (logframeId: number) => `/logframes/${logframeId}/kobo`
+const base = (logframeId: string) => `/logframes/${logframeId}/kobo`
 
 // --- Connection ---
 
-export async function getKoboConnection(logframeId: number): Promise<KoboConnection | null> {
+export async function getKoboConnection(logframeId: string): Promise<KoboConnection | null> {
   const { data } = await apiClient.get<KoboConnection | null>(`${base(logframeId)}/connection`)
   return data
 }
 
 export async function createKoboConnection(
-  logframeId: number,
+  logframeId: string,
   body: { server_url?: string; api_token: string },
 ): Promise<KoboConnection> {
   const { data } = await apiClient.post<KoboConnection>(`${base(logframeId)}/connection`, body)
@@ -25,26 +25,26 @@ export async function createKoboConnection(
 }
 
 export async function updateKoboConnection(
-  logframeId: number,
+  logframeId: string,
   body: { server_url?: string; api_token?: string; is_active?: boolean },
 ): Promise<KoboConnection> {
   const { data } = await apiClient.patch<KoboConnection>(`${base(logframeId)}/connection`, body)
   return data
 }
 
-export async function deleteKoboConnection(logframeId: number): Promise<void> {
+export async function deleteKoboConnection(logframeId: string): Promise<void> {
   await apiClient.delete(`${base(logframeId)}/connection`)
 }
 
 // --- Forms ---
 
-export async function listKoboForms(logframeId: number): Promise<KoboFormSummary[]> {
+export async function listKoboForms(logframeId: string): Promise<KoboFormSummary[]> {
   const { data } = await apiClient.get<KoboFormSummary[]>(`${base(logframeId)}/forms`)
   return data
 }
 
 export async function getKoboFormFields(
-  logframeId: number,
+  logframeId: string,
   formUid: string,
 ): Promise<KoboFormField[]> {
   const { data } = await apiClient.get<KoboFormField[]>(
@@ -55,13 +55,13 @@ export async function getKoboFormFields(
 
 // --- Mappings ---
 
-export async function listKoboMappings(logframeId: number): Promise<KoboFieldMapping[]> {
+export async function listKoboMappings(logframeId: string): Promise<KoboFieldMapping[]> {
   const { data } = await apiClient.get<KoboFieldMapping[]>(`${base(logframeId)}/mappings`)
   return data
 }
 
 export async function createKoboMapping(
-  logframeId: number,
+  logframeId: string,
   body: {
     kobo_form_id: string
     kobo_field_name: string
@@ -75,18 +75,18 @@ export async function createKoboMapping(
   return data
 }
 
-export async function deleteKoboMapping(logframeId: number, mappingId: number): Promise<void> {
+export async function deleteKoboMapping(logframeId: string, mappingId: number): Promise<void> {
   await apiClient.delete(`${base(logframeId)}/mappings/${mappingId}`)
 }
 
 // --- Sync ---
 
-export async function triggerKoboSync(logframeId: number): Promise<KoboSyncLog> {
+export async function triggerKoboSync(logframeId: string): Promise<KoboSyncLog> {
   const { data } = await apiClient.post<KoboSyncLog>(`${base(logframeId)}/sync`)
   return data
 }
 
-export async function listKoboSyncLogs(logframeId: number): Promise<KoboSyncLog[]> {
+export async function listKoboSyncLogs(logframeId: string): Promise<KoboSyncLog[]> {
   const { data } = await apiClient.get<KoboSyncLog[]>(`${base(logframeId)}/sync/logs`)
   return data
 }

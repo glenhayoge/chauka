@@ -17,7 +17,7 @@ interface Props {
   columns: Column[]
   dataEntries: DataEntry[]
   reportingPeriods: ReportingPeriod[]
-  logframeId: number
+  logframeId: string
   canEdit: boolean
 }
 

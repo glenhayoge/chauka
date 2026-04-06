@@ -8,12 +8,12 @@ const MONTHS = [
 ]
 
 interface Props {
-  logframeId: number
+  logframeId: string
   periods: Period[]
   settings: AppSettings | null
 }
 
-function downloadExport(logframeId: number, path: string) {
+function downloadExport(logframeId: string, path: string) {
   const token = useAuthStore.getState().token
   const url = `/api/logframes/${logframeId}/export/${path}`
   // Use a hidden link with fetch + blob to include auth header

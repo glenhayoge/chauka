@@ -1,5 +1,7 @@
 """CRUD for disaggregation categories."""
 
+from uuid import UUID
+
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy import select, update
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -13,19 +15,21 @@ from app.schemas.logframe import (
     DisaggregationCategoryRead,
     DisaggregationCategoryUpdate,
 )
+from app.services.resolve import resolve_logframe
 
 router = APIRouter(
-    prefix="/api/logframes/{logframe_id}/disaggregation-categories",
+    prefix="/api/logframes/{logframe_public_id}/disaggregation-categories",
     tags=["disaggregation"],
 )
 
 
 @router.get("/", response_model=list[DisaggregationCategoryRead])
 async def list_categories(
-    logframe_id: int,
+    logframe_public_id: UUID,
     db: AsyncSession = Depends(get_db),
     current_user: User = Depends(get_current_user),
 ):
+    logframe_id = (await resolve_logframe(logframe_public_id, db)).id
     result = await db.execute(
         select(DisaggregationCategory)
         .where(DisaggregationCategory.logframe_id == logframe_id)
@@ -36,11 +40,12 @@ async def list_categories(
 
 @router.post("/", response_model=DisaggregationCategoryRead, status_code=status.HTTP_201_CREATED)
 async def create_category(
-    logframe_id: int,
+    logframe_public_id: UUID,
     body: DisaggregationCategoryCreate,
     db: AsyncSession = Depends(get_db),
     current_user: User = Depends(require_logframe_editor),
 ):
+    logframe_id = (await resolve_logframe(logframe_public_id, db)).id
     cat = DisaggregationCategory(
         logframe_id=logframe_id,
         name=body.name,
@@ -54,12 +59,13 @@ async def create_category(
 
 @router.patch("/{category_id}", response_model=DisaggregationCategoryRead)
 async def update_category(
-    logframe_id: int,
+    logframe_public_id: UUID,
     category_id: int,
     body: DisaggregationCategoryUpdate,
     db: AsyncSession = Depends(get_db),
     current_user: User = Depends(require_logframe_editor),
 ):
+    logframe_id = (await resolve_logframe(logframe_public_id, db)).id
     result = await db.execute(
         select(DisaggregationCategory).where(
             DisaggregationCategory.id == category_id,
@@ -80,11 +86,12 @@ async def update_category(
 
 @router.delete("/{category_id}", status_code=status.HTTP_204_NO_CONTENT)
 async def delete_category(
-    logframe_id: int,
+    logframe_public_id: UUID,
     category_id: int,
     db: AsyncSession = Depends(get_db),
     current_user: User = Depends(require_logframe_editor),
 ):
+    logframe_id = (await resolve_logframe(logframe_public_id, db)).id
     result = await db.execute(
         select(DisaggregationCategory).where(
             DisaggregationCategory.id == category_id,

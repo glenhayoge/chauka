@@ -4,6 +4,8 @@ Manages connections, column mappings, and sync operations between
 Google Sheets and Chauka indicator data.
 """
 
+from uuid import UUID
+
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -28,9 +30,10 @@ from app.schemas.gsheets import (
     GoogleSheetsSyncLogRead,
 )
 from app.services.gsheets import GoogleSheetsClient, sync_gsheets_connection
+from app.services.resolve import resolve_logframe
 
 router = APIRouter(
-    prefix="/api/logframes/{logframe_id}/gsheets",
+    prefix="/api/logframes/{logframe_public_id}/gsheets",
     tags=["google-sheets-integration"],
 )
 
@@ -40,11 +43,12 @@ router = APIRouter(
 
 @router.get("/connection", response_model=GoogleSheetsConnectionRead | None)
 async def get_connection(
-    logframe_id: int,
+    logframe_public_id: UUID,
     db: AsyncSession = Depends(get_db),
     current_user: User = Depends(require_logframe_editor),
 ):
     """Get the Google Sheets connection for this logframe (if any)."""
+    logframe_id = (await resolve_logframe(logframe_public_id, db)).id
     result = await db.execute(
         select(GoogleSheetsConnection).where(
             GoogleSheetsConnection.logframe_id == logframe_id
@@ -55,12 +59,13 @@ async def get_connection(
 
 @router.post("/connection", response_model=GoogleSheetsConnectionRead, status_code=201)
 async def create_connection(
-    logframe_id: int,
+    logframe_public_id: UUID,
     body: GoogleSheetsConnectionCreate,
     db: AsyncSession = Depends(get_db),
     current_user: User = Depends(require_logframe_editor),
 ):
     """Create a Google Sheets connection for this logframe."""
+    logframe_id = (await resolve_logframe(logframe_public_id, db)).id
     existing = await db.execute(
         select(GoogleSheetsConnection).where(
             GoogleSheetsConnection.logframe_id == logframe_id
@@ -79,12 +84,13 @@ async def create_connection(
 
 @router.patch("/connection", response_model=GoogleSheetsConnectionRead)
 async def update_connection(
-    logframe_id: int,
+    logframe_public_id: UUID,
     body: GoogleSheetsConnectionUpdate,
     db: AsyncSession = Depends(get_db),
     current_user: User = Depends(require_logframe_editor),
 ):
     """Update the Google Sheets connection settings."""
+    logframe_id = (await resolve_logframe(logframe_public_id, db)).id
     result = await db.execute(
         select(GoogleSheetsConnection).where(
             GoogleSheetsConnection.logframe_id == logframe_id
@@ -102,11 +108,12 @@ async def update_connection(
 
 @router.delete("/connection", status_code=204)
 async def delete_connection(
-    logframe_id: int,
+    logframe_public_id: UUID,
     db: AsyncSession = Depends(get_db),
     current_user: User = Depends(require_logframe_editor),
 ):
     """Remove the Google Sheets connection and all mappings."""
+    logframe_id = (await resolve_logframe(logframe_public_id, db)).id
     result = await db.execute(
         select(GoogleSheetsConnection).where(
             GoogleSheetsConnection.logframe_id == logframe_id
@@ -124,11 +131,12 @@ async def delete_connection(
 
 @router.get("/sheets", response_model=list[GoogleSheetsSheetInfo])
 async def list_sheets(
-    logframe_id: int,
+    logframe_public_id: UUID,
     db: AsyncSession = Depends(get_db),
     current_user: User = Depends(require_logframe_editor),
 ):
     """List sheets (tabs) in the connected spreadsheet."""
+    logframe_id = (await resolve_logframe(logframe_public_id, db)).id
     result = await db.execute(
         select(GoogleSheetsConnection).where(
             GoogleSheetsConnection.logframe_id == logframe_id,
@@ -144,11 +152,12 @@ async def list_sheets(
 
 @router.get("/columns", response_model=list[GoogleSheetsColumnInfo])
 async def list_columns(
-    logframe_id: int,
+    logframe_public_id: UUID,
     db: AsyncSession = Depends(get_db),
     current_user: User = Depends(require_logframe_editor),
 ):
     """List column headers from the connected sheet's first row."""
+    logframe_id = (await resolve_logframe(logframe_public_id, db)).id
     result = await db.execute(
         select(GoogleSheetsConnection).where(
             GoogleSheetsConnection.logframe_id == logframe_id,
@@ -168,11 +177,12 @@ async def list_columns(
 
 @router.get("/mappings", response_model=list[GoogleSheetsColumnMappingRead])
 async def list_mappings(
-    logframe_id: int,
+    logframe_public_id: UUID,
     db: AsyncSession = Depends(get_db),
     current_user: User = Depends(require_logframe_editor),
 ):
     """List all column mappings for this logframe's connection."""
+    logframe_id = (await resolve_logframe(logframe_public_id, db)).id
     result = await db.execute(
         select(GoogleSheetsConnection).where(
             GoogleSheetsConnection.logframe_id == logframe_id
@@ -191,12 +201,13 @@ async def list_mappings(
 
 @router.post("/mappings", response_model=GoogleSheetsColumnMappingRead, status_code=201)
 async def create_mapping(
-    logframe_id: int,
+    logframe_public_id: UUID,
     body: GoogleSheetsColumnMappingCreate,
     db: AsyncSession = Depends(get_db),
     current_user: User = Depends(require_logframe_editor),
 ):
     """Create a new column mapping."""
+    logframe_id = (await resolve_logframe(logframe_public_id, db)).id
     result = await db.execute(
         select(GoogleSheetsConnection).where(
             GoogleSheetsConnection.logframe_id == logframe_id
@@ -214,13 +225,14 @@ async def create_mapping(
 
 @router.patch("/mappings/{mapping_id}", response_model=GoogleSheetsColumnMappingRead)
 async def update_mapping(
-    logframe_id: int,
+    logframe_public_id: UUID,
     mapping_id: int,
     body: GoogleSheetsColumnMappingUpdate,
     db: AsyncSession = Depends(get_db),
     current_user: User = Depends(require_logframe_editor),
 ):
     """Update a column mapping."""
+    logframe_id = (await resolve_logframe(logframe_public_id, db)).id
     result = await db.execute(
         select(GoogleSheetsColumnMapping).where(
             GoogleSheetsColumnMapping.id == mapping_id
@@ -238,12 +250,13 @@ async def update_mapping(
 
 @router.delete("/mappings/{mapping_id}", status_code=204)
 async def delete_mapping(
-    logframe_id: int,
+    logframe_public_id: UUID,
     mapping_id: int,
     db: AsyncSession = Depends(get_db),
     current_user: User = Depends(require_logframe_editor),
 ):
     """Delete a column mapping."""
+    logframe_id = (await resolve_logframe(logframe_public_id, db)).id
     result = await db.execute(
         select(GoogleSheetsColumnMapping).where(
             GoogleSheetsColumnMapping.id == mapping_id
@@ -261,11 +274,12 @@ async def delete_mapping(
 
 @router.post("/sync", response_model=GoogleSheetsSyncLogRead)
 async def trigger_sync(
-    logframe_id: int,
+    logframe_public_id: UUID,
     db: AsyncSession = Depends(get_db),
     current_user: User = Depends(require_logframe_editor),
 ):
     """Trigger a sync from Google Sheets for this logframe."""
+    logframe_id = (await resolve_logframe(logframe_public_id, db)).id
     result = await db.execute(
         select(GoogleSheetsConnection).where(
             GoogleSheetsConnection.logframe_id == logframe_id,
@@ -281,11 +295,12 @@ async def trigger_sync(
 
 @router.get("/sync/logs", response_model=list[GoogleSheetsSyncLogRead])
 async def list_sync_logs(
-    logframe_id: int,
+    logframe_public_id: UUID,
     db: AsyncSession = Depends(get_db),
     current_user: User = Depends(require_logframe_editor),
 ):
     """List recent sync logs for this logframe."""
+    logframe_id = (await resolve_logframe(logframe_public_id, db)).id
     result = await db.execute(
         select(GoogleSheetsConnection).where(
             GoogleSheetsConnection.logframe_id == logframe_id

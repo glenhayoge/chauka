@@ -5,7 +5,7 @@ import { useLogframeStore } from '../../store/logframe'
 import type { DisaggregationCategory } from '../../api/types'
 
 export default function DisaggregationSettings() {
-  const logframeId = useLogframeStore((s) => s.data?.logframe?.id)
+  const logframeId = useLogframeStore((s) => s.data?.logframe?.public_id)
   const queryClient = useQueryClient()
   const [newName, setNewName] = useState('')
   const [editId, setEditId] = useState<number | null>(null)

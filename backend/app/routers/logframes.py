@@ -1,3 +1,5 @@
+from uuid import UUID
+
 from fastapi import APIRouter, Depends, HTTPException
 from pydantic import BaseModel
 from sqlalchemy import select
@@ -11,6 +13,7 @@ from app.models.org import Organisation, OrganisationMembership, Program, Projec
 from app.schemas.bootstrap import BootstrapData
 from app.schemas.logframe import LogframeRead
 from app.services.bootstrap import get_bootstrap_data
+from app.services.resolve import resolve_logframe
 
 
 class LogframeUpdate(BaseModel):
@@ -55,12 +58,13 @@ async def list_logframes(
     return result.scalars().all()
 
 
-@router.get("/{logframe_id}", response_model=LogframeRead)
+@router.get("/{logframe_public_id}", response_model=LogframeRead)
 async def get_logframe(
-    logframe_id: int,
+    logframe_public_id: UUID,
     db: AsyncSession = Depends(get_db),
     current_user: User = Depends(get_current_user),
 ):
+    logframe_id = (await resolve_logframe(logframe_public_id, db)).id
     result = await db.execute(select(Logframe).where(Logframe.id == logframe_id))
     logframe = result.scalar_one_or_none()
     if not logframe:
@@ -68,13 +72,14 @@ async def get_logframe(
     return logframe
 
 
-@router.patch("/{logframe_id}", response_model=LogframeRead)
+@router.patch("/{logframe_public_id}", response_model=LogframeRead)
 async def update_logframe(
-    logframe_id: int,
+    logframe_public_id: UUID,
     body: LogframeUpdate,
     db: AsyncSession = Depends(get_db),
     current_user: User = Depends(get_current_user),
 ):
+    logframe_id = (await resolve_logframe(logframe_public_id, db)).id
     result = await db.execute(select(Logframe).where(Logframe.id == logframe_id))
     obj = result.scalar_one_or_none()
     if not obj:
@@ -86,12 +91,13 @@ async def update_logframe(
     return obj
 
 
-@router.delete("/{logframe_id}", status_code=204)
+@router.delete("/{logframe_public_id}", status_code=204)
 async def delete_logframe(
-    logframe_id: int,
+    logframe_public_id: UUID,
     db: AsyncSession = Depends(get_db),
     current_user: User = Depends(get_current_user),
 ):
+    logframe_id = (await resolve_logframe(logframe_public_id, db)).id
     result = await db.execute(select(Logframe).where(Logframe.id == logframe_id))
     obj = result.scalar_one_or_none()
     if not obj:
@@ -100,12 +106,13 @@ async def delete_logframe(
     await db.commit()
 
 
-@router.get("/{logframe_id}/bootstrap", response_model=BootstrapData)
+@router.get("/{logframe_public_id}/bootstrap", response_model=BootstrapData)
 async def bootstrap(
-    logframe_id: int,
+    logframe_public_id: UUID,
     db: AsyncSession = Depends(get_db),
     current_user: User = Depends(get_current_user),
 ):
+    logframe_id = (await resolve_logframe(logframe_public_id, db)).id
     data = await get_bootstrap_data(logframe_id, db, current_user)
     if data is None:
         raise HTTPException(status_code=404, detail="Logframe not found")

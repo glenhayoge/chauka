@@ -1,3 +1,5 @@
+from uuid import UUID
+
 from fastapi import APIRouter, Depends, Query
 from sqlalchemy import select, desc
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -8,9 +10,10 @@ from app.models.audit import AuditLog
 from app.models.contacts import User
 from pydantic import BaseModel, ConfigDict
 from datetime import datetime
+from app.services.resolve import resolve_logframe
 
 router = APIRouter(
-    prefix="/api/logframes/{logframe_id}/audit-log",
+    prefix="/api/logframes/{logframe_public_id}/audit-log",
     tags=["audit"],
 )
 
@@ -29,13 +32,14 @@ class AuditLogRead(BaseModel):
 
 @router.get("/", response_model=list[AuditLogRead])
 async def list_audit_logs(
-    logframe_id: int,
+    logframe_public_id: UUID,
     entity_type: str | None = None,
     limit: int = Query(default=50, le=200),
     offset: int = Query(default=0, ge=0),
     db: AsyncSession = Depends(get_db),
     current_user: User = Depends(get_current_user),
 ):
+    logframe_id = (await resolve_logframe(logframe_public_id, db)).id
     stmt = (
         select(AuditLog)
         .where(AuditLog.logframe_id == logframe_id)

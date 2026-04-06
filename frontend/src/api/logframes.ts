@@ -6,7 +6,7 @@ export async function getLogframes(): Promise<Logframe[]> {
   return data
 }
 
-export async function getBootstrap(logframeId: number): Promise<BootstrapData> {
+export async function getBootstrap(logframeId: string): Promise<BootstrapData> {
   const { data } = await apiClient.get<BootstrapData>(`/logframes/${logframeId}/bootstrap`)
   return data
 }

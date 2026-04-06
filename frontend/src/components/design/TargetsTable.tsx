@@ -7,7 +7,7 @@ interface Props {
   subindicators: SubIndicator[]
   periods: Period[]
   targets: Target[]
-  logframeId: number
+  logframeId: string
   canEdit: boolean
 }
 
@@ -67,7 +67,7 @@ interface CellProps {
   subindicatorId: number
   indicatorId: number
   periodId: number
-  logframeId: number
+  logframeId: string
   canEdit: boolean
 }
 

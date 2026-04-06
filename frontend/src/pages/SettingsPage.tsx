@@ -20,8 +20,8 @@ type TabKey = (typeof TABS)[number]['key']
 
 export default function SettingsPage() {
   const { logframeId: publicId } = useParams<{ logframeId: string }>()
-  const { id: resolvedId, isLoading: resolving, notFound } = useResolveLogframeId(publicId)
-  const { isLoading, error } = useBootstrap(resolvedId ?? 0)
+  const { isLoading: resolving, notFound } = useResolveLogframeId(publicId)
+  const { isLoading, error } = useBootstrap(publicId ?? '')
   const data = useLogframeStore((s) => s.data)
   const [searchParams] = useSearchParams()
   const navigate = useNavigate()
@@ -79,7 +79,7 @@ export default function SettingsPage() {
 
       {/* Tab content */}
       {activeTab === 'logframe' && (
-        <LogframeSettingsPanel logframeId={resolvedId!} canEdit={data.canEdit} />
+        <LogframeSettingsPanel logframeId={publicId!} canEdit={data.canEdit} />
       )}
       {activeTab === 'disaggregation' && (
         <div className="bg-card border rounded-lg p-4">
@@ -88,15 +88,15 @@ export default function SettingsPage() {
       )}
       {activeTab === 'integrations' && (
         <div className="space-y-6">
-          <KoboSettings logframeId={resolvedId!} canEdit={data.canEdit} />
-          <GoogleSheetsSettings logframeId={resolvedId!} canEdit={data.canEdit} />
+          <KoboSettings logframeId={publicId!} canEdit={data.canEdit} />
+          <GoogleSheetsSettings logframeId={publicId!} canEdit={data.canEdit} />
         </div>
       )}
     </div>
   )
 }
 
-function LogframeSettingsPanel({ logframeId, canEdit }: { logframeId: number; canEdit: boolean }) {
+function LogframeSettingsPanel({ logframeId, canEdit }: { logframeId: string; canEdit: boolean }) {
   const data = useLogframeStore((s) => s.data)
   const queryClient = useQueryClient()
 
@@ -107,7 +107,7 @@ function LogframeSettingsPanel({ logframeId, canEdit }: { logframeId: number; ca
   const settings = data.settings
   const logframe = data.logframe
 
-  async function saveSetting(field: string, value: string | number) {
+  async function saveSetting(field: string, value: string | number | boolean) {
     if (!canEdit) return
     await apiClient.patch(`/logframes/${logframeId}/settings/`, { [field]: value })
     queryClient.invalidateQueries({ queryKey: ['bootstrap', logframeId] })
@@ -206,6 +206,36 @@ function LogframeSettingsPanel({ logframeId, canEdit }: { logframeId: number; ca
           canEdit={canEdit}
         />
       </div>
+
+      {/* Contribution analysis */}
+      <div className="bg-card border rounded-lg p-4">
+        <h3 className="text-sm font-semibold text-foreground uppercase tracking-wide mb-1">
+          Contribution Analysis
+        </h3>
+        <p className="text-xs text-muted-foreground mb-3">
+          When enabled, computes how output-level indicator progress contributes to outcome-level results, weighted by each result's contribution factor.
+        </p>
+        <label className="flex items-center gap-3 cursor-pointer w-fit">
+          <button
+            role="switch"
+            aria-checked={settings.contribution_analysis_enabled}
+            disabled={!canEdit}
+            onClick={() => saveSetting('contribution_analysis_enabled', !settings.contribution_analysis_enabled)}
+            className={`relative inline-flex h-5 w-9 items-center rounded-full transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-ring disabled:opacity-50 ${
+              settings.contribution_analysis_enabled ? 'bg-primary' : 'bg-border'
+            }`}
+          >
+            <span
+              className={`inline-block h-3.5 w-3.5 rounded-full bg-white shadow transition-transform ${
+                settings.contribution_analysis_enabled ? 'translate-x-[18px]' : 'translate-x-0.5'
+              }`}
+            />
+          </button>
+          <span className="text-sm text-foreground">
+            {settings.contribution_analysis_enabled ? 'Enabled' : 'Disabled'}
+          </span>
+        </label>
+      </div>
     </div>
   )
 }
@@ -277,7 +307,7 @@ function SettingField({ label, value, type = 'text', options, onSave, canEdit }:
 
 function LevelEditor({ levels, logframeId, canEdit }: {
   levels: Record<string, string>
-  logframeId: number
+  logframeId: string
   canEdit: boolean
 }) {
   const queryClient = useQueryClient()

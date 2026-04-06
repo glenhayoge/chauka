@@ -1,3 +1,4 @@
+from uuid import UUID
 from datetime import date
 
 from fastapi import APIRouter, Depends, HTTPException
@@ -9,19 +10,21 @@ from app.database import get_db
 from app.models.contacts import User
 from app.models.logframe import StatusUpdate
 from app.schemas.logframe import StatusUpdateCreate, StatusUpdateRead, StatusUpdateUpdate
+from app.services.resolve import resolve_logframe
 
-router = APIRouter(prefix="/api/logframes/{logframe_id}/statusupdates", tags=["statusupdates"])
+router = APIRouter(prefix="/api/logframes/{logframe_public_id}/statusupdates", tags=["statusupdates"])
 
 
 @router.get("/", response_model=list[StatusUpdateRead])
 async def list_status_updates(
-    logframe_id: int,
+    logframe_public_id: UUID,
     activity: int | None = None,
     start_date: date | None = None,
     end_date: date | None = None,
     db: AsyncSession = Depends(get_db),
     current_user: User = Depends(get_current_user),
 ):
+    logframe_id = (await resolve_logframe(logframe_public_id, db)).id
     stmt = select(StatusUpdate)
     if activity:
         stmt = stmt.where(StatusUpdate.activity_id == activity)
@@ -35,11 +38,12 @@ async def list_status_updates(
 
 @router.post("/", response_model=StatusUpdateRead, status_code=201)
 async def create_status_update(
-    logframe_id: int,
+    logframe_public_id: UUID,
     body: StatusUpdateCreate,
     db: AsyncSession = Depends(get_db),
     current_user: User = Depends(require_logframe_editor),
 ):
+    logframe_id = (await resolve_logframe(logframe_public_id, db)).id
     data = body.model_dump()
     data["user_id"] = current_user.id
     obj = StatusUpdate(**data)
@@ -51,12 +55,13 @@ async def create_status_update(
 
 @router.patch("/{status_update_id}", response_model=StatusUpdateRead)
 async def update_status_update(
-    logframe_id: int,
+    logframe_public_id: UUID,
     status_update_id: int,
     body: StatusUpdateUpdate,
     db: AsyncSession = Depends(get_db),
     current_user: User = Depends(require_logframe_editor),
 ):
+    logframe_id = (await resolve_logframe(logframe_public_id, db)).id
     result = await db.execute(select(StatusUpdate).where(StatusUpdate.id == status_update_id))
     obj = result.scalar_one_or_none()
     if not obj:
@@ -70,11 +75,12 @@ async def update_status_update(
 
 @router.delete("/{status_update_id}", status_code=204)
 async def delete_status_update(
-    logframe_id: int,
+    logframe_public_id: UUID,
     status_update_id: int,
     db: AsyncSession = Depends(get_db),
     current_user: User = Depends(require_logframe_editor),
 ):
+    logframe_id = (await resolve_logframe(logframe_public_id, db)).id
     result = await db.execute(select(StatusUpdate).where(StatusUpdate.id == status_update_id))
     obj = result.scalar_one_or_none()
     if not obj:

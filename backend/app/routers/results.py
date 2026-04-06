@@ -1,3 +1,5 @@
+from uuid import UUID
+
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -8,16 +10,18 @@ from app.models.contacts import User
 from app.models.logframe import Result
 from app.schemas.logframe import ResultCreate, ResultRead, ResultUpdate
 from app.services.ordering import auto_level, next_order
+from app.services.resolve import resolve_logframe
 
-router = APIRouter(prefix="/api/logframes/{logframe_id}/results", tags=["results"])
+router = APIRouter(prefix="/api/logframes/{logframe_public_id}/results", tags=["results"])
 
 
 @router.get("/", response_model=list[ResultRead])
 async def list_results(
-    logframe_id: int,
+    logframe_public_id: UUID,
     db: AsyncSession = Depends(get_db),
     current_user: User = Depends(get_current_user),
 ):
+    logframe_id = (await resolve_logframe(logframe_public_id, db)).id
     result = await db.execute(
         select(Result).where(Result.logframe_id == logframe_id).order_by(Result.order)
     )
@@ -26,11 +30,12 @@ async def list_results(
 
 @router.post("/", response_model=ResultRead, status_code=201)
 async def create_result(
-    logframe_id: int,
+    logframe_public_id: UUID,
     body: ResultCreate,
     db: AsyncSession = Depends(get_db),
     current_user: User = Depends(require_logframe_editor),
 ):
+    logframe_id = (await resolve_logframe(logframe_public_id, db)).id
     order = await next_order(db, Result, logframe_id=logframe_id)
     level = body.level
     if level is None:
@@ -47,11 +52,12 @@ async def create_result(
 
 @router.get("/{result_id}", response_model=ResultRead)
 async def get_result(
-    logframe_id: int,
+    logframe_public_id: UUID,
     result_id: int,
     db: AsyncSession = Depends(get_db),
     current_user: User = Depends(get_current_user),
 ):
+    logframe_id = (await resolve_logframe(logframe_public_id, db)).id
     result = await db.execute(
         select(Result).where(Result.id == result_id, Result.logframe_id == logframe_id)
     )
@@ -63,12 +69,13 @@ async def get_result(
 
 @router.patch("/{result_id}", response_model=ResultRead)
 async def update_result(
-    logframe_id: int,
+    logframe_public_id: UUID,
     result_id: int,
     body: ResultUpdate,
     db: AsyncSession = Depends(get_db),
     current_user: User = Depends(require_logframe_editor),
 ):
+    logframe_id = (await resolve_logframe(logframe_public_id, db)).id
     result = await db.execute(
         select(Result).where(Result.id == result_id, Result.logframe_id == logframe_id)
     )
@@ -84,11 +91,12 @@ async def update_result(
 
 @router.delete("/{result_id}", status_code=204)
 async def delete_result(
-    logframe_id: int,
+    logframe_public_id: UUID,
     result_id: int,
     db: AsyncSession = Depends(get_db),
     current_user: User = Depends(require_logframe_editor),
 ):
+    logframe_id = (await resolve_logframe(logframe_public_id, db)).id
     result = await db.execute(
         select(Result).where(Result.id == result_id, Result.logframe_id == logframe_id)
     )

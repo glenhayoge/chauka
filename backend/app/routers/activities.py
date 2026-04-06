@@ -1,3 +1,4 @@
+from uuid import UUID
 from datetime import date
 
 from fastapi import APIRouter, Depends, HTTPException
@@ -10,21 +11,23 @@ from app.models.contacts import User
 from app.models.logframe import Activity
 from app.schemas.logframe import ActivityCreate, ActivityRead, ActivityUpdate
 from app.services.ordering import next_order
+from app.services.resolve import resolve_logframe
 
 router = APIRouter(
-    prefix="/api/logframes/{logframe_id}/results/{result_id}/activities",
+    prefix="/api/logframes/{logframe_public_id}/results/{result_id}/activities",
     tags=["activities"],
 )
 
 
 @router.get("/", response_model=list[ActivityRead])
 async def list_activities(
-    logframe_id: int, result_id: int,
+    logframe_public_id: UUID, result_id: int,
     start_date: date | None = None,
     end_date: date | None = None,
     db: AsyncSession = Depends(get_db),
     current_user: User = Depends(get_current_user),
 ):
+    logframe_id = (await resolve_logframe(logframe_public_id, db)).id
     stmt = select(Activity).where(Activity.result_id == result_id).order_by(Activity.order)
     if start_date:
         stmt = stmt.where(Activity.start_date >= start_date)
@@ -36,11 +39,12 @@ async def list_activities(
 
 @router.post("/", response_model=ActivityRead, status_code=201)
 async def create_activity(
-    logframe_id: int, result_id: int,
+    logframe_public_id: UUID, result_id: int,
     body: ActivityCreate,
     db: AsyncSession = Depends(get_db),
     current_user: User = Depends(require_logframe_editor),
 ):
+    logframe_id = (await resolve_logframe(logframe_public_id, db)).id
     order = await next_order(db, Activity, result_id=result_id)
     data = body.model_dump()
     data.update(order=order, result_id=result_id)
@@ -53,11 +57,12 @@ async def create_activity(
 
 @router.patch("/{activity_id}", response_model=ActivityRead)
 async def update_activity(
-    logframe_id: int, result_id: int, activity_id: int,
+    logframe_public_id: UUID, result_id: int, activity_id: int,
     body: ActivityUpdate,
     db: AsyncSession = Depends(get_db),
     current_user: User = Depends(require_logframe_editor),
 ):
+    logframe_id = (await resolve_logframe(logframe_public_id, db)).id
     result = await db.execute(
         select(Activity).where(Activity.id == activity_id, Activity.result_id == result_id)
     )
@@ -73,10 +78,11 @@ async def update_activity(
 
 @router.delete("/{activity_id}", status_code=204)
 async def delete_activity(
-    logframe_id: int, result_id: int, activity_id: int,
+    logframe_public_id: UUID, result_id: int, activity_id: int,
     db: AsyncSession = Depends(get_db),
     current_user: User = Depends(require_logframe_editor),
 ):
+    logframe_id = (await resolve_logframe(logframe_public_id, db)).id
     result = await db.execute(
         select(Activity).where(Activity.id == activity_id, Activity.result_id == result_id)
     )

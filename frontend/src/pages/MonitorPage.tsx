@@ -8,8 +8,8 @@ import EmptyState from '../components/ui/EmptyState'
 
 export default function MonitorPage() {
   const { logframeId: publicId } = useParams<{ logframeId: string }>()
-  const { id: resolvedId, isLoading: resolving, notFound } = useResolveLogframeId(publicId)
-  const { isLoading, error } = useBootstrap(resolvedId ?? 0)
+  const { isLoading: resolving, notFound } = useResolveLogframeId(publicId)
+  const { isLoading, error } = useBootstrap(publicId ?? '')
   const data = useLogframeStore((s) => s.data)
   const [searchParams] = useSearchParams()
   const filterResultId = searchParams.get('result')
@@ -74,7 +74,7 @@ export default function MonitorPage() {
                   columns={data.columns}
                   dataEntries={data.dataEntries}
                   reportingPeriods={data.reportingPeriods}
-                  logframeId={resolvedId!}
+                  logframeId={publicId!}
                   canEdit={data.canEdit}
                 />
               )

@@ -10,7 +10,7 @@ import {
 } from '../../api/kobo'
 
 interface Props {
-  logframeId: number
+  logframeId: string
   canEdit: boolean
 }
 
@@ -69,7 +69,7 @@ function SetupView({
   logframeId,
   queryClient,
 }: {
-  logframeId: number
+  logframeId: string
   queryClient: ReturnType<typeof useQueryClient>
 }) {
   const [serverUrl, setServerUrl] = useState('https://kf.kobotoolbox.org')
@@ -142,7 +142,7 @@ function ConnectedView({
   queryClient,
 }: {
   connection: KoboConnection
-  logframeId: number
+  logframeId: string
   queryClient: ReturnType<typeof useQueryClient>
 }) {
   const [syncing, setSyncing] = useState(false)

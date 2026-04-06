@@ -6,8 +6,8 @@ import PeoplePanel from '../components/settings/PeoplePanel'
 
 export default function PeoplePage() {
   const { logframeId: publicId } = useParams<{ logframeId: string }>()
-  const { id: resolvedId, isLoading: resolving, notFound } = useResolveLogframeId(publicId)
-  const { isLoading, error } = useBootstrap(resolvedId ?? 0)
+  const { isLoading: resolving, notFound } = useResolveLogframeId(publicId)
+  const { isLoading, error } = useBootstrap(publicId ?? "")
   const data = useLogframeStore((s) => s.data)
 
   if (resolving) return <p className="text-muted-foreground">Loading…</p>
@@ -19,7 +19,7 @@ export default function PeoplePage() {
   return (
     <div>
       {/* <h2 className="text-lg font-semibold mb-4">People</h2> */}
-      <PeoplePanel logframeId={resolvedId!} canEdit={data.canEdit} />
+      <PeoplePanel logframeId={publicId!} canEdit={data.canEdit} />
     </div>
   )
 }

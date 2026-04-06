@@ -15,7 +15,7 @@ import { displayDate } from '../../utils/format'
 
 interface Props {
   activity: Activity
-  logframeId: number
+  logframeId: string
 }
 
 export default function ActivityDetail({ activity, logframeId }: Props) {

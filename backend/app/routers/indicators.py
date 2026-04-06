@@ -1,3 +1,5 @@
+from uuid import UUID
+
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -8,20 +10,22 @@ from app.models.contacts import User
 from app.models.logframe import Indicator, SubIndicator
 from app.schemas.logframe import IndicatorCreate, IndicatorRead, IndicatorUpdate
 from app.services.ordering import next_order
+from app.services.resolve import resolve_logframe
 
 router = APIRouter(
-    prefix="/api/logframes/{logframe_id}/results/{result_id}/indicators",
+    prefix="/api/logframes/{logframe_public_id}/results/{result_id}/indicators",
     tags=["indicators"],
 )
 
 
 @router.get("/", response_model=list[IndicatorRead])
 async def list_indicators(
-    logframe_id: int,
+    logframe_public_id: UUID,
     result_id: int,
     db: AsyncSession = Depends(get_db),
     current_user: User = Depends(get_current_user),
 ):
+    logframe_id = (await resolve_logframe(logframe_public_id, db)).id
     result = await db.execute(
         select(Indicator).where(Indicator.result_id == result_id).order_by(Indicator.order)
     )
@@ -30,12 +34,13 @@ async def list_indicators(
 
 @router.post("/", response_model=IndicatorRead, status_code=201)
 async def create_indicator(
-    logframe_id: int,
+    logframe_public_id: UUID,
     result_id: int,
     body: IndicatorCreate,
     db: AsyncSession = Depends(get_db),
     current_user: User = Depends(require_logframe_editor),
 ):
+    logframe_id = (await resolve_logframe(logframe_public_id, db)).id
     order = await next_order(db, Indicator, result_id=result_id)
     data = body.model_dump()
     data.update(order=order, result_id=result_id)
@@ -54,12 +59,13 @@ async def create_indicator(
 
 @router.get("/{indicator_id}", response_model=IndicatorRead)
 async def get_indicator(
-    logframe_id: int,
+    logframe_public_id: UUID,
     result_id: int,
     indicator_id: int,
     db: AsyncSession = Depends(get_db),
     current_user: User = Depends(get_current_user),
 ):
+    logframe_id = (await resolve_logframe(logframe_public_id, db)).id
     result = await db.execute(
         select(Indicator).where(
             Indicator.id == indicator_id, Indicator.result_id == result_id
@@ -73,13 +79,14 @@ async def get_indicator(
 
 @router.patch("/{indicator_id}", response_model=IndicatorRead)
 async def update_indicator(
-    logframe_id: int,
+    logframe_public_id: UUID,
     result_id: int,
     indicator_id: int,
     body: IndicatorUpdate,
     db: AsyncSession = Depends(get_db),
     current_user: User = Depends(require_logframe_editor),
 ):
+    logframe_id = (await resolve_logframe(logframe_public_id, db)).id
     result = await db.execute(
         select(Indicator).where(
             Indicator.id == indicator_id, Indicator.result_id == result_id
@@ -97,12 +104,13 @@ async def update_indicator(
 
 @router.delete("/{indicator_id}", status_code=204)
 async def delete_indicator(
-    logframe_id: int,
+    logframe_public_id: UUID,
     result_id: int,
     indicator_id: int,
     db: AsyncSession = Depends(get_db),
     current_user: User = Depends(require_logframe_editor),
 ):
+    logframe_id = (await resolve_logframe(logframe_public_id, db)).id
     result = await db.execute(
         select(Indicator).where(
             Indicator.id == indicator_id, Indicator.result_id == result_id

@@ -63,7 +63,7 @@ export async function updateProject(
 }
 
 export async function updateLogframe(
-  logframeId: number,
+  logframeId: string,
   body: { name: string },
 ): Promise<Logframe> {
   const { data } = await apiClient.patch<Logframe>(`/logframes/${logframeId}`, body)
@@ -192,7 +192,7 @@ export async function deleteProject(
   await apiClient.delete(`/organisations/${orgId}/programs/${programId}/projects/${projectId}`)
 }
 
-export async function deleteLogframe(logframeId: number): Promise<void> {
+export async function deleteLogframe(logframeId: string): Promise<void> {
   await apiClient.delete(`/logframes/${logframeId}`)
 }
 

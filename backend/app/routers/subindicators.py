@@ -1,3 +1,5 @@
+from uuid import UUID
+
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -8,19 +10,21 @@ from app.models.contacts import User
 from app.models.logframe import SubIndicator
 from app.schemas.logframe import SubIndicatorCreate, SubIndicatorRead, SubIndicatorUpdate
 from app.services.ordering import next_order
+from app.services.resolve import resolve_logframe
 
 router = APIRouter(
-    prefix="/api/logframes/{logframe_id}/results/{result_id}/indicators/{indicator_id}/subindicators",
+    prefix="/api/logframes/{logframe_public_id}/results/{result_id}/indicators/{indicator_id}/subindicators",
     tags=["subindicators"],
 )
 
 
 @router.get("/", response_model=list[SubIndicatorRead])
 async def list_subindicators(
-    logframe_id: int, result_id: int, indicator_id: int,
+    logframe_public_id: UUID, result_id: int, indicator_id: int,
     db: AsyncSession = Depends(get_db),
     current_user: User = Depends(get_current_user),
 ):
+    logframe_id = (await resolve_logframe(logframe_public_id, db)).id
     result = await db.execute(
         select(SubIndicator).where(SubIndicator.indicator_id == indicator_id).order_by(SubIndicator.order)
     )
@@ -29,11 +33,12 @@ async def list_subindicators(
 
 @router.post("/", response_model=SubIndicatorRead, status_code=201)
 async def create_subindicator(
-    logframe_id: int, result_id: int, indicator_id: int,
+    logframe_public_id: UUID, result_id: int, indicator_id: int,
     body: SubIndicatorCreate,
     db: AsyncSession = Depends(get_db),
     current_user: User = Depends(require_logframe_editor),
 ):
+    logframe_id = (await resolve_logframe(logframe_public_id, db)).id
     order = await next_order(db, SubIndicator, indicator_id=indicator_id)
     data = body.model_dump()
     data.update(order=order, indicator_id=indicator_id)
@@ -46,11 +51,12 @@ async def create_subindicator(
 
 @router.patch("/{subindicator_id}", response_model=SubIndicatorRead)
 async def update_subindicator(
-    logframe_id: int, result_id: int, indicator_id: int, subindicator_id: int,
+    logframe_public_id: UUID, result_id: int, indicator_id: int, subindicator_id: int,
     body: SubIndicatorUpdate,
     db: AsyncSession = Depends(get_db),
     current_user: User = Depends(require_logframe_editor),
 ):
+    logframe_id = (await resolve_logframe(logframe_public_id, db)).id
     result = await db.execute(
         select(SubIndicator).where(
             SubIndicator.id == subindicator_id,
@@ -69,10 +75,11 @@ async def update_subindicator(
 
 @router.delete("/{subindicator_id}", status_code=204)
 async def delete_subindicator(
-    logframe_id: int, result_id: int, indicator_id: int, subindicator_id: int,
+    logframe_public_id: UUID, result_id: int, indicator_id: int, subindicator_id: int,
     db: AsyncSession = Depends(get_db),
     current_user: User = Depends(require_logframe_editor),
 ):
+    logframe_id = (await resolve_logframe(logframe_public_id, db)).id
     result = await db.execute(
         select(SubIndicator).where(
             SubIndicator.id == subindicator_id,

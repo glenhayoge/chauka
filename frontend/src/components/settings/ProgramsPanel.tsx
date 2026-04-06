@@ -180,12 +180,12 @@ function ProgramLogframesList({ orgId, programId, logframes, canEdit }: { orgId:
     }
   }
 
-  async function handleDelete(lfId: number) {
+  async function handleDelete(lfId: string) {
     await deleteLogframe(lfId)
     queryClient.invalidateQueries({ queryKey: ['program-logframes', orgId, programId] })
   }
 
-  async function handleRename(lfId: number, name: string) {
+  async function handleRename(lfId: string, name: string) {
     await updateLogframe(lfId, { name })
     queryClient.invalidateQueries({ queryKey: ['program-logframes', orgId, programId] })
   }
@@ -194,7 +194,7 @@ function ProgramLogframesList({ orgId, programId, logframes, canEdit }: { orgId:
     <div className="space-y-1.5">
       <p className="text-xs font-medium text-muted-foreground uppercase tracking-wider">Logframes (direct)</p>
       {logframes.map((lf) => (
-        <LogframeRow key={lf.id} logframe={lf} onDelete={() => handleDelete(lf.id)} onRename={(name) => handleRename(lf.id, name)} canEdit={canEdit} />
+        <LogframeRow key={lf.id} logframe={lf} onDelete={() => handleDelete(lf.public_id)} onRename={(name) => handleRename(lf.public_id, name)} canEdit={canEdit} />
       ))}
       {logframes.length === 0 && (
         <p className="text-xs text-muted-foreground/60 italic">No logframes directly under this program.</p>
@@ -350,12 +350,12 @@ function LogframesList({ orgId, programId, projectId, logframes, canEdit }: { or
     }
   }
 
-  async function handleDelete(lfId: number) {
+  async function handleDelete(lfId: string) {
     await deleteLogframe(lfId)
     queryClient.invalidateQueries({ queryKey: ['project-logframes', orgId, programId, projectId] })
   }
 
-  async function handleRename(lfId: number, name: string) {
+  async function handleRename(lfId: string, name: string) {
     await updateLogframe(lfId, { name })
     queryClient.invalidateQueries({ queryKey: ['project-logframes', orgId, programId, projectId] })
   }
@@ -364,7 +364,7 @@ function LogframesList({ orgId, programId, projectId, logframes, canEdit }: { or
     <div className="space-y-1.5">
       <p className="text-[10px] font-medium text-muted-foreground uppercase tracking-wider">Logframes</p>
       {logframes.map((lf) => (
-        <LogframeRow key={lf.id} logframe={lf} onDelete={() => handleDelete(lf.id)} onRename={(name) => handleRename(lf.id, name)} canEdit={canEdit} />
+        <LogframeRow key={lf.id} logframe={lf} onDelete={() => handleDelete(lf.public_id)} onRename={(name) => handleRename(lf.public_id, name)} canEdit={canEdit} />
       ))}
       {logframes.length === 0 && (
         <p className="text-xs text-muted-foreground/60 italic">No logframes yet.</p>
@@ -561,12 +561,12 @@ function StandaloneLogframesList({ orgId, projectId, logframes, canEdit }: { org
     }
   }
 
-  async function handleDelete(lfId: number) {
+  async function handleDelete(lfId: string) {
     await deleteLogframe(lfId)
     queryClient.invalidateQueries({ queryKey: ['org-project-logframes', orgId, projectId] })
   }
 
-  async function handleRename(lfId: number, name: string) {
+  async function handleRename(lfId: string, name: string) {
     await updateLogframe(lfId, { name })
     queryClient.invalidateQueries({ queryKey: ['org-project-logframes', orgId, projectId] })
   }
@@ -575,7 +575,7 @@ function StandaloneLogframesList({ orgId, projectId, logframes, canEdit }: { org
     <div className="space-y-1.5">
       <p className="text-[10px] font-medium text-muted-foreground uppercase tracking-wider">Logframes</p>
       {logframes.map((lf) => (
-        <LogframeRow key={lf.id} logframe={lf} onDelete={() => handleDelete(lf.id)} onRename={(name) => handleRename(lf.id, name)} canEdit={canEdit} />
+        <LogframeRow key={lf.id} logframe={lf} onDelete={() => handleDelete(lf.public_id)} onRename={(name) => handleRename(lf.public_id, name)} canEdit={canEdit} />
       ))}
       {logframes.length === 0 && (
         <p className="text-xs text-muted-foreground/60 italic">No logframes yet.</p>

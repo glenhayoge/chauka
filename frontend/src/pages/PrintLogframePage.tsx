@@ -14,8 +14,8 @@ import type {
 
 export default function PrintLogframePage() {
   const { logframeId: publicId } = useParams<{ logframeId: string }>()
-  const { id: resolvedId, isLoading: resolving, notFound } = useResolveLogframeId(publicId)
-  const { isLoading, error } = useBootstrap(resolvedId ?? 0)
+  const { isLoading: resolving, notFound } = useResolveLogframeId(publicId)
+  const { isLoading, error } = useBootstrap(publicId ?? "")
   const data = useLogframeStore((s) => s.data)
 
   if (resolving) return <p className="text-muted-foreground p-6">Loading logframe data...</p>

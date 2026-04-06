@@ -10,7 +10,7 @@ interface Props {
   statusUpdates: StatusUpdate[]
   statusCodes: StatusCode[]
   activityId: number
-  logframeId: number
+  logframeId: string
   canEdit: boolean
 }
 
@@ -110,7 +110,7 @@ export default function StatusHistory({ statusUpdates, statusCodes, activityId, 
 
 interface AddFormProps {
   activityId: number
-  logframeId: number
+  logframeId: string
   statusCodes: StatusCode[]
   onDone: () => void
 }

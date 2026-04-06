@@ -589,6 +589,7 @@ class SettingsRead(BaseModel):
     open_result_level: int
     use_components: bool = False
     level_labels: dict[str, str] | None = None
+    contribution_analysis_enabled: bool = False
 
 
 class SettingsUpdate(BaseModel):
@@ -603,6 +604,7 @@ class SettingsUpdate(BaseModel):
     open_result_level: int | None = None
     use_components: bool | None = None
     level_labels: dict[str, str] | None = None
+    contribution_analysis_enabled: bool | None = None
 
     @field_validator("description", mode="before")
     @classmethod

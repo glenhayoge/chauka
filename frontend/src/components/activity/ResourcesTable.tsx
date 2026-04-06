@@ -9,7 +9,7 @@ import EditableNumber from '../ui/EditableNumber'
 interface Props {
   resources: Resource[]
   activityId: number
-  logframeId: number
+  logframeId: string
   canEdit: boolean
 }
 
@@ -221,7 +221,7 @@ export default function ResourcesTable({ resources, activityId, logframeId, canE
   )
 }
 
-function AddResourceForm({ activityId, logframeId }: { activityId: number; logframeId: number }) {
+function AddResourceForm({ activityId, logframeId }: { activityId: number; logframeId: string }) {
   const queryClient = useQueryClient()
   const [open, setOpen] = useState(false)
   const [type, setType] = useState('')

@@ -7,7 +7,7 @@ import { useQueryClient } from '@tanstack/react-query'
 import { displayDate } from '../../utils/format'
 
 interface Props {
-  logframeId: number
+  logframeId: string
   subindicators: SubIndicator[]
 }
 

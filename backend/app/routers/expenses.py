@@ -1,3 +1,5 @@
+from uuid import UUID
+
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -7,20 +9,22 @@ from app.database import get_db
 from app.models.contacts import User
 from app.models.logframe import Expense, BudgetLine
 from app.schemas.logframe import ExpenseCreate, ExpenseRead, ExpenseUpdate
+from app.services.resolve import resolve_logframe
 
 router = APIRouter(
-    prefix="/api/logframes/{logframe_id}/expenses",
+    prefix="/api/logframes/{logframe_public_id}/expenses",
     tags=["expenses"],
 )
 
 
 @router.get("/", response_model=list[ExpenseRead])
 async def list_expenses(
-    logframe_id: int,
+    logframe_public_id: UUID,
     budget_line: int | None = None,
     db: AsyncSession = Depends(get_db),
     current_user: User = Depends(get_current_user),
 ):
+    logframe_id = (await resolve_logframe(logframe_public_id, db)).id
     stmt = select(Expense)
     if budget_line:
         stmt = stmt.where(Expense.budget_line_id == budget_line)
@@ -30,11 +34,12 @@ async def list_expenses(
 
 @router.post("/", response_model=ExpenseRead, status_code=201)
 async def create_expense(
-    logframe_id: int,
+    logframe_public_id: UUID,
     body: ExpenseCreate,
     db: AsyncSession = Depends(get_db),
     current_user: User = Depends(require_logframe_editor),
 ):
+    logframe_id = (await resolve_logframe(logframe_public_id, db)).id
     # Verify budget line exists
     bl = await db.execute(select(BudgetLine).where(BudgetLine.id == body.budget_line_id))
     if not bl.scalar_one_or_none():
@@ -48,12 +53,13 @@ async def create_expense(
 
 @router.patch("/{expense_id}", response_model=ExpenseRead)
 async def update_expense(
-    logframe_id: int,
+    logframe_public_id: UUID,
     expense_id: int,
     body: ExpenseUpdate,
     db: AsyncSession = Depends(get_db),
     current_user: User = Depends(require_logframe_editor),
 ):
+    logframe_id = (await resolve_logframe(logframe_public_id, db)).id
     result = await db.execute(select(Expense).where(Expense.id == expense_id))
     obj = result.scalar_one_or_none()
     if not obj:
@@ -67,11 +73,12 @@ async def update_expense(
 
 @router.delete("/{expense_id}", status_code=204)
 async def delete_expense(
-    logframe_id: int,
+    logframe_public_id: UUID,
     expense_id: int,
     db: AsyncSession = Depends(get_db),
     current_user: User = Depends(require_logframe_editor),
 ):
+    logframe_id = (await resolve_logframe(logframe_public_id, db)).id
     result = await db.execute(select(Expense).where(Expense.id == expense_id))
     obj = result.scalar_one_or_none()
     if not obj:

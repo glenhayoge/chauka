@@ -10,7 +10,7 @@ import SettingsSection from './SettingsSection'
 import { COUNTRIES, ORG_TYPES, SECTORS } from '../../utils/orgOptions'
 
 interface Props {
-  logframeId: number
+  logframeId: string
   canEdit: boolean
 }
 

@@ -102,8 +102,8 @@ function computeVisibleResults(
 
 export default function OverviewPage() {
   const { logframeId: publicId } = useParams<{ logframeId: string }>()
-  const { id: resolvedId, isLoading: resolving, notFound } = useResolveLogframeId(publicId)
-  const { isLoading, error } = useBootstrap(resolvedId ?? 0)
+  const { isLoading: resolving, notFound } = useResolveLogframeId(publicId)
+  const { isLoading, error } = useBootstrap(publicId ?? '')
   const data = useLogframeStore((s) => s.data)
   const initExpandedResults = useUIStore((s) => s.initExpandedResults)
   const filters = useUIStore((s) => s.filters)
@@ -154,7 +154,7 @@ export default function OverviewPage() {
             key={result.id}
             result={result}
             allResults={data.results}
-            logframeId={resolvedId!}
+            logframeId={publicId!}
             visibleResultIds={visibleResultIds}
             resultCodes={resultCodes}
             activityCodes={activityCodes}
@@ -176,11 +176,11 @@ export default function OverviewPage() {
 
         {/* Add new top-level result */}
         {data.canEdit && (
-          <AddResultRow logframeId={resolvedId!} />
+          <AddResultRow logframeId={publicId!} />
         )}
       </div>
       <ExportControls
-        logframeId={resolvedId!}
+        logframeId={publicId!}
         periods={data.periods}
         settings={data.settings}
       />

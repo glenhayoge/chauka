@@ -11,7 +11,7 @@ import ActivityDetail from './ActivityDetail'
 
 interface Props {
   activity: Activity
-  logframeId: number
+  logframeId: string
   activityCode?: string
 }
 

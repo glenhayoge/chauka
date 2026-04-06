@@ -10,8 +10,8 @@ const PLACEHOLDER_NAMES = ['Untitled Program', 'Untitled Project', 'Untitled Log
 
 export default function DashboardPage() {
   const { logframeId: publicId } = useParams<{ logframeId: string }>()
-  const { id: resolvedId, isLoading: resolving, notFound } = useResolveLogframeId(publicId)
-  const { isLoading, error } = useBootstrap(resolvedId ?? 0)
+  const { isLoading: resolving, notFound } = useResolveLogframeId(publicId)
+  const { isLoading, error } = useBootstrap(publicId ?? '')
   const data = useLogframeStore((s) => s.data)
   const [exportOpen, setExportOpen] = useState(false)
 
@@ -53,7 +53,7 @@ export default function DashboardPage() {
             </svg>
           </Link>
           {/* Export to Excel */}
-          {resolvedId && (
+          {publicId && (
             <button
               onClick={() => setExportOpen(true)}
               title="Export to Excel"
@@ -144,9 +144,9 @@ export default function DashboardPage() {
       </div>
 
       {/* Export dialog */}
-      {exportOpen && resolvedId && (
+      {exportOpen && publicId && (
         <ExportDialog
-          logframeId={resolvedId}
+          logframeId={publicId}
           onClose={() => setExportOpen(false)}
         />
       )}

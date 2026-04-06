@@ -18,8 +18,8 @@ import { buildResultCodeMap } from '../utils/resultCodes'
 
 export default function ResultDesignPage() {
   const { logframeId: publicId } = useParams<{ logframeId: string }>()
-  const { id: resolvedId, isLoading: resolving, notFound } = useResolveLogframeId(publicId)
-  const { isLoading, error } = useBootstrap(resolvedId ?? 0)
+  const { isLoading: resolving, notFound } = useResolveLogframeId(publicId)
+  const { isLoading, error } = useBootstrap(publicId ?? '')
   const data = useLogframeStore((s) => s.data)
   const [searchParams] = useSearchParams()
   const filterResultId = searchParams.get('result')
@@ -46,11 +46,11 @@ export default function ResultDesignPage() {
     const resultId = result.id
     const indicators = data.indicators.filter((i) => i.result_id === resultId)
     const assumptions = data.assumptions.filter((a) => a.result_id === resultId)
-    const resultBase = `/logframes/${resolvedId!}/results/${resultId}`
+    const resultBase = `/logframes/${publicId!}/results/${resultId}`
 
     async function saveResultField(field: string, value: unknown) {
       await apiClient.patch(resultBase, { [field]: value })
-      queryClient.invalidateQueries({ queryKey: ['bootstrap', resolvedId!] })
+      queryClient.invalidateQueries({ queryKey: ['bootstrap', publicId!] })
     }
 
     async function addIndicator() {
@@ -60,12 +60,12 @@ export default function ResultDesignPage() {
         source_of_verification: '',
         result_id: resultId,
       })
-      queryClient.invalidateQueries({ queryKey: ['bootstrap', resolvedId!] })
+      queryClient.invalidateQueries({ queryKey: ['bootstrap', publicId!] })
     }
 
     async function deleteResult() {
       await apiClient.delete(resultBase)
-      queryClient.invalidateQueries({ queryKey: ['bootstrap', resolvedId!] })
+      queryClient.invalidateQueries({ queryKey: ['bootstrap', publicId!] })
       navigate(`/app/logframes/${publicId}/design`)
     }
 
@@ -152,7 +152,7 @@ export default function ResultDesignPage() {
             <IndicatorEditor
               key={indicator.id}
               indicator={indicator}
-              logframeId={resolvedId!}
+              logframeId={publicId!}
               periods={data.periods}
               targets={data.targets ?? []}
             />
@@ -169,7 +169,7 @@ export default function ResultDesignPage() {
             assumptions={assumptions}
             riskRatings={data.riskRatings}
             resultId={result.id}
-            logframeId={resolvedId!}
+            logframeId={publicId!}
             canEdit={canEdit}
           />
         </div>

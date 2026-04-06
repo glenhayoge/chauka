@@ -1,3 +1,5 @@
+from uuid import UUID
+
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -7,18 +9,20 @@ from app.database import get_db
 from app.models.contacts import User
 from app.models.logframe import Target
 from app.schemas.logframe import TargetCreate, TargetRead, TargetUpdate
+from app.services.resolve import resolve_logframe
 
-router = APIRouter(prefix="/api/logframes/{logframe_id}/targets", tags=["targets"])
+router = APIRouter(prefix="/api/logframes/{logframe_public_id}/targets", tags=["targets"])
 
 
 @router.get("/", response_model=list[TargetRead])
 async def list_targets(
-    logframe_id: int,
+    logframe_public_id: UUID,
     subindicator: int | None = None,
     milestone: int | None = None,
     db: AsyncSession = Depends(get_db),
     current_user: User = Depends(get_current_user),
 ):
+    logframe_id = (await resolve_logframe(logframe_public_id, db)).id
     stmt = select(Target)
     if subindicator:
         stmt = stmt.where(Target.subindicator_id == subindicator)
@@ -30,11 +34,12 @@ async def list_targets(
 
 @router.post("/", response_model=TargetRead, status_code=201)
 async def create_target(
-    logframe_id: int,
+    logframe_public_id: UUID,
     body: TargetCreate,
     db: AsyncSession = Depends(get_db),
     current_user: User = Depends(require_logframe_editor),
 ):
+    logframe_id = (await resolve_logframe(logframe_public_id, db)).id
     obj = Target(**body.model_dump())
     db.add(obj)
     await db.commit()
@@ -44,12 +49,13 @@ async def create_target(
 
 @router.patch("/{target_id}", response_model=TargetRead)
 async def update_target(
-    logframe_id: int,
+    logframe_public_id: UUID,
     target_id: int,
     body: TargetUpdate,
     db: AsyncSession = Depends(get_db),
     current_user: User = Depends(require_logframe_editor),
 ):
+    logframe_id = (await resolve_logframe(logframe_public_id, db)).id
     result = await db.execute(select(Target).where(Target.id == target_id))
     obj = result.scalar_one_or_none()
     if not obj:
@@ -63,11 +69,12 @@ async def update_target(
 
 @router.delete("/{target_id}", status_code=204)
 async def delete_target(
-    logframe_id: int,
+    logframe_public_id: UUID,
     target_id: int,
     db: AsyncSession = Depends(get_db),
     current_user: User = Depends(require_logframe_editor),
 ):
+    logframe_id = (await resolve_logframe(logframe_public_id, db)).id
     result = await db.execute(select(Target).where(Target.id == target_id))
     obj = result.scalar_one_or_none()
     if not obj:

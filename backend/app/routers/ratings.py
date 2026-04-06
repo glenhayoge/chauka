@@ -1,3 +1,5 @@
+from uuid import UUID
+
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -7,16 +9,18 @@ from app.database import get_db
 from app.models.contacts import User
 from app.models.logframe import Rating
 from app.schemas.logframe import RatingCreate, RatingRead, RatingUpdate
+from app.services.resolve import resolve_logframe
 
-router = APIRouter(prefix="/api/logframes/{logframe_id}/ratings", tags=["ratings"])
+router = APIRouter(prefix="/api/logframes/{logframe_public_id}/ratings", tags=["ratings"])
 
 
 @router.get("/", response_model=list[RatingRead])
 async def list_ratings(
-    logframe_id: int,
+    logframe_public_id: UUID,
     db: AsyncSession = Depends(get_db),
     current_user: User = Depends(get_current_user),
 ):
+    logframe_id = (await resolve_logframe(logframe_public_id, db)).id
     result = await db.execute(
         select(Rating).where(Rating.logframe_id == logframe_id)
     )
@@ -25,11 +29,12 @@ async def list_ratings(
 
 @router.post("/", response_model=RatingRead, status_code=201)
 async def create_rating(
-    logframe_id: int,
+    logframe_public_id: UUID,
     body: RatingCreate,
     db: AsyncSession = Depends(get_db),
     current_user: User = Depends(require_logframe_editor),
 ):
+    logframe_id = (await resolve_logframe(logframe_public_id, db)).id
     obj = Rating(name=body.name, color=body.color, logframe_id=logframe_id)
     db.add(obj)
     await db.commit()
@@ -39,12 +44,13 @@ async def create_rating(
 
 @router.patch("/{rating_id}", response_model=RatingRead)
 async def update_rating(
-    logframe_id: int,
+    logframe_public_id: UUID,
     rating_id: int,
     body: RatingUpdate,
     db: AsyncSession = Depends(get_db),
     current_user: User = Depends(require_logframe_editor),
 ):
+    logframe_id = (await resolve_logframe(logframe_public_id, db)).id
     result = await db.execute(
         select(Rating).where(Rating.id == rating_id, Rating.logframe_id == logframe_id)
     )
@@ -60,11 +66,12 @@ async def update_rating(
 
 @router.delete("/{rating_id}", status_code=204)
 async def delete_rating(
-    logframe_id: int,
+    logframe_public_id: UUID,
     rating_id: int,
     db: AsyncSession = Depends(get_db),
     current_user: User = Depends(require_logframe_editor),
 ):
+    logframe_id = (await resolve_logframe(logframe_public_id, db)).id
     result = await db.execute(
         select(Rating).where(Rating.id == rating_id, Rating.logframe_id == logframe_id)
     )

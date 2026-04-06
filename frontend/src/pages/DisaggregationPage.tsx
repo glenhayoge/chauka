@@ -9,8 +9,8 @@ import DisaggregationChart from '../components/analytics/DisaggregationChart'
 
 export default function DisaggregationPage() {
   const { logframeId: publicId } = useParams<{ logframeId: string }>()
-  const { id: resolvedId, isLoading: resolving, notFound } = useResolveLogframeId(publicId)
-  const { isLoading, error } = useBootstrap(resolvedId ?? 0)
+  const { isLoading: resolving, notFound } = useResolveLogframeId(publicId)
+  const { isLoading, error } = useBootstrap(publicId ?? "")
   const data = useLogframeStore((s) => s.data)
 
   const categories = data?.disaggregationCategories ?? []
@@ -27,7 +27,7 @@ export default function DisaggregationPage() {
     }
   }, [categories, categoryId])
 
-  const logframeId = data?.logframe?.id
+  const logframeId = data?.logframe?.public_id
 
   const { data: breakdown, isLoading: breakdownLoading } = useQuery({
     queryKey: ['disaggregation-breakdown', logframeId, categoryId, columnId],

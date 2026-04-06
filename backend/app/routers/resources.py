@@ -1,3 +1,5 @@
+from uuid import UUID
+
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -7,20 +9,22 @@ from app.database import get_db
 from app.models.contacts import User
 from app.models.logframe import Resource
 from app.schemas.logframe import ResourceCreate, ResourceRead, ResourceUpdate
+from app.services.resolve import resolve_logframe
 
 router = APIRouter(
-    prefix="/api/logframes/{logframe_id}/resources",
+    prefix="/api/logframes/{logframe_public_id}/resources",
     tags=["resources"],
 )
 
 
 @router.get("/", response_model=list[ResourceRead])
 async def list_resources(
-    logframe_id: int,
+    logframe_public_id: UUID,
     activity_id: int | None = None,
     db: AsyncSession = Depends(get_db),
     current_user: User = Depends(get_current_user),
 ):
+    logframe_id = (await resolve_logframe(logframe_public_id, db)).id
     stmt = select(Resource)
     if activity_id:
         stmt = stmt.where(Resource.activity_id == activity_id)
@@ -30,12 +34,13 @@ async def list_resources(
 
 @router.post("/", response_model=ResourceRead, status_code=201)
 async def create_resource(
-    logframe_id: int,
+    logframe_public_id: UUID,
     body: ResourceCreate,
     activity_id: int | None = None,
     db: AsyncSession = Depends(get_db),
     current_user: User = Depends(require_logframe_editor),
 ):
+    logframe_id = (await resolve_logframe(logframe_public_id, db)).id
     if not activity_id:
         raise HTTPException(status_code=400, detail="activity_id query param required")
     obj = Resource(**body.model_dump(), activity_id=activity_id)
@@ -47,12 +52,13 @@ async def create_resource(
 
 @router.patch("/{resource_id}", response_model=ResourceRead)
 async def update_resource(
-    logframe_id: int,
+    logframe_public_id: UUID,
     resource_id: int,
     body: ResourceUpdate,
     db: AsyncSession = Depends(get_db),
     current_user: User = Depends(require_logframe_editor),
 ):
+    logframe_id = (await resolve_logframe(logframe_public_id, db)).id
     result = await db.execute(select(Resource).where(Resource.id == resource_id))
     obj = result.scalar_one_or_none()
     if not obj:
@@ -66,11 +72,12 @@ async def update_resource(
 
 @router.delete("/{resource_id}", status_code=204)
 async def delete_resource(
-    logframe_id: int,
+    logframe_public_id: UUID,
     resource_id: int,
     db: AsyncSession = Depends(get_db),
     current_user: User = Depends(require_logframe_editor),
 ):
+    logframe_id = (await resolve_logframe(logframe_public_id, db)).id
     result = await db.execute(select(Resource).where(Resource.id == resource_id))
     obj = result.scalar_one_or_none()
     if not obj:

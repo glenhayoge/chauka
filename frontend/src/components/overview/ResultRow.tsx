@@ -22,7 +22,7 @@ const LEVEL_STYLES: Record<number, string> = {
 interface Props {
   result: Result
   allResults: Result[]
-  logframeId: number
+  logframeId: string
   depth?: number
   visibleResultIds?: Set<number> | null
   resultCodes?: Map<number, string>

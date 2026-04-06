@@ -13,7 +13,7 @@ import { useQueryClient } from '@tanstack/react-query'
 
 interface Props {
   indicator: Indicator
-  logframeId: number
+  logframeId: string
   periods: Period[]
   targets: Target[]
 }

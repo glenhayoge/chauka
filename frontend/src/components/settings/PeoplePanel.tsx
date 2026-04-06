@@ -8,7 +8,7 @@ import EditableSelect from '../ui/EditableSelect'
 import clsx from 'clsx'
 
 interface Props {
-  logframeId: number
+  logframeId: string
   canEdit: boolean
 }
 

@@ -4,14 +4,14 @@ import { getBootstrap } from '../api/logframes'
 import { useLogframeStore } from '../store/logframe'
 import { useAuthStore } from '../store/auth'
 
-export function useBootstrap(logframeId: number) {
+export function useBootstrap(logframePublicId: string) {
   const setData = useLogframeStore((s) => s.setData)
   const setCurrentRole = useAuthStore((s) => s.setCurrentRole)
 
   const query = useQuery({
-    queryKey: ['bootstrap', logframeId],
-    queryFn: () => getBootstrap(logframeId),
-    enabled: logframeId > 0,
+    queryKey: ['bootstrap', logframePublicId],
+    queryFn: () => getBootstrap(logframePublicId),
+    enabled: logframePublicId.length > 0,
   })
 
   useEffect(() => {

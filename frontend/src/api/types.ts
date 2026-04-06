@@ -286,6 +286,7 @@ export interface AppSettings {
   open_result_level: number
   use_components: boolean
   level_labels: Record<string, string> | null
+  contribution_analysis_enabled: boolean
 }
 
 export interface BootstrapConf {

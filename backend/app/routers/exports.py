@@ -6,6 +6,7 @@ import re
 import textwrap
 from collections import defaultdict
 from datetime import date, timedelta
+from uuid import UUID
 
 from fastapi import APIRouter, Depends, HTTPException, Query
 from fastapi.responses import StreamingResponse
@@ -33,9 +34,10 @@ from app.models.logframe import (
     Target,
 )
 from app.models.org import Organisation, Program, Project
+from app.services.resolve import resolve_logframe
 
 router = APIRouter(
-    prefix="/api/logframes/{logframe_id}/export",
+    prefix="/api/logframes/{logframe_public_id}/export",
     tags=["export"],
 )
 
@@ -296,11 +298,12 @@ async def _load_latest_data_entries(db: AsyncSession, logframe_id: int) -> dict[
 
 @router.get("/quarterly-report")
 async def export_quarterly_report(
-    logframe_id: int,
+    logframe_public_id: UUID,
     period: str = Query(..., description="Period as MM-YYYY"),
     db: AsyncSession = Depends(get_db),
     current_user: User = Depends(get_current_user),
 ):
+    logframe_id = (await resolve_logframe(logframe_public_id, db)).id
     settings = await _load_settings(db, logframe_id)
 
     # Parse period parameter
@@ -385,11 +388,12 @@ async def export_quarterly_report(
 
 @router.get("/annual-plan")
 async def export_annual_plan(
-    logframe_id: int,
+    logframe_public_id: UUID,
     year: int = Query(..., description="Year as YYYY"),
     db: AsyncSession = Depends(get_db),
     current_user: User = Depends(get_current_user),
 ):
+    logframe_id = (await resolve_logframe(logframe_public_id, db)).id
     settings = await _load_settings(db, logframe_id)
     start_date = date(year, settings.start_month, 1)
     year_end = date(year + 1, settings.start_month, 1) - timedelta(days=1)
@@ -447,11 +451,12 @@ async def export_annual_plan(
 
 @router.get("/quarterly-plan")
 async def export_quarterly_plan(
-    logframe_id: int,
+    logframe_public_id: UUID,
     period: str = Query(..., description="Period as MM-YYYY"),
     db: AsyncSession = Depends(get_db),
     current_user: User = Depends(get_current_user),
 ):
+    logframe_id = (await resolve_logframe(logframe_public_id, db)).id
     settings = await _load_settings(db, logframe_id)
 
     try:
@@ -525,10 +530,11 @@ async def export_quarterly_plan(
 
 @router.get("/logframe")
 async def export_logframe(
-    logframe_id: int,
+    logframe_public_id: UUID,
     db: AsyncSession = Depends(get_db),
     current_user: User = Depends(get_current_user),
 ):
+    logframe_id = (await resolve_logframe(logframe_public_id, db)).id
     """Export the full logframe (results, indicators, activities, assumptions) to Excel."""
     # Load logframe name
     lf_result = await db.execute(select(Logframe).where(Logframe.id == logframe_id))
@@ -713,7 +719,7 @@ async def export_logframe(
 
 @router.get("/logframe-pro")
 async def export_logframe_professional(
-    logframe_id: int,
+    logframe_public_id: UUID,
     style: str = Query("donor", description="Export style: donor|expanded|simple|eu|dfat"),
     include_activities: bool = Query(True),
     include_indicators: bool = Query(True),
@@ -722,6 +728,7 @@ async def export_logframe_professional(
     db: AsyncSession = Depends(get_db),
     current_user: User = Depends(get_current_user),
 ):
+    logframe_id = (await resolve_logframe(logframe_public_id, db)).id
     """Generate a professional, donor-ready logframe Excel export."""
     from app.services.excel_export import build_logframe_excel
 

@@ -27,7 +27,7 @@ const BAND_OPTIONS = [
 interface Props {
   taLines: TALine[]
   activityId: number
-  logframeId: number
+  logframeId: string
   currency: string
   canEdit: boolean
 }

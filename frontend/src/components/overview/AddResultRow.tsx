@@ -3,7 +3,7 @@ import { apiClient } from '../../api/client'
 import { useQueryClient } from '@tanstack/react-query'
 
 interface Props {
-  logframeId: number
+  logframeId: string
   parentId?: number | null
   depth?: number
 }

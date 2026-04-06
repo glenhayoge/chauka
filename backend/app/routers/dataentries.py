@@ -1,3 +1,5 @@
+from uuid import UUID
+
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -7,18 +9,20 @@ from app.database import get_db
 from app.models.contacts import User
 from app.models.logframe import DataEntry
 from app.schemas.logframe import DataEntryCreate, DataEntryRead, DataEntryUpdate
+from app.services.resolve import resolve_logframe
 
-router = APIRouter(prefix="/api/logframes/{logframe_id}/data-entries", tags=["data-entries"])
+router = APIRouter(prefix="/api/logframes/{logframe_public_id}/data-entries", tags=["data-entries"])
 
 
 @router.get("/", response_model=list[DataEntryRead])
 async def list_data_entries(
-    logframe_id: int,
+    logframe_public_id: UUID,
     subindicator: int | None = None,
     column: int | None = None,
     db: AsyncSession = Depends(get_db),
     current_user: User = Depends(get_current_user),
 ):
+    logframe_id = (await resolve_logframe(logframe_public_id, db)).id
     stmt = select(DataEntry)
     if subindicator:
         stmt = stmt.where(DataEntry.subindicator_id == subindicator)
@@ -30,11 +34,12 @@ async def list_data_entries(
 
 @router.post("/", response_model=DataEntryRead, status_code=201)
 async def create_data_entry(
-    logframe_id: int,
+    logframe_public_id: UUID,
     body: DataEntryCreate,
     db: AsyncSession = Depends(get_db),
     current_user: User = Depends(require_logframe_editor),
 ):
+    logframe_id = (await resolve_logframe(logframe_public_id, db)).id
     obj = DataEntry(**body.model_dump())
     db.add(obj)
     await db.commit()
@@ -44,11 +49,12 @@ async def create_data_entry(
 
 @router.patch("/{entry_id}", response_model=DataEntryRead)
 async def update_data_entry(
-    logframe_id: int, entry_id: int,
+    logframe_public_id: UUID, entry_id: int,
     body: DataEntryUpdate,
     db: AsyncSession = Depends(get_db),
     current_user: User = Depends(require_logframe_editor),
 ):
+    logframe_id = (await resolve_logframe(logframe_public_id, db)).id
     result = await db.execute(select(DataEntry).where(DataEntry.id == entry_id))
     obj = result.scalar_one_or_none()
     if not obj:
@@ -62,10 +68,11 @@ async def update_data_entry(
 
 @router.delete("/{entry_id}", status_code=204)
 async def delete_data_entry(
-    logframe_id: int, entry_id: int,
+    logframe_public_id: UUID, entry_id: int,
     db: AsyncSession = Depends(get_db),
     current_user: User = Depends(require_logframe_editor),
 ):
+    logframe_id = (await resolve_logframe(logframe_public_id, db)).id
     result = await db.execute(select(DataEntry).where(DataEntry.id == entry_id))
     obj = result.scalar_one_or_none()
     if not obj:

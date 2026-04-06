@@ -10,7 +10,7 @@ import {
 } from '../../api/gsheets'
 
 interface Props {
-  logframeId: number
+  logframeId: string
   canEdit: boolean
 }
 
@@ -69,7 +69,7 @@ function SetupView({
   logframeId,
   queryClient,
 }: {
-  logframeId: number
+  logframeId: string
   queryClient: ReturnType<typeof useQueryClient>
 }) {
   const [spreadsheetId, setSpreadsheetId] = useState('')
@@ -182,7 +182,7 @@ function ConnectedView({
   queryClient,
 }: {
   connection: GoogleSheetsConnection
-  logframeId: number
+  logframeId: string
   queryClient: ReturnType<typeof useQueryClient>
 }) {
   const [syncing, setSyncing] = useState(false)

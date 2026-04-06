@@ -13,8 +13,8 @@ import { formatDateDisplay } from '../utils/format'
 
 export default function BudgetPage() {
   const { logframeId: publicId } = useParams<{ logframeId: string }>()
-  const { id: resolvedId, isLoading: resolving, notFound } = useResolveLogframeId(publicId)
-  const { isLoading, error } = useBootstrap(resolvedId ?? 0)
+  const { isLoading: resolving, notFound } = useResolveLogframeId(publicId)
+  const { isLoading, error } = useBootstrap(publicId ?? "")
   const data = useLogframeStore((s) => s.data)
 
   if (resolving) return <p className="text-muted-foreground">Loading…</p>
@@ -62,7 +62,7 @@ export default function BudgetPage() {
             budgetLines={actBudgetLines}
             expenses={expenses}
             currency={currency}
-            logframeId={resolvedId!}
+            logframeId={publicId!}
             canEdit={data.canEdit}
           />
         )
@@ -92,7 +92,7 @@ interface ActivityBudgetProps {
   budgetLines: BudgetLine[]
   expenses: Expense[]
   currency: string
-  logframeId: number
+  logframeId: string
   canEdit: boolean
 }
 
@@ -163,7 +163,7 @@ interface BudgetLineRowProps {
   remaining: number
   pct: number
   currency: string
-  logframeId: number
+  logframeId: string
   canEdit: boolean
 }
 
@@ -242,7 +242,7 @@ function BudgetLineRow({ budgetLine, expenses, spent, remaining, pct, currency, 
   )
 }
 
-function ExpenseRow({ expense, currency, logframeId, canEdit }: { expense: Expense; currency: string; logframeId: number; canEdit: boolean }) {
+function ExpenseRow({ expense, currency, logframeId, canEdit }: { expense: Expense; currency: string; logframeId: string; canEdit: boolean }) {
   const queryClient = useQueryClient()
 
   async function handleDelete() {
@@ -264,7 +264,7 @@ function ExpenseRow({ expense, currency, logframeId, canEdit }: { expense: Expen
   )
 }
 
-function AddExpenseForm({ budgetLineId, logframeId, currency, onDone }: { budgetLineId: number; logframeId: number; currency: string; onDone: () => void }) {
+function AddExpenseForm({ budgetLineId, logframeId, currency, onDone }: { budgetLineId: number; logframeId: string; currency: string; onDone: () => void }) {
   const queryClient = useQueryClient()
   const [amount, setAmount] = useState('')
   const [description, setDescription] = useState('')

@@ -12,7 +12,7 @@ interface Props {
   assumptions: Assumption[]
   riskRatings: RiskRating[]
   resultId: number
-  logframeId: number
+  logframeId: string
   canEdit: boolean
 }
 
