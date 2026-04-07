@@ -4,7 +4,7 @@ import CodeBlock from './CodeBlock'
 function heading(Tag: 'h1' | 'h2' | 'h3' | 'h4') {
   const styles: Record<string, string> = {
     h1: 'text-2xl font-bold mt-0 mb-4',
-    h2: 'text-xl font-semibold mt-10 mb-3 pb-2 border-b border-border',
+    h2: 'text-xl font-semibold mt-10 mb-3 pb-2',
     h3: 'text-lg font-semibold mt-8 mb-2',
     h4: 'text-base font-semibold mt-6 mb-2',
   }

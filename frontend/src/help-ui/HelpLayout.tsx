@@ -10,42 +10,42 @@ export default function HelpLayout() {
   return (
     <div className="min-h-screen flex flex-col bg-background">
       {/* Top bar */}
-      <header className="sticky top-0 z-30 border-b border-border bg-background/95 backdrop-blur">
-        <div className="max-w-7xl mx-auto">
-          <div className="px-3 py-2">
-            {/* Title row */}
-            <div className="flex items-center gap-3">
-              <Link to="/help" className="text-sm font-semibold text-foreground whitespace-nowrap py-3">
-                Chauka Help Centre
-              </Link>
-              {/* Search — hidden on mobile, shown on sm+ */}
-              <div className="hidden sm:block flex-1">
-                <HelpSearchBar />
-              </div>
-              <div className="hidden md:flex items-center gap-3 shrink-0">
-                <Link to="/" className="text-xs text-muted-foreground hover:text-foreground">Home</Link>
-                <Link to="/docs" className="text-xs text-muted-foreground hover:text-foreground">Developer Docs</Link>
-              </div>
-              <button
-                onClick={() => setMobileOpen(!mobileOpen)}
-                className="lg:hidden ml-auto p-2 -mr-2 text-muted-foreground hover:text-foreground"
-                aria-label="Toggle sidebar"
-              >
-                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  {mobileOpen ? (
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-                  ) : (
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
-                  )}
-                </svg>
-              </button>
-            </div>
-            {/* Search — mobile only, full width below title */}
-            <div className="sm:hidden mt-2">
+      <header className="sticky px-3 sm:px-6 top-0 z-30 border-b border-border bg-background/95 backdrop-blur">
+
+        <div className="px-3 py-2">
+          {/* Title row */}
+          <div className="flex items-center gap-3">
+            <Link to="/help" className="text-sm font-semibold text-foreground whitespace-nowrap py-3">
+              Chauka Help Centre
+            </Link>
+            {/* Search — hidden on mobile, shown on sm+ */}
+            <div className="hidden sm:block flex-1">
               <HelpSearchBar />
             </div>
+            <div className="hidden md:flex items-center gap-3 shrink-0">
+              <Link to="/" className="text-xs text-muted-foreground hover:text-foreground">Home</Link>
+              <Link to="/docs" className="text-xs text-muted-foreground hover:text-foreground">Developer Docs</Link>
+            </div>
+            <button
+              onClick={() => setMobileOpen(!mobileOpen)}
+              className="lg:hidden ml-auto p-2 -mr-2 text-muted-foreground hover:text-foreground"
+              aria-label="Toggle sidebar"
+            >
+              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                {mobileOpen ? (
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                ) : (
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
+                )}
+              </svg>
+            </button>
+          </div>
+          {/* Search — mobile only, full width below title */}
+          <div className="sm:hidden mt-2">
+            <HelpSearchBar />
           </div>
         </div>
+
       </header>
 
       <div className="max-w-[90rem] mx-auto flex flex-1 max-w-7xl">
@@ -89,7 +89,7 @@ export default function HelpLayout() {
 
         {/* Main content */}
         <main className="flex-1 min-w-0 px-4 py-6 sm:px-6 sm:py-8 lg:px-10" data-docs-content>
-          <div className="max-w-3xl">
+          <div className="max-w-5xl">
             <Suspense fallback={<div className="text-sm text-muted-foreground py-8">Loading...</div>}>
               <Outlet />
             </Suspense>
