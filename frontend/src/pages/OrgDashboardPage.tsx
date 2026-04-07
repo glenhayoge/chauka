@@ -100,31 +100,23 @@ export default function OrgDashboardPage() {
           <>
             {/* Summary cards */}
             <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3 mb-8">
-              <SummaryCard label="Programs" value={dashboard.program_count} color="blue" />
-              <SummaryCard label="Projects" value={dashboard.project_count} color="green" />
-              <SummaryCard label="Logframes" value={dashboard.logframe_count} color="purple" />
-              <SummaryCard
-                label="Total Budget"
-                value={formatCurrency(dashboard.total_budget)}
-                color="amber"
-              />
-              <SummaryCard
-                label="Total Spent"
-                value={formatCurrency(dashboard.total_spent)}
-                color="orange"
-              />
+              <SummaryCard label="Programs" value={dashboard.program_count} href={`/organisations/${publicId}/settings?tab=programs`} />
+              <SummaryCard label="Projects" value={dashboard.project_count} href={`/organisations/${publicId}/settings?tab=programs`} />
+              <SummaryCard label="Logframes" value={dashboard.logframe_count} href="/app" />
+              <SummaryCard label="Total budget" value={formatCurrency(dashboard.total_budget)} />
+              <SummaryCard label="Total spent" value={formatCurrency(dashboard.total_spent)} />
               <SummaryCard
                 label="Utilisation"
                 value={`${dashboard.utilisation_pct}%`}
-                color={dashboard.utilisation_pct > 90 ? 'red' : dashboard.utilisation_pct > 70 ? 'amber' : 'green'}
+                highlight={dashboard.utilisation_pct > 90 ? 'destructive' : undefined}
               />
             </div>
 
             {/* Second row: detailed counts */}
             <div className="grid grid-cols-3 gap-3 mb-8">
-              <SummaryCard label="Results" value={dashboard.result_count} color="indigo" />
-              <SummaryCard label="Indicators" value={dashboard.indicator_count} color="teal" />
-              <SummaryCard label="Activities" value={dashboard.activity_count} color="cyan" />
+              <SummaryCard label="Results" value={dashboard.result_count} href="/app" />
+              <SummaryCard label="Indicators" value={dashboard.indicator_count} href={`/organisations/${publicId}/indicator-library`} />
+              <SummaryCard label="Activities" value={dashboard.activity_count} href="/app" />
             </div>
 
             {/* Indicator health */}
@@ -236,31 +228,35 @@ export default function OrgDashboardPage() {
   )
 }
 
-const COLOR_MAP: Record<string, string> = {
-  blue: 'bg-accent text-primary border-border',
-  green: 'bg-ok/10 text-ok border-border',
-  purple: 'bg-purple-50 text-purple-700 border-border',
-  amber: 'bg-amber-50 text-amber-700 border-border',
-  orange: 'bg-accent text-primary border-border',
-  red: 'bg-destructive/10 text-destructive border-border',
-  indigo: 'bg-indigo-50 text-indigo-700 border-border',
-  teal: 'bg-teal-50 text-teal-700 border-border',
-  cyan: 'bg-cyan-50 text-cyan-700 border-border',
-}
-
 function SummaryCard({
   label,
   value,
-  color = 'blue',
+  href,
+  highlight,
 }: {
   label: string
   value: number | string
-  color?: string
+  href?: string
+  highlight?: 'destructive'
 }) {
+  const content = (
+    <>
+      <p className="text-xs text-muted-foreground mb-1">{label}</p>
+      <p className={`text-2xl font-bold ${highlight === 'destructive' ? 'text-destructive' : 'text-foreground'}`}>{value}</p>
+    </>
+  )
+
+  if (href) {
+    return (
+      <Link to={href} className="border border-border rounded-[var(--radius)] p-4 hover:bg-muted/50 transition-colors block">
+        {content}
+      </Link>
+    )
+  }
+
   return (
-    <div className={`rounded-lg border p-4 ${COLOR_MAP[color] ?? COLOR_MAP.blue}`}>
-      <p className="text-[11px] font-medium uppercase tracking-wide opacity-70 mb-1">{label}</p>
-      <p className="text-2xl font-bold">{value}</p>
+    <div className="border border-border rounded-[var(--radius)] p-4">
+      {content}
     </div>
   )
 }

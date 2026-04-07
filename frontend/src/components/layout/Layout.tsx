@@ -182,39 +182,39 @@ export default function Layout() {
             </div>
           )}
 
-          {/* Desktop dashboard nav bar */}
+          {/* Desktop section nav — compact link row, visually distinct from page-level tabs */}
           {currentLogframeId && (
-            <nav className="hidden sm:flex px-3 gap-1 bg-background/95 border-0 border">
-              <NavButton
+            <nav className="hidden sm:flex items-center gap-4 px-4 py-2 border-t border-border text-sm">
+              <NavLink
                 to={`/app/logframes/${currentLogframeId}`}
-                active={pathname === `/app/logframes/${currentLogframeId}`}
+                active={pathname === `/app/logframes/${currentLogframeId}` || pathname.startsWith(`/app/logframes/${currentLogframeId}/overview`) || pathname.startsWith(`/app/logframes/${currentLogframeId}/design`) || pathname.startsWith(`/app/logframes/${currentLogframeId}/monitor`) || pathname.startsWith(`/app/logframes/${currentLogframeId}/budget`) || pathname.startsWith(`/app/logframes/${currentLogframeId}/timeline`) || pathname.startsWith(`/app/logframes/${currentLogframeId}/workload`)}
               >
                 Dashboard
-              </NavButton>
-              <NavButton
+              </NavLink>
+              <NavLink
                 to={`/app/logframes/${currentLogframeId}/disaggregation`}
                 active={pathname.startsWith(`/app/logframes/${currentLogframeId}/disaggregation`)}
               >
                 Disaggregation
-              </NavButton>
-              <NavButton
+              </NavLink>
+              <NavLink
                 to={`/app/logframes/${currentLogframeId}/contribution`}
                 active={pathname.startsWith(`/app/logframes/${currentLogframeId}/contribution`)}
               >
                 Contribution
-              </NavButton>
-              <NavButton
+              </NavLink>
+              <NavLink
                 to={`/app/logframes/${currentLogframeId}/people`}
                 active={pathname.startsWith(`/app/logframes/${currentLogframeId}/people`)}
               >
                 People
-              </NavButton>
-              <NavButton
+              </NavLink>
+              <NavLink
                 to={`/app/logframes/${currentLogframeId}/settings`}
                 active={pathname.startsWith(`/app/logframes/${currentLogframeId}/settings`)}
               >
                 Settings
-              </NavButton>
+              </NavLink>
             </nav>
           )}
         </header>
@@ -227,15 +227,15 @@ export default function Layout() {
   )
 }
 
-function NavButton({ to, active, children }: { to: string; active: boolean; children: React.ReactNode }) {
+function NavLink({ to, active, children }: { to: string; active: boolean; children: React.ReactNode }) {
   return (
     <Link
       to={to}
       className={clsx(
-        'px-4 py-2 text-sm font-medium rounded-t transition-colors',
+        'transition-colors',
         active
-          ? 'bg-secondary/95 text-secondary-foreground'
-          : 'text-foreground-muted hover:text-foreground/80 hover:bg-secondary/95'
+          ? 'text-foreground font-medium'
+          : 'text-muted-foreground hover:text-foreground'
       )}
     >
       {children}

@@ -128,6 +128,25 @@ export default function OrgSelectPage() {
         </nav>
       )}
 
+      {/* Org-level links (always visible when org is selected) */}
+      {selectedOrgId !== null && (() => {
+        const selectedOrg = orgs?.find((o) => o.id === selectedOrgId)
+        if (!selectedOrg) return null
+        return (
+          <div className="flex items-center gap-4 mb-6 text-sm">
+            <Link to={`/organisations/${selectedOrg.public_id}/dashboard`} className="text-muted-foreground hover:text-foreground">
+              Dashboard
+            </Link>
+            <Link to={`/organisations/${selectedOrg.public_id}/indicator-library`} className="text-muted-foreground hover:text-foreground">
+              Indicator Library
+            </Link>
+            <Link to={`/organisations/${selectedOrg.public_id}/settings`} className="text-muted-foreground hover:text-foreground">
+              Settings
+            </Link>
+          </div>
+        )
+      })()}
+
       {/* Step 1: Select / Create Organisation */}
       {selectedOrgId === null && (
         <div className='mx-auto'>
@@ -335,8 +354,8 @@ export default function OrgSelectPage() {
           {/* Auto-navigate when there's exactly one direct logframe and no projects */}
           {programDirectLogframes && programDirectLogframes.length === 1 &&
             (!projects || projects.length === 0) && (
-            <Navigate to={`/app/logframes/${programDirectLogframes[0].public_id}`} replace />
-          )}
+              <Navigate to={`/app/logframes/${programDirectLogframes[0].public_id}`} replace />
+            )}
 
           {/* Direct logframes section */}
           {programDirectLogframes && programDirectLogframes.length > 0 && (
@@ -368,23 +387,23 @@ export default function OrgSelectPage() {
           {/* If no direct logframes exist yet, show the logframe creation form */}
           {programDirectLogframes && programDirectLogframes.length === 0 &&
             (!projects || projects.length === 0) && (
-            <div className="w-full mb-6">
-              <h2 className="text-sm font-medium text-foreground mb-2 text-center">
-                Set Up Your Logframe
-              </h2>
-              <p className="text-sm text-muted-foreground mb-4 text-center">
-                Configure the reporting periods and currency for your logframe.
-              </p>
-              <LogframeSetupForm
-                autoOpen
-                onSubmit={async (values) => {
-                  const lf = await createProgramLogframe(selectedOrgId!, selectedProgramId!, { name: values.name })
-                  queryClient.invalidateQueries({ queryKey: ['program-logframes', selectedOrgId, selectedProgramId] })
-                  navigate(`/app/logframes/${lf.public_id}`)
-                }}
-              />
-            </div>
-          )}
+              <div className="w-full mb-6">
+                <h2 className="text-sm font-medium text-foreground mb-2 text-center">
+                  Set Up Your Logframe
+                </h2>
+                <p className="text-sm text-muted-foreground mb-4 text-center">
+                  Configure the reporting periods and currency for your logframe.
+                </p>
+                <LogframeSetupForm
+                  autoOpen
+                  onSubmit={async (values) => {
+                    const lf = await createProgramLogframe(selectedOrgId!, selectedProgramId!, { name: values.name })
+                    queryClient.invalidateQueries({ queryKey: ['program-logframes', selectedOrgId, selectedProgramId] })
+                    navigate(`/app/logframes/${lf.public_id}`)
+                  }}
+                />
+              </div>
+            )}
 
           {/* Projects section */}
           {projects && projects.length > 0 && (
@@ -793,7 +812,7 @@ function CreateForm({ label, fields, onSubmit, autoOpen, isOpen, onToggle }: {
   }
 
   return (
-    <form onSubmit={handleSubmit} className="mt-4 border border-border rounded-lg p-6 bg-card w-full max-w-md mx-auto space-y-3 shadow-sm">
+    <form onSubmit={handleSubmit} className="mt-4 border border-border rounded-lg p-6 bg-card w-full max-w-md mx-auto space-y-3">
       <h3 className="text-sm font-medium text-foreground">Create {label}</h3>
       {fields.map((field) => (
         <div key={field.name}>
