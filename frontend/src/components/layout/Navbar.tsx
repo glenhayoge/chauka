@@ -14,11 +14,11 @@ export default function Navbar() {
         </div>
         <div className="flex items-center gap-4">
           <div className="hidden sm:flex items-center gap-4 mr-8">
-            <Link to="/#features" className="text-sm text-foreground hover:text-primary">Features</Link>
-            <Link to="/#about" className="text-sm text-foreground hover:text-primary">About</Link>
+            <a href="/#features" className="text-sm text-foreground hover:text-primary">Features</a>
+            <a href="/#about" className="text-sm text-foreground hover:text-primary">About</a>
             <Link to="/docs" className="text-sm text-foreground hover:text-primary">Docs</Link>
             <Link to="/help" className="text-sm text-foreground hover:text-primary">Help</Link>
-            <Link to="/#contact" className="text-sm text-foreground hover:text-primary">Contact</Link>
+            <a href="/#contact" className="text-sm text-foreground hover:text-primary">Contact</a>
           </div>
           {isLoggedIn ? (
             <Link to="/app" className="text-sm text-foreground hover:text-primary">Go to app</Link>

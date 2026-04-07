@@ -1,4 +1,5 @@
 from fastapi import APIRouter, Depends, HTTPException
+from pydantic import BaseModel
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
@@ -10,6 +11,15 @@ from app.models.logframe import Logframe, Period, Rating, RiskRating
 from app.models.org import Organisation, Program
 from app.schemas.logframe import LogframeRead
 from app.schemas.org import ProgramCreate, ProgramRead, ProgramUpdate
+
+
+class LogframeCreate(BaseModel):
+    name: str
+    start_year: int = 2025
+    end_year: int = 2028
+    start_month: int = 1
+    n_periods: int = 4
+    currency: str = "USD"
 
 router = APIRouter(
     prefix="/api/organisations/{organisation_id}/programs",
@@ -141,37 +151,26 @@ async def list_program_logframes(
 async def create_program_logframe(
     organisation_id: int,
     program_id: int,
+    body: LogframeCreate,
     db: AsyncSession = Depends(get_db),
     current_user: User = Depends(get_current_user),
 ):
     """Create a logframe directly under a program (no project needed)."""
-    from pydantic import BaseModel
-
-    class Body(BaseModel):
-        name: str
-        start_year: int = 2025
-        end_year: int = 2028
-        start_month: int = 1
-        n_periods: int = 4
-        currency: str = "USD"
-
-    # Read body manually since we defined it inline
-    from fastapi import Request
-    # Actually, let's use a simpler approach — duplicate the seed logic
     prog = await db.execute(select(Program).where(
         Program.id == program_id, Program.organisation_id == organisation_id
     ))
     if not prog.scalar_one_or_none():
         raise HTTPException(status_code=404, detail="Program not found")
 
-    obj = Logframe(name="New Logframe", program_id=program_id)
+    obj = Logframe(name=body.name, program_id=program_id)
     db.add(obj)
     await db.flush()
 
     settings = Settings(
-        logframe_id=obj.id, name="New Logframe", description="",
-        start_month=1, start_year=2025, end_year=2028, n_periods=4,
-        currency="USD", max_result_level=3, open_result_level=2,
+        logframe_id=obj.id, name=body.name, description="",
+        start_month=body.start_month, start_year=body.start_year,
+        end_year=body.end_year, n_periods=body.n_periods,
+        currency=body.currency, max_result_level=3, open_result_level=2,
     )
     db.add(settings)
     for rname, color in [("On Track", "#16a34a"), ("Caution", "#f59e0b"), ("Off Track", "#dc2626")]:
@@ -179,9 +178,9 @@ async def create_program_logframe(
     for rname in ["Low", "Medium", "High"]:
         db.add(RiskRating(name=rname, logframe_id=obj.id))
 
-    month, year = 1, 2025
-    while year < 2028:
-        end_month = month + 2
+    month, year = body.start_month, body.start_year
+    while year < body.end_year:
+        end_month = month + (12 // body.n_periods) - 1
         end_year = year
         if end_month > 12:
             end_month -= 12

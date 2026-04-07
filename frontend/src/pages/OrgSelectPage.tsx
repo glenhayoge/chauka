@@ -14,6 +14,8 @@ import {
   createOrgProject,
   getOrgProjectLogframes,
   createOrgProjectLogframe,
+  getProgramLogframes,
+  createProgramLogframe,
 } from '../api/organisations'
 import { COUNTRIES, ORG_TYPES, SECTORS } from '../utils/orgOptions'
 
@@ -66,6 +68,13 @@ export default function OrgSelectPage() {
     queryKey: ['standalone-project-logframes', selectedOrgId, standaloneProjectId],
     queryFn: () => getOrgProjectLogframes(selectedOrgId!, standaloneProjectId!),
     enabled: selectedOrgId !== null && standaloneProjectId !== null,
+  })
+
+  // Direct logframes under the selected program (no project)
+  const { data: programDirectLogframes } = useQuery({
+    queryKey: ['program-logframes', selectedOrgId, selectedProgramId],
+    queryFn: () => getProgramLogframes(selectedOrgId!, selectedProgramId!),
+    enabled: selectedOrgId !== null && selectedProgramId !== null,
   })
 
   // Auto-select single org (in useEffect to avoid setState during render)
@@ -320,66 +329,107 @@ export default function OrgSelectPage() {
         </div>
       )}
 
-      {/* Step 3: Select / Create Project */}
+      {/* Step 3: Direct program logframes + projects */}
       {selectedProgramId !== null && selectedProjectId === null && (
-        <div className="flex flex-col items-center">
-          <h2 className="text-sm font-medium text-foreground mb-2 text-center">
-            {projects && projects.length > 0 ? 'Select a Project' : 'Create a Project'}
-          </h2>
-          <p className="text-sm text-muted-foreground mb-4 text-center">
-            Projects contain the logframes where you plan and monitor your work.
-          </p>
-          <div className="grid gap-3 max-w-md">
-            {projects?.map((proj) => (
-              <button
-                key={proj.id}
-                onClick={() => setSelectedProjectId(proj.id)}
-                className="block w-full text-left border rounded-lg p-4 hover:bg-muted transition-colors"
-              >
-                <div className="flex items-center justify-between">
-                  <span className="font-medium">{proj.name}</span>
-                  <span className={`text-xs px-2 py-0.5 rounded-full ${proj.status === 'active' ? 'bg-ok/10 text-ok'
-                    : proj.status === 'completed' ? 'bg-muted text-muted-foreground'
-                      : 'bg-muted text-foreground'
-                    }`}>{proj.status}</span>
-                </div>
-                {proj.description && <p className="text-sm text-muted-foreground mt-1">{proj.description}</p>}
-              </button>
-            ))}
-          </div>
-          <div className="flex items-center justify-center gap-4 mt-4">
-            <CreateForm
-              label="project"
-              fields={[
-                { name: 'name', label: 'Project name', required: true },
-                { name: 'description', label: 'Description' },
-              ]}
-              autoOpen={projects && projects.length === 0}
-              onSubmit={async (values) => {
-                const proj = await createProject(selectedOrgId!, selectedProgramId, { name: values.name, description: values.description })
-                queryClient.invalidateQueries({ queryKey: ['projects', selectedOrgId, selectedProgramId] })
-                setSelectedProjectId(proj.id)
-              }}
-            />
-            {projects && projects.length === 0 && (
-              <button
-                onClick={async () => {
-                  setSkipping(true)
-                  try {
-                    const proj = await createProject(selectedOrgId!, selectedProgramId!, { name: 'Untitled Project' })
-                    const lf = await createLogframe(selectedOrgId!, selectedProgramId!, proj.id, { name: 'Untitled Logframe' })
-                    navigate(`/app/logframes/${lf.public_id}`)
-                  } finally {
-                    setSkipping(false)
-                  }
+        <div className="flex flex-col items-center w-full max-w-md mx-auto">
+          {/* Auto-navigate when there's exactly one direct logframe and no projects */}
+          {programDirectLogframes && programDirectLogframes.length === 1 &&
+            (!projects || projects.length === 0) && (
+            <Navigate to={`/app/logframes/${programDirectLogframes[0].public_id}`} replace />
+          )}
+
+          {/* Direct logframes section */}
+          {programDirectLogframes && programDirectLogframes.length > 0 && (
+            <div className="w-full mb-6">
+              <h2 className="text-sm font-medium text-foreground mb-2 text-center">
+                Select a Logframe
+              </h2>
+              <div className="grid gap-3">
+                {programDirectLogframes.map((lf) => (
+                  <Link
+                    key={lf.id}
+                    to={`/app/logframes/${lf.public_id}`}
+                    className="block border rounded-lg p-4 hover:bg-muted transition-colors"
+                  >
+                    <span className="font-medium">{lf.name}</span>
+                  </Link>
+                ))}
+              </div>
+              <LogframeSetupForm
+                onSubmit={async (values) => {
+                  const lf = await createProgramLogframe(selectedOrgId!, selectedProgramId!, { name: values.name })
+                  queryClient.invalidateQueries({ queryKey: ['program-logframes', selectedOrgId, selectedProgramId] })
+                  navigate(`/app/logframes/${lf.public_id}`)
                 }}
-                disabled={skipping}
-                className="text-sm text-muted-foreground hover:text-muted-foreground disabled:opacity-50"
-              >
-                {skipping ? 'Setting up...' : 'Skip for now'}
-              </button>
-            )}
-          </div>
+              />
+            </div>
+          )}
+
+          {/* If no direct logframes exist yet, show the logframe creation form */}
+          {programDirectLogframes && programDirectLogframes.length === 0 &&
+            (!projects || projects.length === 0) && (
+            <div className="w-full mb-6">
+              <h2 className="text-sm font-medium text-foreground mb-2 text-center">
+                Set Up Your Logframe
+              </h2>
+              <p className="text-sm text-muted-foreground mb-4 text-center">
+                Configure the reporting periods and currency for your logframe.
+              </p>
+              <LogframeSetupForm
+                autoOpen
+                onSubmit={async (values) => {
+                  const lf = await createProgramLogframe(selectedOrgId!, selectedProgramId!, { name: values.name })
+                  queryClient.invalidateQueries({ queryKey: ['program-logframes', selectedOrgId, selectedProgramId] })
+                  navigate(`/app/logframes/${lf.public_id}`)
+                }}
+              />
+            </div>
+          )}
+
+          {/* Projects section */}
+          {projects && projects.length > 0 && (
+            <div className="w-full">
+              <h2 className="text-sm font-medium text-foreground mb-2 text-center">
+                Or Select a Project
+              </h2>
+              <div className="grid gap-3">
+                {projects.map((proj) => (
+                  <button
+                    key={proj.id}
+                    onClick={() => setSelectedProjectId(proj.id)}
+                    className="block w-full text-left border rounded-lg p-4 hover:bg-muted transition-colors"
+                  >
+                    <div className="flex items-center justify-between">
+                      <span className="font-medium">{proj.name}</span>
+                      <span className={`text-xs px-2 py-0.5 rounded-full ${proj.status === 'active' ? 'bg-ok/10 text-ok'
+                        : proj.status === 'completed' ? 'bg-muted text-muted-foreground'
+                          : 'bg-muted text-foreground'
+                        }`}>{proj.status}</span>
+                    </div>
+                    {proj.description && <p className="text-sm text-muted-foreground mt-1">{proj.description}</p>}
+                  </button>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* Allow adding a project when there are direct logframes too */}
+          {programDirectLogframes && programDirectLogframes.length > 0 && (
+            <div className="flex items-center justify-center mt-4">
+              <CreateForm
+                label="project"
+                fields={[
+                  { name: 'name', label: 'Project name', required: true },
+                  { name: 'description', label: 'Description' },
+                ]}
+                onSubmit={async (values) => {
+                  const proj = await createProject(selectedOrgId!, selectedProgramId, { name: values.name, description: values.description })
+                  queryClient.invalidateQueries({ queryKey: ['projects', selectedOrgId, selectedProgramId] })
+                  setSelectedProjectId(proj.id)
+                }}
+              />
+            </div>
+          )}
         </div>
       )}
 

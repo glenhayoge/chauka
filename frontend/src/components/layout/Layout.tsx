@@ -161,7 +161,7 @@ export default function Layout() {
               )}
 
               {/* User info + logout */}
-              <div className="border-t border-border pt-3 flex items-center justify-between">
+              <div className="pt-3 flex items-center justify-between">
                 <div className="flex items-center gap-3 text-foreground">
                   <NotificationBell />
                   <Link
