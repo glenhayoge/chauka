@@ -182,39 +182,39 @@ export default function Layout() {
             </div>
           )}
 
-          {/* Desktop section nav — compact link row, visually distinct from page-level tabs */}
+          {/* Primary nav — top-level logframe sections */}
           {currentLogframeId && (
-            <nav className="hidden sm:flex items-center gap-4 px-4 py-2 border-t border-border text-sm">
-              <NavLink
+            <nav className="hidden sm:flex items-center gap-1 px-4 py-2 border-t border-border">
+              <PrimaryNavLink
                 to={`/app/logframes/${currentLogframeId}`}
                 active={pathname === `/app/logframes/${currentLogframeId}` || pathname.startsWith(`/app/logframes/${currentLogframeId}/overview`) || pathname.startsWith(`/app/logframes/${currentLogframeId}/design`) || pathname.startsWith(`/app/logframes/${currentLogframeId}/monitor`) || pathname.startsWith(`/app/logframes/${currentLogframeId}/budget`) || pathname.startsWith(`/app/logframes/${currentLogframeId}/timeline`) || pathname.startsWith(`/app/logframes/${currentLogframeId}/workload`)}
               >
                 Dashboard
-              </NavLink>
-              <NavLink
+              </PrimaryNavLink>
+              <PrimaryNavLink
                 to={`/app/logframes/${currentLogframeId}/disaggregation`}
                 active={pathname.startsWith(`/app/logframes/${currentLogframeId}/disaggregation`)}
               >
                 Disaggregation
-              </NavLink>
-              <NavLink
+              </PrimaryNavLink>
+              <PrimaryNavLink
                 to={`/app/logframes/${currentLogframeId}/contribution`}
                 active={pathname.startsWith(`/app/logframes/${currentLogframeId}/contribution`)}
               >
                 Contribution
-              </NavLink>
-              <NavLink
+              </PrimaryNavLink>
+              <PrimaryNavLink
                 to={`/app/logframes/${currentLogframeId}/people`}
                 active={pathname.startsWith(`/app/logframes/${currentLogframeId}/people`)}
               >
                 People
-              </NavLink>
-              <NavLink
+              </PrimaryNavLink>
+              <PrimaryNavLink
                 to={`/app/logframes/${currentLogframeId}/settings`}
                 active={pathname.startsWith(`/app/logframes/${currentLogframeId}/settings`)}
               >
                 Settings
-              </NavLink>
+              </PrimaryNavLink>
             </nav>
           )}
         </header>
@@ -227,15 +227,15 @@ export default function Layout() {
   )
 }
 
-function NavLink({ to, active, children }: { to: string; active: boolean; children: React.ReactNode }) {
+function PrimaryNavLink({ to, active, children }: { to: string; active: boolean; children: React.ReactNode }) {
   return (
     <Link
       to={to}
       className={clsx(
-        'transition-colors',
+        'px-3 py-1.5 rounded-md text-sm font-medium transition-colors',
         active
-          ? 'text-foreground font-medium'
-          : 'text-muted-foreground hover:text-foreground'
+          ? 'bg-foreground text-background'
+          : 'text-muted-foreground hover:text-foreground hover:bg-foreground/8'
       )}
     >
       {children}

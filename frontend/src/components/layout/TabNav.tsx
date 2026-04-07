@@ -16,7 +16,7 @@ export default function TabNav() {
   const base = `/app/logframes/${logframeId}`
 
   return (
-    <nav className="flex overflow-x-auto border-b border-border mb-4 sm:mb-6 -mx-3 px-3 sm:mx-0 sm:px-0">
+    <nav className="flex overflow-x-auto border-b border-border/60 mb-4 sm:mb-6 -mx-3 px-3 sm:mx-0 sm:px-0">
       {TABS.map(({ label, path }) => {
         const href = base + path
         const active = pathname.startsWith(href)
@@ -25,10 +25,10 @@ export default function TabNav() {
             key={path}
             to={href}
             className={clsx(
-              'px-4 sm:px-6 py-2.5 sm:py-3 text-sm font-medium border-b-2 -mb-px whitespace-nowrap',
+              'px-3 sm:px-5 py-2 text-xs font-medium tracking-wide border-b-2 -mb-px whitespace-nowrap uppercase transition-colors',
               active
-                ? 'border-primary text-primary'
-                : 'border-transparent text-muted-foreground hover:text-foreground'
+                ? 'border-foreground/40 text-foreground'
+                : 'border-transparent text-muted-foreground/70 hover:text-muted-foreground hover:border-border'
             )}
           >
             {label}
