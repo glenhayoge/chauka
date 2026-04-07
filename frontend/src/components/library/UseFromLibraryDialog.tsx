@@ -9,10 +9,11 @@ interface Props {
   logframePublicId: string
   resultId: number
   organisationId: number | null
+  orgSector?: string
   onClose: () => void
 }
 
-export default function UseFromLibraryDialog({ logframePublicId, resultId, organisationId, onClose }: Props) {
+export default function UseFromLibraryDialog({ logframePublicId, resultId, organisationId, orgSector, onClose }: Props) {
   const queryClient = useQueryClient()
   const [selected, setSelected] = useState<LibraryIndicator | null>(null)
   const [saving, setSaving] = useState(false)
@@ -47,6 +48,9 @@ export default function UseFromLibraryDialog({ logframePublicId, resultId, organ
         <div className="flex items-center justify-between px-5 py-3 border-b border-border">
           <p className="text-sm font-medium text-foreground">
             {selected ? 'Indicator preview' : 'Browse indicator library'}
+            {!selected && orgSector && (
+              <span className="text-muted-foreground font-normal"> · {orgSector}</span>
+            )}
           </p>
           <button onClick={onClose} className="text-muted-foreground hover:text-foreground text-lg leading-none">&times;</button>
         </div>
@@ -56,6 +60,7 @@ export default function UseFromLibraryDialog({ logframePublicId, resultId, organ
           {!selected ? (
             <IndicatorLibrarySearch
               organisationId={organisationId}
+              initialSector={orgSector}
               onSelect={setSelected}
               selectable
             />

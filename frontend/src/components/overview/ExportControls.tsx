@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { useAuthStore } from '../../store/auth'
+import { useToastStore } from '../../store/toast'
 import type { Period, AppSettings } from '../../api/types'
 
 const MONTHS = [
@@ -15,6 +16,7 @@ interface Props {
 
 function downloadExport(logframeId: string, path: string) {
   const token = useAuthStore.getState().token
+  const addToast = useToastStore.getState().addToast
   const url = `/api/logframes/${logframeId}/export/${path}`
   // Use a hidden link with fetch + blob to include auth header
   fetch(url, {
@@ -34,7 +36,7 @@ function downloadExport(logframeId: string, path: string) {
       a.click()
       URL.revokeObjectURL(a.href)
     })
-    .catch(() => alert('Export failed. Please try again.'))
+    .catch(() => addToast('error', 'Export failed. Please try again.'))
 }
 
 function formatPeriodLabel(p: Period): string {

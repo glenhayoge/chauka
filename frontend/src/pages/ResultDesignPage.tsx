@@ -175,6 +175,7 @@ export default function ResultDesignPage() {
               logframePublicId={publicId!}
               resultId={resultId}
               organisationId={data.orgContext?.organisation?.id ?? null}
+              orgSector={data.orgContext?.organisation?.sector ?? ''}
               onClose={() => setLibraryDialogOpen(false)}
             />
           )}

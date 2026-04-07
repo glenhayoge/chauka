@@ -18,14 +18,15 @@ const selectClass =
 
 interface Props {
   organisationId: number | null
+  initialSector?: string
   onSelect?: (indicator: LibraryIndicator) => void
   selectable?: boolean
 }
 
-export default function IndicatorLibrarySearch({ organisationId, onSelect, selectable }: Props) {
+export default function IndicatorLibrarySearch({ organisationId, initialSector, onSelect, selectable }: Props) {
   const [query, setQuery] = useState('')
   const [debouncedQuery, setDebouncedQuery] = useState('')
-  const [sector, setSector] = useState('')
+  const [sector, setSector] = useState(initialSector ?? '')
   const [resultLevel, setResultLevel] = useState('')
   const [framework, setFramework] = useState('')
   const [page, setPage] = useState(1)

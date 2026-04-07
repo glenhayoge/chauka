@@ -80,7 +80,7 @@ export default function ExportDialog({ logframeId, onClose }: Props) {
         URL.revokeObjectURL(a.href)
         onClose()
       })
-      .catch((err) => setError(err.message || 'Export failed.'))
+      .catch(() => setError('Export failed. Please try again.'))
       .finally(() => setLoading(false))
   }
 

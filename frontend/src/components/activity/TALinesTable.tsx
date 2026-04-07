@@ -1,6 +1,8 @@
 import { useState } from 'react'
 import type { TALine } from '../../api/types'
 import { apiClient } from '../../api/client'
+import { getErrorMessage } from '../../api/errors'
+import { useToastStore } from '../../store/toast'
 import { useQueryClient } from '@tanstack/react-query'
 import EditableText from '../ui/EditableText'
 import EditableNumber from '../ui/EditableNumber'
@@ -34,6 +36,7 @@ interface Props {
 
 export default function TALinesTable({ taLines, activityId, logframeId, currency, canEdit }: Props) {
   const queryClient = useQueryClient()
+  const addToast = useToastStore((s) => s.addToast)
   const [adding, setAdding] = useState(false)
 
   const totalDays = taLines.reduce((sum, t) => sum + (t.no_days || 0), 0)
@@ -58,7 +61,7 @@ export default function TALinesTable({ taLines, activityId, logframeId, currency
         amount: 0,
       })
       .then(() => queryClient.invalidateQueries({ queryKey: ['bootstrap', logframeId] }))
-      .catch((err) => console.error('Failed to add TA line:', err?.response?.data ?? err))
+      .catch((err) => addToast('error', getErrorMessage(err, 'Failed to add TA line')))
       .finally(() => setAdding(false))
   }
 

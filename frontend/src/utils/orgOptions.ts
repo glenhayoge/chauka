@@ -33,15 +33,14 @@ export const ORG_TYPES = [
 ]
 
 export const SECTORS = [
-  'Public Administration',
-  'Arts, Entertainment, and Recreation',
-  'Educational Services / Higher Education',
-  'Health Services / Public Health',
-  'Finance and Insurance',
-  'Information / Media',
-  'Economic/Social Development',
-  'Security / Police / Peacekeeping',
-  'Disarmament & Demobilization',
-  'Environment',
-  'Private sector',
+  'Agriculture & Food Security',
+  'Health & Nutrition',
+  'Education',
+  'WASH',
+  'Economic Development',
+  'Environment & Climate',
+  'Governance',
+  'Gender Equality',
+  'Infrastructure',
+  'Social Protection',
 ]

@@ -1,5 +1,6 @@
 import axios from 'axios'
 import { useAuthStore } from '../store/auth'
+import { getErrorMessage } from './errors'
 
 export const apiClient = axios.create({
   baseURL: '/api',
@@ -20,7 +21,12 @@ apiClient.interceptors.response.use(
     if (error.response?.status === 401) {
       useAuthStore.getState().logout()
       window.location.href = '/login'
+      return Promise.reject(error)
     }
+
+    // Attach a friendly message so callers can use error.friendlyMessage without
+    // re-parsing the response themselves.
+    error.friendlyMessage = getErrorMessage(error)
     return Promise.reject(error)
   }
 )

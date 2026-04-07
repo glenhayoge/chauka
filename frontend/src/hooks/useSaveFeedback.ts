@@ -1,4 +1,5 @@
 import { useCallback, useRef, useState } from 'react'
+import { getErrorMessage } from '../api/errors'
 
 export type SaveState = 'idle' | 'saving' | 'success' | 'error'
 
@@ -19,7 +20,7 @@ export function useSaveFeedback() {
         return result
       } catch (err) {
         setState('error')
-        setErrorMsg(err instanceof Error ? err.message : 'Save failed')
+        setErrorMsg(getErrorMessage(err, 'Save failed'))
       }
     },
     []

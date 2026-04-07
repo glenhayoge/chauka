@@ -1,3 +1,4 @@
+import logging
 import os
 from contextlib import asynccontextmanager
 from pathlib import Path
@@ -6,8 +7,10 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import FileResponse
 from fastapi.staticfiles import StaticFiles
+from sqlalchemy.exc import IntegrityError
 
 from app.auth.router import router as auth_router
+from app.exceptions import integrity_error_handler, unhandled_exception_handler
 from app.config import settings
 from app.database import create_tables
 import app.models  # noqa: F401 - ensure models registered before create_tables
@@ -50,6 +53,12 @@ from app.routers.analytics import router as analytics_router
 from app.routers.indicator_library import router as indicator_library_router
 from app.security.headers import SecurityHeadersMiddleware
 
+logging.basicConfig(
+    level=logging.INFO,
+    format="%(asctime)s %(levelname)s %(name)s | %(message)s",
+)
+
+
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     await create_tables()
@@ -62,6 +71,9 @@ app = FastAPI(
     version="0.1.0",
     lifespan=lifespan,
 )
+
+app.add_exception_handler(Exception, unhandled_exception_handler)
+app.add_exception_handler(IntegrityError, integrity_error_handler)
 
 app.add_middleware(SecurityHeadersMiddleware)
 app.add_middleware(
