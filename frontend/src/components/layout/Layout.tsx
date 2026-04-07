@@ -1,14 +1,13 @@
 import { useState } from 'react'
 import { Outlet, useNavigate, useParams, Link, useLocation } from 'react-router-dom'
 import { useQuery } from '@tanstack/react-query'
-import { useAuthStore } from '../../store/auth'
 import { useLogframeStore } from '../../store/logframe'
 import { getLogframes } from '../../api/logframes'
 import clsx from 'clsx'
 import NotificationBell from './NotificationBell'
+import UserMenu from './UserMenu'
 
 export default function Layout() {
-  const { username, logout } = useAuthStore()
   const navigate = useNavigate()
   const { logframeId } = useParams<{ logframeId: string }>()
   const { pathname } = useLocation()
@@ -19,11 +18,6 @@ export default function Layout() {
     queryKey: ['logframes'],
     queryFn: getLogframes,
   })
-
-  function handleLogout() {
-    logout()
-    navigate('/login')
-  }
 
   function handleLogframeChange(e: React.ChangeEvent<HTMLSelectElement>) {
     const newId = e.target.value
@@ -66,22 +60,9 @@ export default function Layout() {
             </div>
 
             {/* Desktop user controls */}
-            <div className="hidden sm:flex items-center gap-4">
-              {useAuthStore((s) => s.isStaff) && (
-                <Link to="/admin" className="text-sm text-foreground/80 hover:text-foreground transition-colors">
-                  Admin
-                </Link>
-              )}
+            <div className="hidden sm:flex items-center gap-3">
               <NotificationBell />
-              <Link to="/profile" className="text-sm text-foreground hover:text-foreground/80 hover:underline transition-colors">
-                {username}
-              </Link>
-              <button
-                onClick={handleLogout}
-                className="text-sm text-foreground hover:text-foreground/80 underline hover:no-underline transition-colors"
-              >
-                Log out
-              </button>
+              <UserMenu />
             </div>
 
             {/* Mobile hamburger button */}
@@ -161,23 +142,9 @@ export default function Layout() {
               )}
 
               {/* User info + logout */}
-              <div className="pt-3 flex items-center justify-between">
-                <div className="flex items-center gap-3 text-foreground">
-                  <NotificationBell />
-                  <Link
-                    to="/profile"
-                    onClick={() => setMobileMenuOpen(false)}
-                    className="text-sm text-foreground py-3 hover:text-background hover:underline transition-colors"
-                  >
-                    {username}
-                  </Link>
-                </div>
-                <button
-                  onClick={handleLogout}
-                  className="text-sm text-foreground hover:text-background underline hover:no-underline transition-colors"
-                >
-                  Log out
-                </button>
+              <div className="pt-3 flex items-center justify-between border-t border-border">
+                <NotificationBell />
+                <UserMenu />
               </div>
             </div>
           )}

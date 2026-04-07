@@ -1,6 +1,6 @@
-import { useParams, Link, useNavigate } from 'react-router-dom'
+import { useParams, Link } from 'react-router-dom'
 import { useQuery } from '@tanstack/react-query'
-import { useAuthStore } from '../store/auth'
+import UserMenu from '../components/layout/UserMenu'
 import { getOrganisation } from '../api/organisations'
 import { getOrgDashboard } from '../api/organisations'
 import { useResolveOrgId } from '../hooks/useResolveIds'
@@ -8,8 +8,6 @@ import { useResolveOrgId } from '../hooks/useResolveIds'
 export default function OrgDashboardPage() {
   const { orgId: publicId } = useParams<{ orgId: string }>()
   const { id: resolvedOrgId, isLoading: resolving, notFound } = useResolveOrgId(publicId)
-  const navigate = useNavigate()
-  const { username, logout } = useAuthStore()
 
   const { data: org, isLoading: orgLoading, error: orgError } = useQuery({
     queryKey: ['organisation', resolvedOrgId],
@@ -22,11 +20,6 @@ export default function OrgDashboardPage() {
     queryFn: () => getOrgDashboard(resolvedOrgId!),
     enabled: !!org,
   })
-
-  function handleLogout() {
-    logout()
-    navigate('/login')
-  }
 
   if (resolving || orgLoading || dashLoading) return <p className="text-muted-foreground p-6">Loading dashboard...</p>
   if (notFound || orgError || !org) return <p className="text-destructive p-6">Organisation not found.</p>
@@ -49,47 +42,43 @@ export default function OrgDashboardPage() {
   }
 
   return (
-    <div className="min-h-screen flex flex-col bg-muted">
+    <div className="min-h-screen">
       {/* Header */}
-      <header className="bg-primary text-background px-4 sm:px-6 py-3 flex items-center justify-between">
-        <div className="flex items-center gap-4">
-          <Link to="/app" className="text-lg font-semibold hover:text-background/80">
-            Chauka
-          </Link>
-          <span className="text-background/40">/</span>
-          <span className="text-sm text-background/70 truncate">{org.name}</span>
-          <span className="text-background/40">/</span>
-          <span className="text-sm text-background/90">Dashboard</span>
-        </div>
-        <div className="flex items-center gap-4">
-          <span className="text-sm text-background/70 hidden sm:inline">{username}</span>
-          <button
-            onClick={handleLogout}
-            className="text-sm text-background/70 hover:text-background underline hover:no-underline"
-          >
-            Log out
-          </button>
-        </div>
-      </header>
+      <div className='max-w-7xl mx-auto'>
+        <header className="text-foreground px-4 sm:px-6 py-3 flex items-center justify-between">
+          <div className="flex items-center gap-4">
+            <Link to="/app" className="text-lg font-semibold hover:text-foreground/80">
+              Chauka
+            </Link>
+            <span className="text-foreground/40">/</span>
+            <span className="text-sm text-foreground/70 truncate">{org.name}</span>
+            <span className="text-foreground/40">/</span>
+            <span className="text-sm text-foreground/90">Dashboard</span>
+          </div>
+          <UserMenu />
+        </header>
+      </div>
 
-      <main className="flex-1 p-3 sm:p-6 max-w-5xl mx-auto w-full">
+      <main className="flex-1 p-3 sm:p-6 max-w-7xl mx-auto w-full">
         {/* Navigation links */}
-        <div className="flex items-center gap-4 mb-4">
+        <div className="flex items-center justify-between mb-4">
           <Link to="/app" className="text-sm text-muted-foreground hover:underline">
             &larr; Back to organisations
           </Link>
-          <Link
-            to={`/organisations/${publicId}/indicator-library`}
-            className="text-sm text-foreground/50 hover:text-foreground"
-          >
-            Indicator Library
-          </Link>
-          <Link
-            to={`/organisations/${publicId}/settings`}
-            className="text-sm text-muted-foreground hover:text-foreground"
-          >
-            Settings
-          </Link>
+          <div className="flex items-center gap-4">
+            <Link
+              to={`/organisations/${publicId}/indicator-library`}
+              className="text-sm text-foreground/50 hover:text-foreground"
+            >
+              Indicator Library
+            </Link>
+            <Link
+              to={`/organisations/${publicId}/settings`}
+              className="text-sm text-muted-foreground hover:text-foreground"
+            >
+              Settings
+            </Link>
+          </div>
         </div>
 
         <h2 className="text-xl font-semibold mb-6">{org.name} Dashboard</h2>

@@ -1,6 +1,7 @@
 import { useParams, useSearchParams, useNavigate, Link } from 'react-router-dom'
 import { useQuery } from '@tanstack/react-query'
 import { useAuthStore } from '../store/auth'
+import UserMenu from '../components/layout/UserMenu'
 import { getOrganisation, getMembers } from '../api/organisations'
 import { useResolveOrgId } from '../hooks/useResolveIds'
 import clsx from 'clsx'
@@ -21,7 +22,7 @@ export default function OrgSettingsPage() {
   const { id: resolvedOrgId, isLoading: resolving, notFound } = useResolveOrgId(publicId)
   const [searchParams] = useSearchParams()
   const navigate = useNavigate()
-  const { username, userId, logout } = useAuthStore()
+  const { userId } = useAuthStore()
 
   const tabParam = searchParams.get('tab') as TabKey | null
   const activeTab: TabKey = TABS.some((t) => t.key === tabParam) ? tabParam! : 'general'
@@ -48,11 +49,6 @@ export default function OrgSettingsPage() {
     navigate(`/organisations/${publicId}/settings?tab=${key}`, { replace: true })
   }
 
-  function handleLogout() {
-    logout()
-    navigate('/login')
-  }
-
   if (resolving || isLoading) return <p className="text-muted-foreground p-6">Loading...</p>
   if (notFound || error || !org) return <p className="text-destructive p-6">Organisation not found.</p>
 
@@ -71,35 +67,29 @@ export default function OrgSettingsPage() {
             <span className="opacity-30">/</span>
             <span className="text-sm opacity-80">Settings</span>
           </div>
-          <div className="flex items-center gap-4">
-            <span className="text-sm opacity-70 hidden sm:inline">{username}</span>
-            <button
-              onClick={handleLogout}
-              className="text-sm opacity-70 hover:opacity-100 underline hover:no-underline"
-            >
-              Log out
-            </button>
-          </div>
+          <UserMenu />
 
         </header>
       </div>
       <main className="flex-1 p-3 sm:p-6 max-w-7xl mx-auto w-full">
-        <div className="flex items-center gap-4 mb-4">
+        <div className="flex items-center justify-between mb-4">
           <Link to="/app" className="text-sm text-muted-foreground hover:underline">
             &larr; Back to organisations
           </Link>
-          <Link
-            to={`/organisations/${publicId}/dashboard`}
-            className="text-sm text-muted-foreground hover:text-foreground"
-          >
-            Dashboard
-          </Link>
-          <Link
-            to={`/organisations/${publicId}/indicator-library`}
-            className="text-sm text-muted-foreground hover:text-foreground"
-          >
-            Indicator Library
-          </Link>
+          <div className="flex items-center gap-4">
+            <Link
+              to={`/organisations/${publicId}/dashboard`}
+              className="text-sm text-muted-foreground hover:text-foreground"
+            >
+              Dashboard
+            </Link>
+            <Link
+              to={`/organisations/${publicId}/indicator-library`}
+              className="text-sm text-muted-foreground hover:text-foreground"
+            >
+              Indicator Library
+            </Link>
+          </div>
         </div>
 
         <h2 className="text-lg font-semibold text-foreground mb-4">Organisation Settings</h2>

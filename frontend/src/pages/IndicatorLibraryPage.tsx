@@ -1,7 +1,8 @@
 import { useState } from 'react'
-import { useParams, Link, useNavigate } from 'react-router-dom'
+import { useParams, Link } from 'react-router-dom'
 import { useQuery, useQueryClient } from '@tanstack/react-query'
 import { useAuthStore } from '../store/auth'
+import UserMenu from '../components/layout/UserMenu'
 import { getOrganisation, getMembers } from '../api/organisations'
 import { createLibraryIndicator } from '../api/indicatorLibrary'
 import { useResolveOrgId } from '../hooks/useResolveIds'
@@ -11,9 +12,8 @@ import LibraryIndicatorForm from '../components/library/LibraryIndicatorForm'
 export default function IndicatorLibraryPage() {
   const { orgId: publicId } = useParams<{ orgId: string }>()
   const { id: resolvedOrgId, isLoading: resolving, notFound } = useResolveOrgId(publicId)
-  const navigate = useNavigate()
   const queryClient = useQueryClient()
-  const { username, userId, logout } = useAuthStore()
+  const { userId } = useAuthStore()
   const [showForm, setShowForm] = useState(false)
   const [saving, setSaving] = useState(false)
 
@@ -33,11 +33,6 @@ export default function IndicatorLibraryPage() {
   const currentMembership = memberList.find((m) => m.user_id === userId)
   const isAdmin = currentMembership?.role === 'admin' || org?.owner_id === userId
 
-  function handleLogout() {
-    logout()
-    navigate('/login')
-  }
-
   if (resolving || isLoading) return <p className="text-muted-foreground p-6">Loading...</p>
   if (notFound || error || !org) return <p className="text-destructive p-6">Organisation not found.</p>
 
@@ -52,10 +47,7 @@ export default function IndicatorLibraryPage() {
             <span className="opacity-30">/</span>
             <span className="text-sm opacity-80">Indicator Library</span>
           </div>
-          <div className="flex items-center gap-4">
-            <span className="text-sm opacity-70 hidden sm:inline">{username}</span>
-            <button onClick={handleLogout} className="text-sm opacity-70 hover:opacity-100 underline hover:no-underline">Log out</button>
-          </div>
+          <UserMenu />
         </header>
       </div>
 

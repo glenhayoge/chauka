@@ -1,16 +1,8 @@
-import { Outlet, Link, useNavigate } from 'react-router-dom'
-import { useAuthStore } from '../../store/auth'
+import { Outlet, Link } from 'react-router-dom'
 import AdminSidebar from './AdminSidebar'
+import UserMenu from '../layout/UserMenu'
 
 export default function AdminLayout() {
-  const { username, logout } = useAuthStore()
-  const navigate = useNavigate()
-
-  function handleLogout() {
-    logout()
-    navigate('/login')
-  }
-
   return (
     <div className="min-h-screen flex flex-col text-foreground">
       {/* Header */}
@@ -24,19 +16,11 @@ export default function AdminLayout() {
           <div className="flex items-center gap-4">
             <Link
               to="/app"
-              className="text-sm text-muted hover:text-foreground transition-colors"
+              className="text-sm text-muted-foreground hover:text-foreground transition-colors"
             >
               Back to App
             </Link>
-            <Link to="/profile" className="text-sm text-foreground hover:text-foreground/80 hover:underline transition-colors">
-              {username}
-            </Link>
-            <button
-              onClick={handleLogout}
-              className="text-sm text-foreground hover:text-foreground/80 underline hover:no-underline transition-colors"
-            >
-              Log out
-            </button>
+            <UserMenu />
           </div>
         </div>
       </header>
