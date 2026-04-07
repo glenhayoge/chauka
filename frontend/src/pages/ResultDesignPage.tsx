@@ -14,6 +14,7 @@ import EditableSelect from '../components/ui/EditableSelect'
 import EditableNumber from '../components/ui/EditableNumber'
 import RichTextEditor from '../components/ui/RichTextEditor'
 import AddButton from '../components/ui/AddButton'
+import UseFromLibraryDialog from '../components/library/UseFromLibraryDialog'
 import { buildResultCodeMap } from '../utils/resultCodes'
 
 export default function ResultDesignPage() {
@@ -26,6 +27,7 @@ export default function ResultDesignPage() {
   const queryClient = useQueryClient()
   const navigate = useNavigate()
   const [confirmDelete, setConfirmDelete] = useState(false)
+  const [libraryDialogOpen, setLibraryDialogOpen] = useState(false)
 
   if (resolving) return <p className="text-muted-foreground">Loading…</p>
   if (notFound) return <p className="text-destructive">Logframe not found.</p>
@@ -157,7 +159,25 @@ export default function ResultDesignPage() {
               targets={data.targets ?? []}
             />
           ))}
-          {canEdit && <AddButton onClick={addIndicator} label="Add indicator" />}
+          {canEdit && (
+            <div className="flex items-center gap-3">
+              <AddButton onClick={addIndicator} label="Add indicator" />
+              <button
+                onClick={() => setLibraryDialogOpen(true)}
+                className="text-sm text-muted-foreground hover:text-foreground"
+              >
+                Browse indicator library
+              </button>
+            </div>
+          )}
+          {libraryDialogOpen && (
+            <UseFromLibraryDialog
+              logframePublicId={publicId!}
+              resultId={resultId}
+              organisationId={data.orgContext?.organisation?.id ?? null}
+              onClose={() => setLibraryDialogOpen(false)}
+            />
+          )}
         </div>
 
         {/* Assumptions section */}

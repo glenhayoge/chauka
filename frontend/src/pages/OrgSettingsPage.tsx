@@ -84,9 +84,23 @@ export default function OrgSettingsPage() {
         </header>
       </div>
       <main className="flex-1 p-3 sm:p-6 max-w-7xl mx-auto w-full">
-        <Link to="/app" className="text-sm text-muted-foreground hover:underline mb-4 inline-block">
-          &larr; Back to organisations
-        </Link>
+        <div className="flex items-center gap-4 mb-4">
+          <Link to="/app" className="text-sm text-muted-foreground hover:underline">
+            &larr; Back to organisations
+          </Link>
+          <Link
+            to={`/organisations/${publicId}/dashboard`}
+            className="text-sm text-muted-foreground hover:text-foreground"
+          >
+            Dashboard
+          </Link>
+          <Link
+            to={`/organisations/${publicId}/indicator-library`}
+            className="text-sm text-muted-foreground hover:text-foreground"
+          >
+            Indicator Library
+          </Link>
+        </div>
 
         <h2 className="text-lg font-semibold text-foreground mb-4">Organisation Settings</h2>
 

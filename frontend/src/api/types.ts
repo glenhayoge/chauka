@@ -114,6 +114,40 @@ export interface Indicator {
   is_computed: boolean
   measurement_type: string
   unit: string
+  library_indicator_id: number | null
+}
+
+export interface LibraryIndicator {
+  id: number
+  name: string
+  organisation_id: number | null
+  sector: string
+  result_level: string
+  definition: string
+  unit_of_measure: string
+  calculation_method: string
+  data_source: string
+  data_collection_method: string
+  reporting_frequency: string
+  disaggregation_fields: string
+  framework: string
+  framework_code: string
+  measurement_type: string
+  is_active: boolean
+  created_at: string | null
+}
+
+export interface LibraryIndicatorSearchResult {
+  items: LibraryIndicator[]
+  total: number
+  page: number
+  page_size: number
+}
+
+export interface LibrarySector {
+  id: number
+  name: string
+  order: number
 }
 
 export interface SubIndicator {

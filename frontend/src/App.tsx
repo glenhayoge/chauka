@@ -32,6 +32,7 @@ const SettingsPage = lazy(() => import('./pages/SettingsPage'))
 const OrgSettingsPage = lazy(() => import('./pages/OrgSettingsPage'))
 const PrintLogframePage = lazy(() => import('./pages/PrintLogframePage'))
 const OrgDashboardPage = lazy(() => import('./pages/OrgDashboardPage'))
+const IndicatorLibraryPage = lazy(() => import('./pages/IndicatorLibraryPage'))
 const LandingPage = lazy(() => import('./pages/LandingPage'))
 const AdminLayout = lazy(() => import('./components/admin/AdminLayout'))
 const RequireAdmin = lazy(() => import('./components/admin/RequireAdmin'))
@@ -83,6 +84,7 @@ export default function App() {
           </Route>
           <Route path="/organisations/:orgId/settings" element={<RequireAuth><OrgSettingsPage /></RequireAuth>} />
           <Route path="/organisations/:orgId/dashboard" element={<RequireAuth><OrgDashboardPage /></RequireAuth>} />
+          <Route path="/organisations/:orgId/indicator-library" element={<RequireAuth><IndicatorLibraryPage /></RequireAuth>} />
           <Route path="/app/logframes/:logframeId/print" element={<RequireAuth><PrintLogframePage /></RequireAuth>} />
 
           {/* Admin portal */}

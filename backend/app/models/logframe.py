@@ -85,6 +85,10 @@ class Indicator(Base):
     # Phase 4: Dynamic builder
     measurement_type: Mapped[str] = mapped_column(String(50), default="numeric")
     unit: Mapped[str] = mapped_column(String(50), default="")
+    # Library provenance
+    library_indicator_id: Mapped[int | None] = mapped_column(
+        Integer, ForeignKey("library_indicator.id"), nullable=True
+    )
 
     result: Mapped[Result] = relationship("Result", back_populates="indicators")
     subindicators: Mapped[list[SubIndicator]] = relationship(

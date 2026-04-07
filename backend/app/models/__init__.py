@@ -16,6 +16,7 @@ from app.models.gsheets import GoogleSheetsConnection, GoogleSheetsColumnMapping
 from app.models.notification import Notification
 from app.models.audit import AuditLog
 from app.models.permission import Permission, RolePermission
+from app.models.indicator_library import LibraryIndicator, LibraryIndicatorSector
 
 __all__ = [
     "User", "Settings",
@@ -30,4 +31,5 @@ __all__ = [
     "DisaggregationCategory",
     "Notification", "AuditLog",
     "Permission", "RolePermission",
+    "LibraryIndicator", "LibraryIndicatorSector",
 ]

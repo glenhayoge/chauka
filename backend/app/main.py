@@ -47,6 +47,7 @@ from app.routers.admin_orgs import router as admin_orgs_router
 from app.routers.admin_rbac import router as admin_rbac_router
 from app.routers.disaggregation import router as disaggregation_router
 from app.routers.analytics import router as analytics_router
+from app.routers.indicator_library import router as indicator_library_router
 from app.security.headers import SecurityHeadersMiddleware
 
 @asynccontextmanager
@@ -110,6 +111,7 @@ app.include_router(admin_orgs_router)
 app.include_router(admin_rbac_router)
 app.include_router(disaggregation_router)
 app.include_router(analytics_router)
+app.include_router(indicator_library_router)
 
 
 @app.get("/health")

@@ -79,6 +79,12 @@ export default function OrgDashboardPage() {
             &larr; Back to organisations
           </Link>
           <Link
+            to={`/organisations/${publicId}/indicator-library`}
+            className="text-sm text-foreground/50 hover:text-foreground"
+          >
+            Indicator Library
+          </Link>
+          <Link
             to={`/organisations/${publicId}/settings`}
             className="text-sm text-muted-foreground hover:text-foreground"
           >
