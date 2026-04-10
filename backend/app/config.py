@@ -14,6 +14,7 @@ class Settings(BaseSettings):
     access_token_expire_minutes: int = 60
     cors_origins: list[str] = ["http://localhost:5173", "http://localhost:3000"]
     environment: str = "development"
+    sentry_dsn: str = ""
 
 
 settings = Settings()

@@ -1,5 +1,6 @@
 import logging
 import os
+import sys
 from contextlib import asynccontextmanager
 from pathlib import Path
 
@@ -55,10 +56,24 @@ from app.routers.analytics import router as analytics_router
 from app.routers.indicator_library import router as indicator_library_router
 from app.security.headers import SecurityHeadersMiddleware
 
-logging.basicConfig(
-    level=logging.INFO,
-    format="%(asctime)s %(levelname)s %(name)s | %(message)s",
-)
+def _setup_logging() -> None:
+    root = logging.getLogger()
+    root.setLevel(logging.INFO)
+    handler = logging.StreamHandler(sys.stdout)
+    if settings.environment == "production":
+        from pythonjsonlogger.json import JsonFormatter
+        formatter = JsonFormatter(
+            fmt="%(asctime)s %(levelname)s %(name)s %(message)s",
+            rename_fields={"asctime": "timestamp", "levelname": "level"},
+        )
+    else:
+        formatter = logging.Formatter(
+            "%(asctime)s %(levelname)s %(name)s | %(message)s"
+        )
+    handler.setFormatter(formatter)
+    root.addHandler(handler)
+
+_setup_logging()
 
 
 @asynccontextmanager
@@ -67,6 +82,14 @@ async def lifespan(app: FastAPI):
         raise RuntimeError(
             "FATAL: default secret_key detected in production. "
             "Set CHAUKA_SECRET_KEY to a secure random value."
+        )
+    if settings.sentry_dsn:
+        import sentry_sdk
+        sentry_sdk.init(
+            dsn=settings.sentry_dsn,
+            environment=settings.environment,
+            traces_sample_rate=0.1,
+            send_default_pii=False,
         )
     await create_tables()
     yield

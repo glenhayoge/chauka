@@ -1,7 +1,7 @@
 from uuid import UUID
 
-from fastapi import APIRouter, Depends, HTTPException
-from sqlalchemy import select
+from fastapi import APIRouter, Depends, HTTPException, Query
+from sqlalchemy import func, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.auth.dependencies import get_current_user, require_logframe_editor
@@ -9,28 +9,48 @@ from app.database import get_db
 from app.models.contacts import User
 from app.models.logframe import Target
 from app.schemas.logframe import TargetCreate, TargetRead, TargetUpdate
+from app.schemas.pagination import PaginatedResponse
 from app.security.ownership import verify_target_belongs_to_logframe
 from app.services.resolve import resolve_logframe
 
 router = APIRouter(prefix="/api/logframes/{logframe_public_id}/targets", tags=["targets"])
 
 
-@router.get("/", response_model=list[TargetRead])
+@router.get("/", response_model=PaginatedResponse[TargetRead])
 async def list_targets(
     logframe_public_id: UUID,
     subindicator: int | None = None,
     milestone: int | None = None,
+    page: int = Query(default=1, ge=1),
+    page_size: int = Query(default=100, ge=1, le=500),
     db: AsyncSession = Depends(get_db),
     current_user: User = Depends(get_current_user),
 ):
     logframe_id = (await resolve_logframe(logframe_public_id, db)).id
-    stmt = select(Target)
+    filters = []
     if subindicator:
-        stmt = stmt.where(Target.subindicator_id == subindicator)
+        filters.append(Target.subindicator_id == subindicator)
     if milestone:
-        stmt = stmt.where(Target.milestone_id == milestone)
-    result = await db.execute(stmt)
-    return result.scalars().all()
+        filters.append(Target.milestone_id == milestone)
+
+    count_stmt = select(func.count()).select_from(Target)
+    data_stmt = select(Target)
+    for f in filters:
+        count_stmt = count_stmt.where(f)
+        data_stmt = data_stmt.where(f)
+
+    total_result = await db.execute(count_stmt)
+    total = total_result.scalar_one()
+
+    result = await db.execute(
+        data_stmt.offset((page - 1) * page_size).limit(page_size)
+    )
+    return {
+        "items": result.scalars().all(),
+        "total": total,
+        "page": page,
+        "page_size": page_size,
+    }
 
 
 @router.post("/", response_model=TargetRead, status_code=201)

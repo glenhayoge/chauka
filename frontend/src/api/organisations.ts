@@ -18,8 +18,10 @@ import type {
 // --- Organisations ---
 
 export async function getOrganisations(): Promise<Organisation[]> {
-  const { data } = await apiClient.get<Organisation[]>('/organisations/')
-  return data
+  const { data } = await apiClient.get<{ items: Organisation[] }>('/organisations/', {
+    params: { page_size: 100 },
+  })
+  return data.items
 }
 
 export async function getOrganisation(orgId: number): Promise<Organisation> {
@@ -73,10 +75,11 @@ export async function updateLogframe(
 // --- Programs ---
 
 export async function getPrograms(orgId: number): Promise<Program[]> {
-  const { data } = await apiClient.get<Program[]>(
-    `/organisations/${orgId}/programs/`
+  const { data } = await apiClient.get<{ items: Program[] }>(
+    `/organisations/${orgId}/programs/`,
+    { params: { page_size: 100 } }
   )
-  return data
+  return data.items
 }
 
 export async function getProgram(orgId: number, programId: number): Promise<Program> {
@@ -199,10 +202,11 @@ export async function deleteLogframe(logframeId: string): Promise<void> {
 // --- Organisation Memberships ---
 
 export async function getMembers(orgId: number): Promise<OrganisationMembership[]> {
-  const { data } = await apiClient.get<OrganisationMembership[]>(
-    `/organisations/${orgId}/members/`
+  const { data } = await apiClient.get<{ items: OrganisationMembership[] }>(
+    `/organisations/${orgId}/members/`,
+    { params: { page_size: 100 } }
   )
-  return data
+  return data.items
 }
 
 export async function addMember(

@@ -1,5 +1,5 @@
-from fastapi import APIRouter, Depends, HTTPException
-from sqlalchemy import select
+from fastapi import APIRouter, Depends, HTTPException, Query
+from sqlalchemy import func, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.auth.dependencies import get_current_user, require_org_admin, require_org_member
@@ -7,6 +7,7 @@ from app.database import get_db
 from app.models.contacts import User
 from app.models.org import Organisation, OrganisationMembership, OrgRole
 from app.schemas.org import MembershipCreate, MembershipRead
+from app.schemas.pagination import PaginatedResponse
 
 router = APIRouter(
     prefix="/api/organisations/{organisation_id}/members",
@@ -14,9 +15,11 @@ router = APIRouter(
 )
 
 
-@router.get("/", response_model=list[MembershipRead])
+@router.get("/", response_model=PaginatedResponse[MembershipRead])
 async def list_members(
     organisation_id: int,
+    page: int = Query(default=1, ge=1),
+    page_size: int = Query(default=25, ge=1, le=100),
     db: AsyncSession = Depends(get_db),
     current_user: User = Depends(require_org_member),
 ):
@@ -27,12 +30,26 @@ async def list_members(
     if not org.scalar_one_or_none():
         raise HTTPException(status_code=404, detail="Organisation not found")
 
+    total_result = await db.execute(
+        select(func.count())
+        .select_from(OrganisationMembership)
+        .where(OrganisationMembership.organisation_id == organisation_id)
+    )
+    total = total_result.scalar_one()
+
     result = await db.execute(
         select(OrganisationMembership)
         .where(OrganisationMembership.organisation_id == organisation_id)
         .order_by(OrganisationMembership.created_at)
+        .offset((page - 1) * page_size)
+        .limit(page_size)
     )
-    return result.scalars().all()
+    return {
+        "items": result.scalars().all(),
+        "total": total,
+        "page": page,
+        "page_size": page_size,
+    }
 
 
 @router.post("/", response_model=MembershipRead, status_code=201)

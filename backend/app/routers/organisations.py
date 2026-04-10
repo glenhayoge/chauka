@@ -1,5 +1,5 @@
-from fastapi import APIRouter, Depends, HTTPException
-from sqlalchemy import select
+from fastapi import APIRouter, Depends, HTTPException, Query
+from sqlalchemy import func, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.auth.dependencies import get_current_user, require_org_admin, require_org_member
@@ -8,6 +8,7 @@ from app.models.contacts import User
 from app.models.logframe import Logframe
 from app.models.org import Organisation, OrganisationMembership, Project, ProjectRole
 from app.schemas.logframe import LogframeRead
+from app.schemas.pagination import PaginatedResponse
 from app.schemas.org import (
     OrganisationCreate,
     OrganisationRead,
@@ -23,8 +24,10 @@ from app.services.rbac import is_org_member
 router = APIRouter(prefix="/api/organisations", tags=["organisations"])
 
 
-@router.get("/", response_model=list[OrganisationRead])
+@router.get("/", response_model=PaginatedResponse[OrganisationRead])
 async def list_organisations(
+    page: int = Query(default=1, ge=1),
+    page_size: int = Query(default=25, ge=1, le=100),
     db: AsyncSession = Depends(get_db),
     current_user: User = Depends(get_current_user),
 ):
@@ -32,14 +35,26 @@ async def list_organisations(
     member_org_ids = select(OrganisationMembership.organisation_id).where(
         OrganisationMembership.user_id == current_user.id
     )
+    base_filter = (Organisation.id.in_(member_org_ids)) | (Organisation.owner_id == current_user.id)
+
+    total_result = await db.execute(
+        select(func.count()).select_from(Organisation).where(base_filter)
+    )
+    total = total_result.scalar_one()
+
     result = await db.execute(
         select(Organisation)
-        .where(
-            (Organisation.id.in_(member_org_ids)) | (Organisation.owner_id == current_user.id)
-        )
+        .where(base_filter)
         .order_by(Organisation.name)
+        .offset((page - 1) * page_size)
+        .limit(page_size)
     )
-    return result.scalars().all()
+    return {
+        "items": result.scalars().all(),
+        "total": total,
+        "page": page,
+        "page_size": page_size,
+    }
 
 
 @router.post("/", response_model=OrganisationRead, status_code=201)
