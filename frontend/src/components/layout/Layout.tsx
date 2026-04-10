@@ -29,11 +29,12 @@ export default function Layout() {
     ?? logframes?.find((lf) => lf.public_id === currentLogframeId)?.name
 
   return (
-    <div className="min-h-screen text-foreground">
+    <div className="min-h-screen text-foreground ">
       {/* Top header bar */}
-      <div className='max-w-7xl mx-auto'>
-        <header className="text-foreground bg-background/95 px-4">
-          <div className=" py-3 flex justify-between items-center">
+
+      <header className="text-foreground bg-muted px-4">
+        <div className='max-w-7xl mx-auto'>
+          <div className="flex justify-between items-center">
             <div className="flex items-center gap-4 sm:gap-6 min-w-0">
               <Link to="/app" className="text-lg sm:text-xl font-semibold hover:text-foreground/80 transition-colors py-3 flex-shrink-0">
                 Chauka
@@ -184,8 +185,9 @@ export default function Layout() {
               </PrimaryNavLink>
             </nav>
           )}
-        </header>
-      </div>
+        </div>
+      </header>
+
       <main className="flex-1 p-3 sm:p-8 max-w-7xl mx-auto">
         <Outlet />
       </main>

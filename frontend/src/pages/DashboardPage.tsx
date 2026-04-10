@@ -5,6 +5,7 @@ import { useLogframeStore } from '../store/logframe'
 import { useResolveLogframeId } from '../hooks/useResolveIds'
 import TabNav from '../components/layout/TabNav'
 import ExportDialog from '../components/dashboard/ExportDialog'
+import PageTitle from '../components/PageTitle'
 
 const PLACEHOLDER_NAMES = ['Untitled Program', 'Untitled Project', 'Untitled Logframe']
 
@@ -34,6 +35,7 @@ export default function DashboardPage() {
 
   return (
     <div>
+      <PageTitle title="Dashboard" />
       <TabNav />
 
       {/* Logframe name + action buttons */}

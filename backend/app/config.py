@@ -15,6 +15,9 @@ class Settings(BaseSettings):
     cors_origins: list[str] = ["http://localhost:5173", "http://localhost:3000"]
     environment: str = "development"
     sentry_dsn: str = ""
+    resend_api_key: str = ""
+    email_from: str = "Chauka <noreply@chauka.org>"
+    frontend_url: str = "http://localhost:5173"
 
 
 settings = Settings()

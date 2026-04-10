@@ -80,28 +80,38 @@ export default function ResetPasswordPage() {
         <p className="text-sm font-medium text-foreground mb-4">Set a new password</p>
         <form onSubmit={handleSubmit} className="space-y-3">
           <div>
-            <label className="block text-sm text-muted-foreground mb-1">New password</label>
+            <label htmlFor="new-password" className="block text-sm text-muted-foreground mb-1">New password</label>
             <input
+              id="new-password"
               type="password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
+              aria-invalid={!!error}
+              aria-describedby="new-password-hint"
               className={inputClass}
               required
               minLength={8}
             />
+            <p id="new-password-hint" className="text-xs text-muted-foreground mt-1">At least 8 characters</p>
           </div>
           <div>
-            <label className="block text-sm text-muted-foreground mb-1">Confirm password</label>
+            <label htmlFor="confirm-password" className="block text-sm text-muted-foreground mb-1">Confirm password</label>
             <input
+              id="confirm-password"
               type="password"
               value={confirmPassword}
               onChange={(e) => setConfirmPassword(e.target.value)}
+              aria-invalid={!!error}
               className={inputClass}
               required
               minLength={8}
             />
           </div>
-          {error && <p className="text-sm text-destructive">{error}</p>}
+          {error && (
+            <p role="alert" aria-live="polite" className="text-sm text-destructive">
+              {error}
+            </p>
+          )}
           <button
             type="submit"
             disabled={loading}

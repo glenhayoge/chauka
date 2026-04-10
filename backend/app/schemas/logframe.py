@@ -212,16 +212,26 @@ class ColumnRead(ColumnBase):
 
 class DataEntryBase(BaseModel):
     data: str | None = None
+    evidence: str | None = None
     subindicator_id: int
     column_id: int
 
 
 class DataEntryCreate(DataEntryBase):
-    pass
+    @field_validator("evidence", mode="before")
+    @classmethod
+    def _sanitize_evidence(cls, v: str | None) -> str | None:
+        return sanitize_html(v) if v else v
 
 
 class DataEntryUpdate(BaseModel):
     data: str | None = None
+    evidence: str | None = None
+
+    @field_validator("evidence", mode="before")
+    @classmethod
+    def _sanitize_evidence(cls, v: str | None) -> str | None:
+        return sanitize_html(v) if v else v
 
 
 class DataEntryRead(DataEntryBase):

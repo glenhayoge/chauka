@@ -210,6 +210,7 @@ export default function ActualsGrid({
                     nextPeriod && saveReportingPeriodStatus(sub.id, nextPeriod.id, status)
                   }
                   statusOptions={statusOptions}
+                  logframeId={logframeId}
                   canEdit={canEdit}
                 />
               )
@@ -250,6 +251,7 @@ interface SubIndicatorRowProps {
   onSaveEntry: (subId: number, colId: number, value: string) => Promise<void>
   onSaveStatus: (status: string) => void
   statusOptions: Array<'OK' | 'WARNING' | 'DANGER'>
+  logframeId: string
   canEdit: boolean
 }
 
@@ -267,6 +269,7 @@ function SubIndicatorRow({
   onSaveEntry,
   onSaveStatus,
   statusOptions,
+  logframeId,
   canEdit,
 }: SubIndicatorRowProps) {
   return (
@@ -338,9 +341,14 @@ function SubIndicatorRow({
       {recentColumns.map((col) => {
         const cellKey = `${sub.id}-${col.id}`
         if (!expandedCells.has(cellKey)) return null
+        const entry = dataEntries.find(
+          (d) => d.subindicator_id === sub.id && d.column_id === col.id
+        )
         return (
           <EvidenceRow
             key={`evidence-${cellKey}`}
+            entry={entry}
+            columnLabel={col.name}
             colSpan={
               (hasBaseline ? 1 : 0) +
               (hasNextTarget ? 1 : 0) +
@@ -348,6 +356,7 @@ function SubIndicatorRow({
               2 +
               (canEdit ? 1 : 0)
             }
+            logframeId={logframeId}
             canEdit={canEdit}
           />
         )
@@ -391,22 +400,41 @@ function StatusPicker({ current, options, onSave }: StatusPickerProps) {
 }
 
 interface EvidenceRowProps {
+  entry: DataEntry | undefined
+  columnLabel: string
   colSpan: number
+  logframeId: string
   canEdit: boolean
 }
 
-function EvidenceRow({ colSpan, canEdit }: EvidenceRowProps) {
-  const [evidence, setEvidence] = useState('')
+function EvidenceRow({ entry, columnLabel, colSpan, logframeId, canEdit }: EvidenceRowProps) {
+  const queryClient = useQueryClient()
+
+  async function saveEvidence(value: string) {
+    if (!entry) return
+    await apiClient.patch(`/logframes/${logframeId}/data-entries/${entry.id}`, {
+      evidence: value,
+    })
+    queryClient.invalidateQueries({ queryKey: ['bootstrap', logframeId] })
+  }
 
   return (
     <tr className="bg-warning/10">
       <td colSpan={colSpan} className="border border-border px-3 py-2">
-        <div className="text-xs text-muted-foreground mb-1">Evidence / Notes</div>
-        <RichTextEditor
-          value={evidence}
-          onSave={setEvidence}
-          disabled={!canEdit}
-        />
+        <div className="text-xs text-muted-foreground mb-1">
+          Evidence / Notes — {columnLabel}
+        </div>
+        {entry ? (
+          <RichTextEditor
+            value={entry.evidence ?? ''}
+            onSave={saveEvidence}
+            disabled={!canEdit}
+          />
+        ) : (
+          <p className="text-xs text-muted-foreground italic">
+            Enter an actual value first, then come back to add evidence.
+          </p>
+        )}
       </td>
     </tr>
   )

@@ -4,6 +4,7 @@ import { register } from '../api/auth'
 import { useAuthStore } from '../store/auth'
 import Navbar from '../components/layout/Navbar'
 import Footer from '../components/layout/Footer'
+import PageTitle from '../components/PageTitle'
 
 export default function RegisterPage() {
   const [username, setUsername] = useState('')
@@ -51,6 +52,7 @@ export default function RegisterPage() {
 
   return (
     <div className="min-h-screen flex flex-col">
+      <PageTitle title="Create an account" description="Create a new Chauka account to start managing your logframes." />
       <Navbar />
       <div className="flex-1 flex items-center justify-center px-4 py-8">
         <div className="w-full max-w-lg">
@@ -97,16 +99,19 @@ export default function RegisterPage() {
               />
             </div>
             <div>
-              <label className="block text-sm text-muted-foreground mb-1">Password</label>
+              <label htmlFor="register-password" className="block text-sm text-muted-foreground mb-1">Password</label>
               <input
+                id="register-password"
                 type="password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
+                aria-describedby="password-requirements"
+                aria-invalid={!!error}
                 className={inputClass}
                 required
                 minLength={6}
               />
-              <p className="text-xs text-muted-foreground mt-1">At least 6 characters</p>
+              <p id="password-requirements" className="text-xs text-muted-foreground mt-1">At least 6 characters</p>
             </div>
 
             <div className="flex items-start gap-2 pt-1">
@@ -125,7 +130,11 @@ export default function RegisterPage() {
               </label>
             </div>
 
-            {error && <p className="text-sm text-destructive">{error}</p>}
+            {error && (
+              <p role="alert" aria-live="polite" className="text-sm text-destructive">
+                {error}
+              </p>
+            )}
             <button
               type="submit"
               disabled={loading || !agreedToTerms}

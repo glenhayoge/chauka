@@ -3,12 +3,14 @@ import { Link } from 'react-router-dom'
 import { useAuthStore } from '../store/auth'
 import Navbar from '../components/layout/Navbar'
 import Footer from '../components/layout/Footer'
+import PageTitle from '../components/PageTitle'
 
 export default function LandingPage() {
   const isLoggedIn = !!useAuthStore((s) => s.token)
 
   return (
     <div className="min-h-screen">
+      <PageTitle title="Chauka" description="Plan, monitor and report on development programmes using logical frameworks. A monitoring, evaluation and learning (MEL) information system for development organisations." />
       <Navbar />
 
       {/* Main */}

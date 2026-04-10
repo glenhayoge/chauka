@@ -172,6 +172,7 @@ class DataEntry(Base):
 
     id: Mapped[int] = mapped_column(Integer, primary_key=True)
     data: Mapped[str | None] = mapped_column(String(255), nullable=True)
+    evidence: Mapped[str | None] = mapped_column(Text, nullable=True)
     subindicator_id: Mapped[int] = mapped_column(Integer, ForeignKey("logframe_subindicator.id"))
     column_id: Mapped[int] = mapped_column(Integer, ForeignKey("logframe_column.id"))
     # Phase 2: Distinguishes formula-generated from hand-entered values

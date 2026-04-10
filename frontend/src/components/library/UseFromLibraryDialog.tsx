@@ -1,5 +1,6 @@
-import { useState } from 'react'
+import { useEffect, useId, useState } from 'react'
 import { useQueryClient } from '@tanstack/react-query'
+import FocusTrap from 'focus-trap-react'
 import { useLibraryIndicator } from '../../api/indicatorLibrary'
 import type { LibraryIndicator } from '../../api/types'
 import IndicatorLibrarySearch from './IndicatorLibrarySearch'
@@ -18,6 +19,16 @@ export default function UseFromLibraryDialog({ logframePublicId, resultId, organ
   const [selected, setSelected] = useState<LibraryIndicator | null>(null)
   const [saving, setSaving] = useState(false)
   const [error, setError] = useState('')
+  const titleId = useId()
+
+  // Close on Escape
+  useEffect(() => {
+    function handleKeyDown(e: KeyboardEvent) {
+      if (e.key === 'Escape') onClose()
+    }
+    document.addEventListener('keydown', handleKeyDown)
+    return () => document.removeEventListener('keydown', handleKeyDown)
+  }, [onClose])
 
   async function handleUse() {
     if (!selected) return
@@ -38,21 +49,27 @@ export default function UseFromLibraryDialog({ logframePublicId, resultId, organ
   }
 
   return (
-    <div className="fixed inset-0 z-50 flex items-start justify-center pt-[5vh] sm:pt-[10vh]">
+    <FocusTrap focusTrapOptions={{ escapeDeactivates: false, allowOutsideClick: true }}>
+      <div
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby={titleId}
+        className="fixed inset-0 z-50 flex items-start justify-center pt-[5vh] sm:pt-[10vh]"
+      >
       {/* Backdrop */}
-      <div className="absolute inset-0 bg-black/40" onClick={onClose} />
+      <div className="absolute inset-0 bg-black/40" onClick={onClose} aria-hidden="true" />
 
       {/* Dialog */}
       <div className="relative bg-background border border-border rounded-[var(--radius)] w-full max-w-3xl max-h-[80vh] overflow-hidden flex flex-col mx-4">
         {/* Header */}
         <div className="flex items-center justify-between px-5 py-3 border-b border-border">
-          <p className="text-sm font-medium text-foreground">
+          <p id={titleId} className="text-sm font-medium text-foreground">
             {selected ? 'Indicator preview' : 'Browse indicator library'}
             {!selected && orgSector && (
               <span className="text-muted-foreground font-normal"> · {orgSector}</span>
             )}
           </p>
-          <button onClick={onClose} className="text-muted-foreground hover:text-foreground text-lg leading-none">&times;</button>
+          <button onClick={onClose} aria-label="Close dialog" className="text-muted-foreground hover:text-foreground text-lg leading-none">&times;</button>
         </div>
 
         {/* Body */}
@@ -92,6 +109,7 @@ export default function UseFromLibraryDialog({ logframePublicId, resultId, organ
           </div>
         )}
       </div>
-    </div>
+      </div>
+    </FocusTrap>
   )
 }

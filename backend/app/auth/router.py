@@ -10,9 +10,11 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.auth.dependencies import get_current_user
 from app.auth.utils import create_access_token, get_password_hash, verify_password
+from app.config import settings
 from app.database import get_db
 from app.models.contacts import User
 from app.security.rate_limit import check_auth_rate_limit
+from app.services.email import send_password_reset_email
 
 router = APIRouter(prefix="/api/auth", tags=["auth"])
 
@@ -178,13 +180,17 @@ async def forgot_password(
     user.password_reset_expires = expires.isoformat()
     await db.commit()
 
-    # Build reset link relative to the request origin
-    origin = request.headers.get("origin", "")
-    reset_link = f"{origin}/reset-password/{token}"
+    # Build reset link using the configured frontend URL, falling back to origin header
+    base_url = settings.frontend_url or request.headers.get("origin", "")
+    reset_link = f"{base_url}/reset-password/{token}"
 
+    # Send the reset email via Resend (no-op if RESEND_API_KEY is unset)
+    send_password_reset_email(user.email, reset_link)
+
+    # In non-production, return the link so developers can test without email
     return ForgotPasswordResponse(
-        message="If an account with that email exists, a reset link has been generated.",
-        reset_link=reset_link,
+        message="If an account with that email exists, a reset link has been sent.",
+        reset_link=reset_link if settings.environment != "production" else None,
     )
 
 

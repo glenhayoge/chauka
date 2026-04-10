@@ -4,9 +4,11 @@ from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.auth.dependencies import get_current_user, require_org_admin
+from app.config import settings
 from app.database import get_db
 from app.models.contacts import User
 from app.models.org import Invitation, Organisation, OrganisationMembership, OrgRole
+from app.services.email import send_invitation_email
 
 router = APIRouter(tags=["invitations"])
 
@@ -75,7 +77,8 @@ async def create_invitation(
     org_result = await db.execute(
         select(Organisation).where(Organisation.id == organisation_id)
     )
-    if not org_result.scalar_one_or_none():
+    org = org_result.scalar_one_or_none()
+    if not org:
         raise HTTPException(status_code=404, detail="Organisation not found")
 
     # Check for existing pending invite with same email
@@ -99,6 +102,11 @@ async def create_invitation(
     db.add(obj)
     await db.commit()
     await db.refresh(obj)
+
+    # Send invitation email (no-op if RESEND_API_KEY is unset)
+    invite_link = f"{settings.frontend_url}/invite/{obj.token}"
+    send_invitation_email(obj.email, org.name, invite_link, role.value)
+
     return obj
 
 

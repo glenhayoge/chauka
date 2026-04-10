@@ -187,6 +187,7 @@ export interface Column {
 export interface DataEntry {
   id: number
   data: string | null
+  evidence: string | null
   subindicator_id: number
   column_id: number
   is_computed: boolean

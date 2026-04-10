@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { Link } from 'react-router-dom'
 import { forgotPassword } from '../api/auth'
+import PageTitle from '../components/PageTitle'
 
 const inputClass = "w-full border border-border rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-1 focus:ring-ring focus:border-ring"
 
@@ -8,7 +9,7 @@ export default function ForgotPasswordPage() {
   const [email, setEmail] = useState('')
   const [error, setError] = useState('')
   const [loading, setLoading] = useState(false)
-  const [resetLink, setResetLink] = useState<string | null>(null)
+  const [devResetLink, setDevResetLink] = useState<string | null>(null)
   const [submitted, setSubmitted] = useState(false)
 
   async function handleSubmit(e: React.FormEvent) {
@@ -17,7 +18,8 @@ export default function ForgotPasswordPage() {
     setLoading(true)
     try {
       const data = await forgotPassword(email)
-      setResetLink(data.reset_link)
+      // In production the API no longer returns reset_link — only shown in dev
+      setDevResetLink(data.reset_link ?? null)
       setSubmitted(true)
     } catch {
       setError('Something went wrong. Please try again.')
@@ -28,17 +30,20 @@ export default function ForgotPasswordPage() {
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-background px-4">
+      <PageTitle title="Reset password" description="Reset your Chauka password." />
       <div className="w-full max-w-sm">
         {submitted ? (
           <div className="space-y-4">
             <p className="text-sm text-foreground">
-              If an account with that email exists, a reset link has been generated.
+              If an account with that email exists, a reset link has been sent. Check your inbox.
             </p>
-            {resetLink && (
-              <div className="border border-border rounded-md p-3">
-                <p className="text-xs text-muted-foreground mb-1">Reset link:</p>
-                <a href={resetLink} className="text-sm text-foreground hover:text-foreground break-all">
-                  {resetLink}
+            {devResetLink && (
+              <div className="border border-dashed border-border rounded-md p-3">
+                <p className="text-xs text-muted-foreground mb-1">
+                  Dev mode — reset link:
+                </p>
+                <a href={devResetLink} className="text-sm text-foreground hover:text-foreground break-all">
+                  {devResetLink}
                 </a>
               </div>
             )}
@@ -61,7 +66,11 @@ export default function ForgotPasswordPage() {
                   required
                 />
               </div>
-              {error && <p className="text-sm text-destructive">{error}</p>}
+              {error && (
+                <p role="alert" aria-live="polite" className="text-sm text-destructive">
+                  {error}
+                </p>
+              )}
               <button
                 type="submit"
                 disabled={loading}

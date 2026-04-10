@@ -18,6 +18,7 @@ import {
   createProgramLogframe,
 } from '../api/organisations'
 import { COUNTRIES, ORG_TYPES, SECTORS } from '../utils/orgOptions'
+import PageTitle from '../components/PageTitle'
 
 function slugify(text: string): string {
   return text.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '').slice(0, 60)
@@ -112,6 +113,7 @@ export default function OrgSelectPage() {
 
   return (
     <div className="max-w-2xl mx-auto px-4 py-10">
+      <PageTitle title="Select organisation" />
       {/* Breadcrumb */}
       {crumbs.length > 0 && (
         <nav className="flex items-center gap-2 text-sm text-muted-foreground mb-4">

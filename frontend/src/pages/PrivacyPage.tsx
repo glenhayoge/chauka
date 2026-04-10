@@ -1,9 +1,11 @@
 import Navbar from '../components/layout/Navbar'
 import Footer from '../components/layout/Footer'
+import PageTitle from '../components/PageTitle'
 
 export default function PrivacyPage() {
   return (
     <div className="min-h-screen flex flex-col">
+      <PageTitle title="Privacy Policy" />
       <Navbar />
       <div className="flex-1 px-4 py-12">
         <div className="max-w-4xl mx-auto">
