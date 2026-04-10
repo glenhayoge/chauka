@@ -5,7 +5,7 @@ from pydantic import BaseModel
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.auth.dependencies import get_current_user
+from app.auth.dependencies import get_current_user, require_logframe_editor, require_logframe_viewer
 from app.database import get_db
 from app.models.contacts import User
 from app.models.logframe import Logframe
@@ -62,7 +62,7 @@ async def list_logframes(
 async def get_logframe(
     logframe_public_id: UUID,
     db: AsyncSession = Depends(get_db),
-    current_user: User = Depends(get_current_user),
+    current_user: User = Depends(require_logframe_viewer),
 ):
     logframe_id = (await resolve_logframe(logframe_public_id, db)).id
     result = await db.execute(select(Logframe).where(Logframe.id == logframe_id))
@@ -77,7 +77,7 @@ async def update_logframe(
     logframe_public_id: UUID,
     body: LogframeUpdate,
     db: AsyncSession = Depends(get_db),
-    current_user: User = Depends(get_current_user),
+    current_user: User = Depends(require_logframe_editor),
 ):
     logframe_id = (await resolve_logframe(logframe_public_id, db)).id
     result = await db.execute(select(Logframe).where(Logframe.id == logframe_id))
@@ -95,7 +95,7 @@ async def update_logframe(
 async def delete_logframe(
     logframe_public_id: UUID,
     db: AsyncSession = Depends(get_db),
-    current_user: User = Depends(get_current_user),
+    current_user: User = Depends(require_logframe_editor),
 ):
     logframe_id = (await resolve_logframe(logframe_public_id, db)).id
     result = await db.execute(select(Logframe).where(Logframe.id == logframe_id))
@@ -110,7 +110,7 @@ async def delete_logframe(
 async def bootstrap(
     logframe_public_id: UUID,
     db: AsyncSession = Depends(get_db),
-    current_user: User = Depends(get_current_user),
+    current_user: User = Depends(require_logframe_viewer),
 ):
     logframe_id = (await resolve_logframe(logframe_public_id, db)).id
     data = await get_bootstrap_data(logframe_id, db, current_user)

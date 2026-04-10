@@ -10,6 +10,7 @@ from app.models.contacts import User
 from app.models.logframe import SubIndicator
 from app.schemas.logframe import SubIndicatorCreate, SubIndicatorRead, SubIndicatorUpdate
 from app.services.ordering import next_order
+from app.security.ownership import verify_result_ownership, verify_indicator_ownership
 from app.services.resolve import resolve_logframe
 
 router = APIRouter(
@@ -25,6 +26,8 @@ async def list_subindicators(
     current_user: User = Depends(get_current_user),
 ):
     logframe_id = (await resolve_logframe(logframe_public_id, db)).id
+    await verify_result_ownership(result_id, logframe_id, db)
+    await verify_indicator_ownership(indicator_id, result_id, db)
     result = await db.execute(
         select(SubIndicator).where(SubIndicator.indicator_id == indicator_id).order_by(SubIndicator.order)
     )
@@ -39,6 +42,8 @@ async def create_subindicator(
     current_user: User = Depends(require_logframe_editor),
 ):
     logframe_id = (await resolve_logframe(logframe_public_id, db)).id
+    await verify_result_ownership(result_id, logframe_id, db)
+    await verify_indicator_ownership(indicator_id, result_id, db)
     order = await next_order(db, SubIndicator, indicator_id=indicator_id)
     data = body.model_dump()
     data.update(order=order, indicator_id=indicator_id)
@@ -57,6 +62,8 @@ async def update_subindicator(
     current_user: User = Depends(require_logframe_editor),
 ):
     logframe_id = (await resolve_logframe(logframe_public_id, db)).id
+    await verify_result_ownership(result_id, logframe_id, db)
+    await verify_indicator_ownership(indicator_id, result_id, db)
     result = await db.execute(
         select(SubIndicator).where(
             SubIndicator.id == subindicator_id,
@@ -80,6 +87,8 @@ async def delete_subindicator(
     current_user: User = Depends(require_logframe_editor),
 ):
     logframe_id = (await resolve_logframe(logframe_public_id, db)).id
+    await verify_result_ownership(result_id, logframe_id, db)
+    await verify_indicator_ownership(indicator_id, result_id, db)
     result = await db.execute(
         select(SubIndicator).where(
             SubIndicator.id == subindicator_id,

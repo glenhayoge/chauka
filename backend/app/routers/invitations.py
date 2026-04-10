@@ -3,7 +3,7 @@ from pydantic import BaseModel
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.auth.dependencies import get_current_user
+from app.auth.dependencies import get_current_user, require_org_admin
 from app.database import get_db
 from app.models.contacts import User
 from app.models.org import Invitation, Organisation, OrganisationMembership, OrgRole
@@ -48,9 +48,9 @@ class InvitationPublic(BaseModel):
 async def list_invitations(
     organisation_id: int,
     db: AsyncSession = Depends(get_db),
-    current_user: User = Depends(get_current_user),
+    current_user: User = Depends(require_org_admin),
 ):
-    """List pending and accepted invitations for an organisation."""
+    """List pending and accepted invitations for an organisation. Requires org admin."""
     result = await db.execute(
         select(Invitation)
         .where(Invitation.organisation_id == organisation_id)
@@ -68,9 +68,9 @@ async def create_invitation(
     organisation_id: int,
     body: InvitationCreate,
     db: AsyncSession = Depends(get_db),
-    current_user: User = Depends(get_current_user),
+    current_user: User = Depends(require_org_admin),
 ):
-    """Create an invitation to join the organisation."""
+    """Create an invitation to join the organisation. Requires org admin."""
     # Verify org exists
     org_result = await db.execute(
         select(Organisation).where(Organisation.id == organisation_id)
@@ -110,9 +110,9 @@ async def revoke_invitation(
     organisation_id: int,
     invitation_id: int,
     db: AsyncSession = Depends(get_db),
-    current_user: User = Depends(get_current_user),
+    current_user: User = Depends(require_org_admin),
 ):
-    """Revoke a pending invitation."""
+    """Revoke a pending invitation. Requires org admin."""
     result = await db.execute(
         select(Invitation).where(
             Invitation.id == invitation_id,

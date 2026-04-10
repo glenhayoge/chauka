@@ -10,6 +10,7 @@ from app.database import get_db
 from app.models.contacts import User
 from app.models.logframe import StatusUpdate
 from app.schemas.logframe import StatusUpdateCreate, StatusUpdateRead, StatusUpdateUpdate
+from app.security.ownership import verify_statusupdate_belongs_to_logframe
 from app.services.resolve import resolve_logframe
 
 router = APIRouter(prefix="/api/logframes/{logframe_public_id}/statusupdates", tags=["statusupdates"])
@@ -62,6 +63,7 @@ async def update_status_update(
     current_user: User = Depends(require_logframe_editor),
 ):
     logframe_id = (await resolve_logframe(logframe_public_id, db)).id
+    await verify_statusupdate_belongs_to_logframe(status_update_id, logframe_id, db)
     result = await db.execute(select(StatusUpdate).where(StatusUpdate.id == status_update_id))
     obj = result.scalar_one_or_none()
     if not obj:
@@ -81,6 +83,7 @@ async def delete_status_update(
     current_user: User = Depends(require_logframe_editor),
 ):
     logframe_id = (await resolve_logframe(logframe_public_id, db)).id
+    await verify_statusupdate_belongs_to_logframe(status_update_id, logframe_id, db)
     result = await db.execute(select(StatusUpdate).where(StatusUpdate.id == status_update_id))
     obj = result.scalar_one_or_none()
     if not obj:

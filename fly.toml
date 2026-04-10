@@ -5,7 +5,7 @@
 #   fly secrets set CHAUKA_DATABASE_URL="postgresql+asyncpg://..." CHAUKA_SECRET_KEY="..."
 
 app = "chauka"
-primary_region = "jnb"  # Johannesburg — adjust to your region
+primary_region = "syd"  # Sydney — adjust to your region
 
 [build]
   dockerfile = "Dockerfile"

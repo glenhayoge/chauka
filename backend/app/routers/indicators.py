@@ -10,6 +10,7 @@ from app.models.contacts import User
 from app.models.logframe import Indicator, SubIndicator
 from app.schemas.logframe import IndicatorCreate, IndicatorRead, IndicatorUpdate
 from app.services.ordering import next_order
+from app.security.ownership import verify_result_ownership
 from app.services.resolve import resolve_logframe
 
 router = APIRouter(
@@ -26,6 +27,7 @@ async def list_indicators(
     current_user: User = Depends(get_current_user),
 ):
     logframe_id = (await resolve_logframe(logframe_public_id, db)).id
+    await verify_result_ownership(result_id, logframe_id, db)
     result = await db.execute(
         select(Indicator).where(Indicator.result_id == result_id).order_by(Indicator.order)
     )
@@ -41,6 +43,7 @@ async def create_indicator(
     current_user: User = Depends(require_logframe_editor),
 ):
     logframe_id = (await resolve_logframe(logframe_public_id, db)).id
+    await verify_result_ownership(result_id, logframe_id, db)
     order = await next_order(db, Indicator, result_id=result_id)
     data = body.model_dump()
     data.update(order=order, result_id=result_id)
@@ -66,6 +69,7 @@ async def get_indicator(
     current_user: User = Depends(get_current_user),
 ):
     logframe_id = (await resolve_logframe(logframe_public_id, db)).id
+    await verify_result_ownership(result_id, logframe_id, db)
     result = await db.execute(
         select(Indicator).where(
             Indicator.id == indicator_id, Indicator.result_id == result_id
@@ -87,6 +91,7 @@ async def update_indicator(
     current_user: User = Depends(require_logframe_editor),
 ):
     logframe_id = (await resolve_logframe(logframe_public_id, db)).id
+    await verify_result_ownership(result_id, logframe_id, db)
     result = await db.execute(
         select(Indicator).where(
             Indicator.id == indicator_id, Indicator.result_id == result_id
@@ -111,6 +116,7 @@ async def delete_indicator(
     current_user: User = Depends(require_logframe_editor),
 ):
     logframe_id = (await resolve_logframe(logframe_public_id, db)).id
+    await verify_result_ownership(result_id, logframe_id, db)
     result = await db.execute(
         select(Indicator).where(
             Indicator.id == indicator_id, Indicator.result_id == result_id

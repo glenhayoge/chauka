@@ -61,6 +61,11 @@ logging.basicConfig(
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
+    if settings.environment == "production" and settings.secret_key == "dev-secret-key-change-in-production":
+        raise RuntimeError(
+            "FATAL: default secret_key detected in production. "
+            "Set CHAUKA_SECRET_KEY to a secure random value."
+        )
     await create_tables()
     yield
 

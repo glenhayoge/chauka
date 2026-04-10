@@ -9,6 +9,7 @@ from app.database import get_db
 from app.models.contacts import User
 from app.models.logframe import Expense, BudgetLine
 from app.schemas.logframe import ExpenseCreate, ExpenseRead, ExpenseUpdate
+from app.security.ownership import verify_expense_belongs_to_logframe
 from app.services.resolve import resolve_logframe
 
 router = APIRouter(
@@ -60,6 +61,7 @@ async def update_expense(
     current_user: User = Depends(require_logframe_editor),
 ):
     logframe_id = (await resolve_logframe(logframe_public_id, db)).id
+    await verify_expense_belongs_to_logframe(expense_id, logframe_id, db)
     result = await db.execute(select(Expense).where(Expense.id == expense_id))
     obj = result.scalar_one_or_none()
     if not obj:
@@ -79,6 +81,7 @@ async def delete_expense(
     current_user: User = Depends(require_logframe_editor),
 ):
     logframe_id = (await resolve_logframe(logframe_public_id, db)).id
+    await verify_expense_belongs_to_logframe(expense_id, logframe_id, db)
     result = await db.execute(select(Expense).where(Expense.id == expense_id))
     obj = result.scalar_one_or_none()
     if not obj:

@@ -1,7 +1,9 @@
 from datetime import date as date_type, datetime
 from uuid import UUID
 
-from pydantic import BaseModel, ConfigDict
+from pydantic import BaseModel, ConfigDict, field_validator
+
+from app.security.sanitize import sanitize_html
 
 
 # --- Organisation ---
@@ -25,6 +27,11 @@ class OrganisationCreate(BaseModel):
     org_type: str = ""
     sector: str = ""
 
+    @field_validator("description", mode="before")
+    @classmethod
+    def _sanitize(cls, v: str) -> str:
+        return sanitize_html(v) if v else v
+
 
 class OrganisationUpdate(BaseModel):
     name: str | None = None
@@ -34,6 +41,11 @@ class OrganisationUpdate(BaseModel):
     country: str | None = None
     org_type: str | None = None
     sector: str | None = None
+
+    @field_validator("description", mode="before")
+    @classmethod
+    def _sanitize(cls, v: str | None) -> str | None:
+        return sanitize_html(v) if v else v
 
 
 class OrganisationRead(OrganisationBase):
@@ -61,12 +73,22 @@ class ProgramCreate(BaseModel):
     start_date: date_type | None = None
     end_date: date_type | None = None
 
+    @field_validator("description", mode="before")
+    @classmethod
+    def _sanitize(cls, v: str) -> str:
+        return sanitize_html(v) if v else v
+
 
 class ProgramUpdate(BaseModel):
     name: str | None = None
     description: str | None = None
     start_date: date_type | None = None
     end_date: date_type | None = None
+
+    @field_validator("description", mode="before")
+    @classmethod
+    def _sanitize(cls, v: str | None) -> str | None:
+        return sanitize_html(v) if v else v
 
 
 class ProgramRead(ProgramBase):
@@ -94,6 +116,11 @@ class ProjectCreate(BaseModel):
     end_date: date_type | None = None
     status: str = "active"
 
+    @field_validator("description", mode="before")
+    @classmethod
+    def _sanitize(cls, v: str) -> str:
+        return sanitize_html(v) if v else v
+
 
 class ProjectUpdate(BaseModel):
     name: str | None = None
@@ -101,6 +128,11 @@ class ProjectUpdate(BaseModel):
     start_date: date_type | None = None
     end_date: date_type | None = None
     status: str | None = None
+
+    @field_validator("description", mode="before")
+    @classmethod
+    def _sanitize(cls, v: str | None) -> str | None:
+        return sanitize_html(v) if v else v
 
 
 class ProjectRead(ProjectBase):

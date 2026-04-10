@@ -261,7 +261,7 @@ export default function OrgSelectPage() {
           )}
 
           {/* Create actions */}
-          <div className="flex flex-wrap items-center justify-center gap-3 border-t border-border pt-4">
+          <div className="flex flex-wrap items-left justify-left gap-3 border-t border-border pt-4">
             <CreateForm
               label="program"
               fields={[
@@ -305,7 +305,7 @@ export default function OrgSelectPage() {
                   }
                 }}
                 disabled={skipping}
-                className="text-sm text-muted-foreground hover:text-muted-foreground disabled:opacity-50"
+                className="text-sm text-danger/70 hover:text-danger/50 disabled:opacity-50 pt-4"
               >
                 {skipping ? 'Setting up...' : 'Skip for now'}
               </button>

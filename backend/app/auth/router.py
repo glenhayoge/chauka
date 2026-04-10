@@ -1,3 +1,4 @@
+import hashlib
 import secrets
 from datetime import datetime, timedelta, timezone
 
@@ -16,6 +17,11 @@ from app.security.rate_limit import check_auth_rate_limit
 router = APIRouter(prefix="/api/auth", tags=["auth"])
 
 PASSWORD_RESET_EXPIRY_HOURS = 1
+
+
+def _hash_token(token: str) -> str:
+    """Hash a reset token with SHA-256 before storing or comparing."""
+    return hashlib.sha256(token.encode()).hexdigest()
 
 
 class Token(BaseModel):
@@ -77,9 +83,11 @@ class ChangePasswordRequest(BaseModel):
 
 @router.post("/token", response_model=Token)
 async def login(
+    request: Request,
     form_data: OAuth2PasswordRequestForm = Depends(),
     db: AsyncSession = Depends(get_db),
 ):
+    check_auth_rate_limit(request)
     result = await db.execute(select(User).where(User.username == form_data.username))
     user = result.scalar_one_or_none()
     if not user or not verify_password(form_data.password, user.password):
@@ -166,7 +174,7 @@ async def forgot_password(
     token = secrets.token_urlsafe(48)
     expires = datetime.now(timezone.utc) + timedelta(hours=PASSWORD_RESET_EXPIRY_HOURS)
 
-    user.password_reset_token = token
+    user.password_reset_token = _hash_token(token)
     user.password_reset_expires = expires.isoformat()
     await db.commit()
 
@@ -224,8 +232,9 @@ async def reset_password(
 
 async def _get_user_by_reset_token(token: str, db: AsyncSession) -> User | None:
     """Look up a user by reset token, returning None if expired or missing."""
+    hashed = _hash_token(token)
     result = await db.execute(
-        select(User).where(User.password_reset_token == token)
+        select(User).where(User.password_reset_token == hashed)
     )
     user = result.scalar_one_or_none()
     if not user or not user.password_reset_expires:

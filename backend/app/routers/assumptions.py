@@ -12,6 +12,7 @@ from app.schemas.logframe import (
     AssumptionCreate, AssumptionRead, AssumptionUpdate,
     RiskRatingCreate, RiskRatingRead,
 )
+from app.security.ownership import verify_result_ownership
 from app.services.resolve import resolve_logframe
 
 router = APIRouter(prefix="/api/logframes/{logframe_public_id}", tags=["assumptions"])
@@ -50,6 +51,7 @@ async def list_assumptions(
     current_user: User = Depends(get_current_user),
 ):
     logframe_id = (await resolve_logframe(logframe_public_id, db)).id
+    await verify_result_ownership(result_id, logframe_id, db)
     result = await db.execute(select(Assumption).where(Assumption.result_id == result_id))
     return result.scalars().all()
 
@@ -62,6 +64,7 @@ async def create_assumption(
     current_user: User = Depends(require_logframe_editor),
 ):
     logframe_id = (await resolve_logframe(logframe_public_id, db)).id
+    await verify_result_ownership(result_id, logframe_id, db)
     obj = Assumption(**body.model_dump(exclude={"result_id"}), result_id=result_id)
     db.add(obj)
     await db.commit()
@@ -77,6 +80,7 @@ async def update_assumption(
     current_user: User = Depends(require_logframe_editor),
 ):
     logframe_id = (await resolve_logframe(logframe_public_id, db)).id
+    await verify_result_ownership(result_id, logframe_id, db)
     result = await db.execute(
         select(Assumption).where(Assumption.id == assumption_id, Assumption.result_id == result_id)
     )
@@ -97,6 +101,7 @@ async def delete_assumption(
     current_user: User = Depends(require_logframe_editor),
 ):
     logframe_id = (await resolve_logframe(logframe_public_id, db)).id
+    await verify_result_ownership(result_id, logframe_id, db)
     result = await db.execute(
         select(Assumption).where(Assumption.id == assumption_id, Assumption.result_id == result_id)
     )

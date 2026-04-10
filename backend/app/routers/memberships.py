@@ -2,7 +2,7 @@ from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.auth.dependencies import get_current_user, require_org_admin
+from app.auth.dependencies import get_current_user, require_org_admin, require_org_member
 from app.database import get_db
 from app.models.contacts import User
 from app.models.org import Organisation, OrganisationMembership, OrgRole
@@ -18,9 +18,9 @@ router = APIRouter(
 async def list_members(
     organisation_id: int,
     db: AsyncSession = Depends(get_db),
-    current_user: User = Depends(get_current_user),
+    current_user: User = Depends(require_org_member),
 ):
-    """List all members of an organisation. Any authenticated user can list."""
+    """List all members of an organisation. Requires org membership."""
     org = await db.execute(
         select(Organisation).where(Organisation.id == organisation_id)
     )

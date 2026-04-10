@@ -11,6 +11,7 @@ from app.models.contacts import User
 from app.models.logframe import Activity
 from app.schemas.logframe import ActivityCreate, ActivityRead, ActivityUpdate
 from app.services.ordering import next_order
+from app.security.ownership import verify_result_ownership
 from app.services.resolve import resolve_logframe
 
 router = APIRouter(
@@ -28,6 +29,7 @@ async def list_activities(
     current_user: User = Depends(get_current_user),
 ):
     logframe_id = (await resolve_logframe(logframe_public_id, db)).id
+    await verify_result_ownership(result_id, logframe_id, db)
     stmt = select(Activity).where(Activity.result_id == result_id).order_by(Activity.order)
     if start_date:
         stmt = stmt.where(Activity.start_date >= start_date)
@@ -45,6 +47,7 @@ async def create_activity(
     current_user: User = Depends(require_logframe_editor),
 ):
     logframe_id = (await resolve_logframe(logframe_public_id, db)).id
+    await verify_result_ownership(result_id, logframe_id, db)
     order = await next_order(db, Activity, result_id=result_id)
     data = body.model_dump()
     data.update(order=order, result_id=result_id)
@@ -63,6 +66,7 @@ async def update_activity(
     current_user: User = Depends(require_logframe_editor),
 ):
     logframe_id = (await resolve_logframe(logframe_public_id, db)).id
+    await verify_result_ownership(result_id, logframe_id, db)
     result = await db.execute(
         select(Activity).where(Activity.id == activity_id, Activity.result_id == result_id)
     )
@@ -83,6 +87,7 @@ async def delete_activity(
     current_user: User = Depends(require_logframe_editor),
 ):
     logframe_id = (await resolve_logframe(logframe_public_id, db)).id
+    await verify_result_ownership(result_id, logframe_id, db)
     result = await db.execute(
         select(Activity).where(Activity.id == activity_id, Activity.result_id == result_id)
     )

@@ -1,33 +1,29 @@
-"""HTML sanitization for rich text fields stored in the database."""
-import re
+"""HTML sanitization using nh3 (Rust-based)."""
+import nh3
 
-# Pattern to strip script/style/iframe tags entirely
-_DANGEROUS_TAGS = re.compile(
-    r'<(script|style|iframe|object|embed|form|input|button)\b[^>]*>.*?</\1>',
-    re.IGNORECASE | re.DOTALL,
-)
-_SELF_CLOSING_DANGEROUS = re.compile(
-    r'<(script|style|iframe|object|embed|input|button)\b[^>]*/?>',
-    re.IGNORECASE,
-)
-_DANGEROUS_ATTR = re.compile(
-    r'\s*(on\w+|javascript|data)\s*=\s*["\'][^"\']*["\']',
-    re.IGNORECASE,
-)
+_ALLOWED_TAGS = {
+    "p", "br", "strong", "em", "b", "i", "u", "s",
+    "ul", "ol", "li", "a", "h1", "h2", "h3", "h4", "h5", "h6",
+    "blockquote", "pre", "code", "sub", "sup", "table", "thead",
+    "tbody", "tr", "th", "td", "span", "div",
+}
+_ALLOWED_ATTRIBUTES = {
+    "a": {"href", "title", "target"},
+    "span": {"class"},
+    "div": {"class"},
+    "td": {"colspan", "rowspan"},
+    "th": {"colspan", "rowspan"},
+}
 
 
 def sanitize_html(html: str) -> str:
-    """
-    Basic server-side HTML sanitization for rich text fields.
-
-    For production, replace with the `nh3` library:
-        import nh3
-        return nh3.clean(html, tags=ALLOWED_TAGS)
-    """
+    """Sanitize HTML input, stripping dangerous tags and attributes."""
     if not html:
         return html
-    html = _DANGEROUS_TAGS.sub("", html)
-    html = _SELF_CLOSING_DANGEROUS.sub("", html)
-    html = _DANGEROUS_ATTR.sub("", html)
-    html = re.sub(r'href\s*=\s*["\']javascript:[^"\']*["\']', 'href="#"', html, flags=re.IGNORECASE)
-    return html.strip()
+    return nh3.clean(
+        html,
+        tags=_ALLOWED_TAGS,
+        attributes=_ALLOWED_ATTRIBUTES,
+        link_rel=None,
+        url_schemes={"http", "https", "mailto"},
+    )

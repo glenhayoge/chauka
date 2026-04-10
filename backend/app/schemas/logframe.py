@@ -325,12 +325,20 @@ class MilestoneBase(BaseModel):
 
 
 class MilestoneCreate(MilestoneBase):
-    pass
+    @field_validator("description", mode="before")
+    @classmethod
+    def _sanitize(cls, v: str) -> str:
+        return sanitize_html(v) if v else v
 
 
 class MilestoneUpdate(BaseModel):
     period_id: int | None = None
     description: str | None = None
+
+    @field_validator("description", mode="before")
+    @classmethod
+    def _sanitize(cls, v: str | None) -> str | None:
+        return sanitize_html(v) if v else v
 
 
 class MilestoneRead(MilestoneBase):
@@ -411,7 +419,10 @@ class StatusCodeBase(BaseModel):
 
 
 class StatusCodeCreate(StatusCodeBase):
-    pass
+    @field_validator("description", mode="before")
+    @classmethod
+    def _sanitize(cls, v: str) -> str:
+        return sanitize_html(v) if v else v
 
 
 class StatusCodeRead(StatusCodeBase):

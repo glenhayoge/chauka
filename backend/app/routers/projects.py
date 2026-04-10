@@ -4,7 +4,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from pydantic import BaseModel
 
-from app.auth.dependencies import get_current_user
+from app.auth.dependencies import get_current_user, require_org_admin, require_org_member
 from app.database import get_db
 from app.models.contacts import User
 from app.models.appconf import Settings
@@ -33,7 +33,7 @@ async def list_projects(
     organisation_id: int,
     program_id: int,
     db: AsyncSession = Depends(get_db),
-    current_user: User = Depends(get_current_user),
+    current_user: User = Depends(require_org_member),
 ):
     # Verify program exists and belongs to org
     prog = await db.execute(
@@ -59,7 +59,7 @@ async def create_project(
     program_id: int,
     body: ProjectCreate,
     db: AsyncSession = Depends(get_db),
-    current_user: User = Depends(get_current_user),
+    current_user: User = Depends(require_org_admin),
 ):
     prog = await db.execute(
         select(Program).where(
@@ -90,7 +90,7 @@ async def get_project(
     program_id: int,
     project_id: int,
     db: AsyncSession = Depends(get_db),
-    current_user: User = Depends(get_current_user),
+    current_user: User = Depends(require_org_member),
 ):
     result = await db.execute(
         select(Project).where(
@@ -111,7 +111,7 @@ async def update_project(
     project_id: int,
     body: ProjectUpdate,
     db: AsyncSession = Depends(get_db),
-    current_user: User = Depends(get_current_user),
+    current_user: User = Depends(require_org_admin),
 ):
     result = await db.execute(
         select(Project).where(
@@ -135,7 +135,7 @@ async def delete_project(
     program_id: int,
     project_id: int,
     db: AsyncSession = Depends(get_db),
-    current_user: User = Depends(get_current_user),
+    current_user: User = Depends(require_org_admin),
 ):
     result = await db.execute(
         select(Project).where(
@@ -156,7 +156,7 @@ async def list_project_logframes(
     program_id: int,
     project_id: int,
     db: AsyncSession = Depends(get_db),
-    current_user: User = Depends(get_current_user),
+    current_user: User = Depends(require_org_member),
 ):
     """List logframes belonging to a specific project."""
     proj = await db.execute(
@@ -181,7 +181,7 @@ async def create_project_logframe(
     project_id: int,
     body: LogframeCreate,
     db: AsyncSession = Depends(get_db),
-    current_user: User = Depends(get_current_user),
+    current_user: User = Depends(require_org_admin),
 ):
     """Create a new logframe under a project with default settings and ratings."""
     proj = await db.execute(

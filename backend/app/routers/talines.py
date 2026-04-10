@@ -10,6 +10,7 @@ from app.database import get_db
 from app.models.contacts import User
 from app.models.logframe import TALine
 from app.schemas.logframe import TALineCreate, TALineRead, TALineUpdate
+from app.security.ownership import verify_taline_belongs_to_logframe
 from app.services.resolve import resolve_logframe
 
 router = APIRouter(prefix="/api/logframes/{logframe_public_id}/talines", tags=["talines"])
@@ -60,6 +61,7 @@ async def update_ta_line(
     current_user: User = Depends(require_logframe_editor),
 ):
     logframe_id = (await resolve_logframe(logframe_public_id, db)).id
+    await verify_taline_belongs_to_logframe(ta_line_id, logframe_id, db)
     result = await db.execute(select(TALine).where(TALine.id == ta_line_id))
     obj = result.scalar_one_or_none()
     if not obj:
@@ -79,6 +81,7 @@ async def delete_ta_line(
     current_user: User = Depends(require_logframe_editor),
 ):
     logframe_id = (await resolve_logframe(logframe_public_id, db)).id
+    await verify_taline_belongs_to_logframe(ta_line_id, logframe_id, db)
     result = await db.execute(select(TALine).where(TALine.id == ta_line_id))
     obj = result.scalar_one_or_none()
     if not obj:

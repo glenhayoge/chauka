@@ -3,7 +3,7 @@ from pydantic import BaseModel
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.auth.dependencies import get_current_user
+from app.auth.dependencies import get_current_user, require_org_admin, require_org_member
 from app.database import get_db
 from app.models.contacts import User
 from app.models.appconf import Settings
@@ -31,7 +31,7 @@ router = APIRouter(
 async def list_programs(
     organisation_id: int,
     db: AsyncSession = Depends(get_db),
-    current_user: User = Depends(get_current_user),
+    current_user: User = Depends(require_org_member),
 ):
     # Verify organisation exists
     org = await db.execute(
@@ -53,7 +53,7 @@ async def create_program(
     organisation_id: int,
     body: ProgramCreate,
     db: AsyncSession = Depends(get_db),
-    current_user: User = Depends(get_current_user),
+    current_user: User = Depends(require_org_admin),
 ):
     org = await db.execute(
         select(Organisation).where(Organisation.id == organisation_id)
@@ -75,7 +75,7 @@ async def get_program(
     organisation_id: int,
     program_id: int,
     db: AsyncSession = Depends(get_db),
-    current_user: User = Depends(get_current_user),
+    current_user: User = Depends(require_org_member),
 ):
     result = await db.execute(
         select(Program).where(
@@ -95,7 +95,7 @@ async def update_program(
     program_id: int,
     body: ProgramUpdate,
     db: AsyncSession = Depends(get_db),
-    current_user: User = Depends(get_current_user),
+    current_user: User = Depends(require_org_admin),
 ):
     result = await db.execute(
         select(Program).where(
@@ -118,7 +118,7 @@ async def delete_program(
     organisation_id: int,
     program_id: int,
     db: AsyncSession = Depends(get_db),
-    current_user: User = Depends(get_current_user),
+    current_user: User = Depends(require_org_admin),
 ):
     result = await db.execute(
         select(Program).where(
@@ -138,7 +138,7 @@ async def list_program_logframes(
     organisation_id: int,
     program_id: int,
     db: AsyncSession = Depends(get_db),
-    current_user: User = Depends(get_current_user),
+    current_user: User = Depends(require_org_member),
 ):
     """List logframes directly under a program (no project)."""
     result = await db.execute(
@@ -153,7 +153,7 @@ async def create_program_logframe(
     program_id: int,
     body: LogframeCreate,
     db: AsyncSession = Depends(get_db),
-    current_user: User = Depends(get_current_user),
+    current_user: User = Depends(require_org_admin),
 ):
     """Create a logframe directly under a program (no project needed)."""
     prog = await db.execute(select(Program).where(

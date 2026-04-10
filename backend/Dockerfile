@@ -15,6 +15,10 @@ RUN pip install --no-cache-dir -e .
 # Copy source
 COPY . .
 
+RUN adduser --disabled-password --no-create-home --gecos "" appuser && \
+    chown -R appuser:appuser /app
+USER appuser
+
 WORKDIR /app
 
 EXPOSE 8000

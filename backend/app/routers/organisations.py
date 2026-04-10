@@ -2,7 +2,7 @@ from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.auth.dependencies import get_current_user
+from app.auth.dependencies import get_current_user, require_org_admin, require_org_member
 from app.database import get_db
 from app.models.contacts import User
 from app.models.logframe import Logframe
@@ -78,7 +78,7 @@ async def create_organisation(
 async def get_organisation(
     organisation_id: int,
     db: AsyncSession = Depends(get_db),
-    current_user: User = Depends(get_current_user),
+    current_user: User = Depends(require_org_member),
 ):
     result = await db.execute(
         select(Organisation).where(Organisation.id == organisation_id)
@@ -93,7 +93,7 @@ async def get_organisation(
 async def organisation_dashboard(
     organisation_id: int,
     db: AsyncSession = Depends(get_db),
-    current_user: User = Depends(get_current_user),
+    current_user: User = Depends(require_org_member),
 ):
     """Aggregated dashboard for an organisation across all its logframes.
 
@@ -121,7 +121,7 @@ async def update_organisation(
     organisation_id: int,
     body: OrganisationUpdate,
     db: AsyncSession = Depends(get_db),
-    current_user: User = Depends(get_current_user),
+    current_user: User = Depends(require_org_admin),
 ):
     result = await db.execute(
         select(Organisation).where(Organisation.id == organisation_id)
@@ -150,7 +150,7 @@ async def update_organisation(
 async def delete_organisation(
     organisation_id: int,
     db: AsyncSession = Depends(get_db),
-    current_user: User = Depends(get_current_user),
+    current_user: User = Depends(require_org_admin),
 ):
     result = await db.execute(
         select(Organisation).where(Organisation.id == organisation_id)
@@ -168,7 +168,7 @@ async def delete_organisation(
 async def list_org_projects(
     organisation_id: int,
     db: AsyncSession = Depends(get_db),
-    current_user: User = Depends(get_current_user),
+    current_user: User = Depends(require_org_member),
 ):
     """List projects directly under an organisation (no program)."""
     result = await db.execute(
@@ -184,7 +184,7 @@ async def create_org_project(
     organisation_id: int,
     body: ProjectCreate,
     db: AsyncSession = Depends(get_db),
-    current_user: User = Depends(get_current_user),
+    current_user: User = Depends(require_org_admin),
 ):
     """Create a standalone project directly under an organisation."""
     org = await db.execute(
@@ -214,7 +214,7 @@ async def update_org_project(
     project_id: int,
     body: ProjectUpdate,
     db: AsyncSession = Depends(get_db),
-    current_user: User = Depends(get_current_user),
+    current_user: User = Depends(require_org_admin),
 ):
     """Update a standalone org project."""
     result = await db.execute(
@@ -239,7 +239,7 @@ async def delete_org_project(
     organisation_id: int,
     project_id: int,
     db: AsyncSession = Depends(get_db),
-    current_user: User = Depends(get_current_user),
+    current_user: User = Depends(require_org_admin),
 ):
     """Delete a standalone org project."""
     result = await db.execute(
@@ -261,7 +261,7 @@ async def list_org_project_logframes(
     organisation_id: int,
     project_id: int,
     db: AsyncSession = Depends(get_db),
-    current_user: User = Depends(get_current_user),
+    current_user: User = Depends(require_org_member),
 ):
     """List logframes in a standalone org project."""
     result = await db.execute(
@@ -275,7 +275,7 @@ async def create_org_project_logframe(
     organisation_id: int,
     project_id: int,
     db: AsyncSession = Depends(get_db),
-    current_user: User = Depends(get_current_user),
+    current_user: User = Depends(require_org_admin),
 ):
     """Create a logframe in a standalone org project with default settings."""
     from pydantic import BaseModel

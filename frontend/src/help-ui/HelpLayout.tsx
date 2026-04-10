@@ -103,6 +103,14 @@ export default function HelpLayout() {
           </div>
         </aside>
       </div>
+
+      {/* Footer */}
+      <footer className="border-t border-border bg-background">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-10 py-4 flex items-center justify-between text-xs text-muted-foreground">
+          <span>Chauka Help Centre &middot; v0.1.0</span>
+          <span>Last updated April 2026</span>
+        </div>
+      </footer>
     </div>
   )
 }

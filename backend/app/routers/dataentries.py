@@ -9,6 +9,7 @@ from app.database import get_db
 from app.models.contacts import User
 from app.models.logframe import DataEntry
 from app.schemas.logframe import DataEntryCreate, DataEntryRead, DataEntryUpdate
+from app.security.ownership import verify_dataentry_belongs_to_logframe
 from app.services.resolve import resolve_logframe
 
 router = APIRouter(prefix="/api/logframes/{logframe_public_id}/data-entries", tags=["data-entries"])
@@ -55,6 +56,7 @@ async def update_data_entry(
     current_user: User = Depends(require_logframe_editor),
 ):
     logframe_id = (await resolve_logframe(logframe_public_id, db)).id
+    await verify_dataentry_belongs_to_logframe(entry_id, logframe_id, db)
     result = await db.execute(select(DataEntry).where(DataEntry.id == entry_id))
     obj = result.scalar_one_or_none()
     if not obj:
@@ -73,6 +75,7 @@ async def delete_data_entry(
     current_user: User = Depends(require_logframe_editor),
 ):
     logframe_id = (await resolve_logframe(logframe_public_id, db)).id
+    await verify_dataentry_belongs_to_logframe(entry_id, logframe_id, db)
     result = await db.execute(select(DataEntry).where(DataEntry.id == entry_id))
     obj = result.scalar_one_or_none()
     if not obj:

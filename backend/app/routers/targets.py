@@ -9,6 +9,7 @@ from app.database import get_db
 from app.models.contacts import User
 from app.models.logframe import Target
 from app.schemas.logframe import TargetCreate, TargetRead, TargetUpdate
+from app.security.ownership import verify_target_belongs_to_logframe
 from app.services.resolve import resolve_logframe
 
 router = APIRouter(prefix="/api/logframes/{logframe_public_id}/targets", tags=["targets"])
@@ -56,6 +57,7 @@ async def update_target(
     current_user: User = Depends(require_logframe_editor),
 ):
     logframe_id = (await resolve_logframe(logframe_public_id, db)).id
+    await verify_target_belongs_to_logframe(target_id, logframe_id, db)
     result = await db.execute(select(Target).where(Target.id == target_id))
     obj = result.scalar_one_or_none()
     if not obj:
@@ -75,6 +77,7 @@ async def delete_target(
     current_user: User = Depends(require_logframe_editor),
 ):
     logframe_id = (await resolve_logframe(logframe_public_id, db)).id
+    await verify_target_belongs_to_logframe(target_id, logframe_id, db)
     result = await db.execute(select(Target).where(Target.id == target_id))
     obj = result.scalar_one_or_none()
     if not obj:

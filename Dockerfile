@@ -31,6 +31,10 @@ RUN pip install --no-cache-dir ./backend
 # Copy built React app into location FastAPI expects
 COPY --from=frontend-build /app/frontend/dist ./frontend/dist
 
+RUN adduser --disabled-password --no-create-home --gecos "" appuser && \
+    chown -R appuser:appuser /app
+USER appuser
+
 WORKDIR /app/backend
 
 EXPOSE 8000
