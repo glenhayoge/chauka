@@ -6,6 +6,7 @@ import { useResolveLogframeId } from '../hooks/useResolveIds'
 import { useQueryClient } from '@tanstack/react-query'
 import { apiClient } from '../api/client'
 import TabNav from '../components/layout/TabNav'
+import ConfirmDialog from '../components/ui/ConfirmDialog'
 import DeleteButton from '../components/ui/DeleteButton'
 import EmptyState from '../components/ui/EmptyState'
 import type { Activity, BudgetLine, Expense } from '../api/types'
@@ -244,10 +245,12 @@ function BudgetLineRow({ budgetLine, expenses, spent, remaining, pct, currency, 
 
 function ExpenseRow({ expense, currency, logframeId, canEdit }: { expense: Expense; currency: string; logframeId: string; canEdit: boolean }) {
   const queryClient = useQueryClient()
+  const [confirmDelete, setConfirmDelete] = useState(false)
 
   async function handleDelete() {
     await apiClient.delete(`/logframes/${logframeId}/expenses/${expense.id}`)
     queryClient.invalidateQueries({ queryKey: ['bootstrap', logframeId] })
+    setConfirmDelete(false)
   }
 
   return (
@@ -257,7 +260,16 @@ function ExpenseRow({ expense, currency, logframeId, canEdit }: { expense: Expen
       <td className="py-1 text-right text-foreground">{currency} {expense.amount.toLocaleString()}</td>
       {canEdit && (
         <td className="py-1 text-center">
-          <DeleteButton onClick={handleDelete} label="Remove" />
+          <DeleteButton onClick={() => setConfirmDelete(true)} label="Remove" />
+          <ConfirmDialog
+            open={confirmDelete}
+            title="Delete expense"
+            description="Remove this expense record? This cannot be undone."
+            confirmText="Delete"
+            destructive
+            onConfirm={handleDelete}
+            onCancel={() => setConfirmDelete(false)}
+          />
         </td>
       )}
     </tr>

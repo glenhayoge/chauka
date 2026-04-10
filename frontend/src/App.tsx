@@ -44,6 +44,7 @@ const AdminMicroAppsPage = lazy(() => import('./pages/admin/AdminMicroAppsPage')
 const AdminFilesPage = lazy(() => import('./pages/admin/AdminFilesPage'))
 const DisaggregationPage = lazy(() => import('./pages/DisaggregationPage'))
 const ContributionPage = lazy(() => import('./pages/ContributionPage'))
+const NotFoundPage = lazy(() => import('./pages/NotFoundPage'))
 
 function RequireAuth({ children }: { children: React.ReactNode }) {
   const token = useAuthStore((s) => s.token)
@@ -120,6 +121,9 @@ export default function App() {
             <Route path="logframes/:logframeId/disaggregation" element={<DisaggregationPage />} />
             <Route path="logframes/:logframeId/contribution" element={<ContributionPage />} />
           </Route>
+
+          {/* 404 catch-all */}
+          <Route path="*" element={<NotFoundPage />} />
         </Routes>
       </Suspense>
       <ToastContainer />

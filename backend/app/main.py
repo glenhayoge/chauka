@@ -5,9 +5,11 @@ from pathlib import Path
 
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.responses import FileResponse
+from fastapi.responses import FileResponse, JSONResponse
 from fastapi.staticfiles import StaticFiles
+from sqlalchemy import text
 from sqlalchemy.exc import IntegrityError
+from starlette.middleware.gzip import GZipMiddleware
 
 from app.auth.router import router as auth_router
 from app.exceptions import integrity_error_handler, unhandled_exception_handler
@@ -80,6 +82,7 @@ app = FastAPI(
 app.add_exception_handler(Exception, unhandled_exception_handler)
 app.add_exception_handler(IntegrityError, integrity_error_handler)
 
+app.add_middleware(GZipMiddleware, minimum_size=500)
 app.add_middleware(SecurityHeadersMiddleware)
 app.add_middleware(
     CORSMiddleware,
@@ -133,7 +136,16 @@ app.include_router(indicator_library_router)
 
 @app.get("/health")
 async def health():
-    return {"status": "ok"}
+    from app.database import engine
+    try:
+        async with engine.connect() as conn:
+            await conn.execute(text("SELECT 1"))
+        return {"status": "ok"}
+    except Exception:
+        return JSONResponse(
+            status_code=503,
+            content={"status": "unhealthy", "detail": "database unreachable"},
+        )
 
 
 # --- Serve React SPA (single-image deploy) -----------------------------------

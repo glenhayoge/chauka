@@ -8,6 +8,7 @@ import EditableText from '../ui/EditableText'
 import EditableNumber from '../ui/EditableNumber'
 import EditableSelect from '../ui/EditableSelect'
 import EditableDate from '../ui/EditableDate'
+import ConfirmDialog from '../ui/ConfirmDialog'
 import DeleteButton from '../ui/DeleteButton'
 import AddButton from '../ui/AddButton'
 
@@ -38,6 +39,7 @@ export default function TALinesTable({ taLines, activityId, logframeId, currency
   const queryClient = useQueryClient()
   const addToast = useToastStore((s) => s.addToast)
   const [adding, setAdding] = useState(false)
+  const [deleteId, setDeleteId] = useState<number | null>(null)
 
   const totalDays = taLines.reduce((sum, t) => sum + (t.no_days || 0), 0)
   const totalAmount = taLines.reduce((sum, t) => sum + (t.amount || 0), 0)
@@ -153,7 +155,7 @@ export default function TALinesTable({ taLines, activityId, logframeId, currency
                   </td>
                   {canEdit && (
                     <td className="border border-border px-1 py-1 text-center">
-                      <DeleteButton onClick={() => deleteLine(line.id)} label="Remove" />
+                      <DeleteButton onClick={() => setDeleteId(line.id)} label="Remove" />
                     </td>
                   )}
                 </tr>
@@ -178,6 +180,15 @@ export default function TALinesTable({ taLines, activityId, logframeId, currency
           <AddButton onClick={addLine} label={adding ? 'Adding…' : 'Add TA line'} />
         </div>
       )}
+      <ConfirmDialog
+        open={deleteId !== null}
+        title="Delete TA line"
+        description="Remove this TA line? This cannot be undone."
+        confirmText="Delete"
+        destructive
+        onConfirm={() => { if (deleteId !== null) { deleteLine(deleteId); setDeleteId(null) } }}
+        onCancel={() => setDeleteId(null)}
+      />
     </div>
   )
 }
