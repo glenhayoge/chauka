@@ -47,7 +47,7 @@ const ContributionPage = lazy(() => import('./pages/ContributionPage'))
 
 function RequireAuth({ children }: { children: React.ReactNode }) {
   const token = useAuthStore((s) => s.token)
-  if (!token) return <Navigate to="/" replace />
+  if (!token) return <Navigate to="/login" replace />
   return <>{children}</>
 }
 

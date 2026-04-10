@@ -73,8 +73,8 @@ export default function OrgSettingsPage() {
       </div>
       <main className="flex-1 p-3 sm:p-6 max-w-7xl mx-auto w-full">
         <div className="flex items-center justify-between mb-4">
-          <Link to="/app" className="text-sm text-muted-foreground hover:underline">
-            &larr; Back to organisations
+          <Link to={`/organisations/${publicId}/dashboard`} className="text-sm text-muted-foreground hover:underline">
+            &larr; Back to Dashboard
           </Link>
           <div className="flex items-center gap-4">
             <Link

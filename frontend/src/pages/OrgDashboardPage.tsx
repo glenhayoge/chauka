@@ -63,7 +63,7 @@ export default function OrgDashboardPage() {
         {/* Navigation links */}
         <div className="flex items-center justify-between mb-4">
           <Link to="/app" className="text-sm text-muted-foreground hover:underline">
-            &larr; Back to organisations
+            &larr; Back to logframes
           </Link>
           <div className="flex items-center gap-4">
             <Link

@@ -15,16 +15,16 @@ export default function HelpLayout() {
         <div className="px-3 py-2">
           {/* Title row */}
           <div className="flex items-center gap-3">
-            <Link to="/help" className="text-sm font-semibold text-foreground whitespace-nowrap py-3">
+            <Link to="/help" className="text-sm font-semibold text-foreground whitespace-nowrap py-3 shrink-0">
               Chauka Help Centre
             </Link>
-            {/* Search — hidden on mobile, shown on sm+ */}
-            <div className="hidden sm:block flex-1">
+            {/* Search — centered, hidden on mobile */}
+            <div className="hidden sm:flex flex-1 justify-center">
               <HelpSearchBar />
             </div>
             <div className="hidden md:flex items-center gap-3 shrink-0">
               <Link to="/" className="text-xs text-muted-foreground hover:text-foreground">Home</Link>
-              <Link to="/docs" className="text-xs text-muted-foreground hover:text-foreground">Developer Docs</Link>
+              {/* <Link to="/docs" className="text-xs text-muted-foreground hover:text-foreground">Developer Docs</Link> */}
             </div>
             <button
               onClick={() => setMobileOpen(!mobileOpen)}
@@ -69,13 +69,13 @@ export default function HelpLayout() {
             >
               Home
             </Link>
-            <Link
+            {/* <Link
               to="/docs"
               onClick={() => setMobileOpen(false)}
               className="block text-sm px-2 py-1.5 text-muted-foreground hover:text-foreground"
             >
               Developer Docs
-            </Link>
+            </Link> */}
           </div>
         </aside>
 

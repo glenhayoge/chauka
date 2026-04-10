@@ -692,7 +692,7 @@ function NewOrgForm({ onCreated }: { onCreated: (orgId: number) => void }) {
           type="text"
           value={name}
           onChange={(e) => setName(e.target.value)}
-          placeholder="e.g. WaterAid Zambia"
+          placeholder="e.g. OXFAM PNG"
           required
           className="w-full border border-border rounded px-3 py-2 text-sm focus:outline-none focus:ring-1 focus:ring-ring focus:border-ring"
         />

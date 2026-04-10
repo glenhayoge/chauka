@@ -1,0 +1,98 @@
+# Contribution Analysis
+
+The Contribution tab shows how output-level progress contributes to outcome-level results. It uses weighted contribution factors and actual indicator data to calculate an overall score for each outcome.
+
+## What is contribution analysis?
+
+In a results hierarchy, outputs are expected to lead to outcomes. But not all outputs contribute equally — some are more critical than others. Contribution analysis lets you:
+
+- Assign **weights** to outputs reflecting their relative importance
+- Calculate a **weighted progress score** for each outcome based on its outputs' indicator data
+- Visualise which outputs are driving progress and which are lagging
+
+## Enabling contribution analysis
+
+Contribution analysis must be enabled in your logframe settings:
+
+1. Open your logframe
+2. Go to the **Settings** tab
+3. Find **Contribution analysis** and toggle it on
+4. Save
+
+Once enabled, the **Contribution** tab becomes active.
+
+## Setting contribution weights
+
+Each output-level result has a **contribution weight** that reflects how much it contributes to its parent outcome. By default, all results have a weight of 100 (equal contribution).
+
+To adjust weights:
+
+1. Go to the **Design** tab
+2. Find the output-level result you want to adjust
+3. Edit the **contribution weight** field
+4. Repeat for sibling outputs under the same outcome
+
+Weights are relative — what matters is the proportion, not the absolute number. For example, weights of 60, 30, and 10 mean the first output contributes 60% to the outcome score.
+
+## How scores are calculated
+
+Chauka calculates contribution scores by:
+
+1. For each output, finding its indicators and their most recent actual vs target values
+2. Calculating indicator progress as a percentage (actual / target x 100)
+3. Weighting each output's progress by its contribution weight
+4. Summing the weighted progress to produce the outcome score
+
+For example:
+
+| Output | Progress | Weight | Weighted contribution |
+|---|---|---|---|
+| Output 1.1: Farmers trained | 80% | 50% | 40% |
+| Output 1.2: Seeds distributed | 60% | 30% | 18% |
+| Output 1.3: Extension visits | 40% | 20% | 8% |
+| **Outcome 1 score** | | | **66%** |
+
+## Reading the contribution tree
+
+The Contribution tab displays a tree view:
+
+- **Outcome cards** show the parent result with its overall contribution score
+- A **progress bar** shows the score visually
+- **Child outputs** are listed below with their individual progress, weight, and mini progress bar
+- Scores are **colour-coded**:
+  - **Green** (70% and above) — on track
+  - **Amber** (40-69%) — needs attention
+  - **Red** (below 40%) — off track
+
+## Prerequisites
+
+For contribution analysis to produce meaningful results, you need:
+
+- Contribution analysis enabled in Settings
+- Results structured as a hierarchy (outcomes with child outputs)
+- Indicators attached to output-level results
+- Targets set for those indicators
+- Actual data entered in the Monitor tab
+
+If any of these are missing, the contribution score may show as zero or "No data available".
+
+## Use cases
+
+- **Programme reviews** — show stakeholders a quantified view of which outputs are driving change
+- **Donor reporting** — demonstrate progress with weighted evidence
+- **Adaptive management** — identify underperforming outputs that need more resources or a revised approach
+- **Strategic planning** — understand which interventions have the greatest influence on outcomes
+
+## Tips
+
+- **Start with equal weights** — adjust only when you have evidence that some outputs matter more
+- **Review weights periodically** — as your understanding of the programme evolves, weights may need updating
+- **Ensure data is current** — the score is only as good as the latest data entered in Monitor
+- **Use alongside disaggregation** — contribution analysis tells you how much progress; disaggregation tells you who is benefiting
+
+## Next steps
+
+- [Set up indicators and targets](/help/features/indicators-targets)
+- [Enter monitoring data](/help/features/data-entry)
+- [View disaggregation analysis](/help/features/disaggregation-analysis)
+- [Understand results hierarchies](/help/concepts/results-hierarchy)

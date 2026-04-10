@@ -16,7 +16,7 @@ export default function Navbar() {
           <div className="hidden sm:flex items-center gap-4 mr-8">
             <a href="/#features" className="text-sm text-foreground hover:text-primary">Features</a>
             <a href="/#about" className="text-sm text-foreground hover:text-primary">About</a>
-            <Link to="/docs" className="text-sm text-foreground hover:text-primary">Docs</Link>
+            {/* <Link to="/docs" className="text-sm text-foreground hover:text-primary">Docs</Link> */}
             <Link to="/help" className="text-sm text-foreground hover:text-primary">Help</Link>
             <a href="/#contact" className="text-sm text-foreground hover:text-primary">Contact</a>
           </div>

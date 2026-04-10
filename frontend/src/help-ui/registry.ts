@@ -23,9 +23,12 @@ export const helpArticles: HelpEntry[] = [
   { slug: 'features/data-entry', title: 'Entering Monitoring Data', section: 'features', order: 4 },
   { slug: 'features/activities-workplans', title: 'Activities & Work Plans', section: 'features', order: 5 },
   { slug: 'features/budget-tracking', title: 'Budget Tracking', section: 'features', order: 6 },
-  { slug: 'features/dashboard-reports', title: 'Dashboard & Reports', section: 'features', order: 7 },
-  { slug: 'features/team-roles-permissions', title: 'Team Roles & Permissions', section: 'features', order: 8 },
-  { slug: 'features/exporting-data', title: 'Exporting Data', section: 'features', order: 9 },
+  { slug: 'features/indicator-library', title: 'Indicator Library', section: 'features', order: 7 },
+  { slug: 'features/disaggregation-analysis', title: 'Disaggregation Analysis', section: 'features', order: 8 },
+  { slug: 'features/contribution-analysis', title: 'Contribution Analysis', section: 'features', order: 9 },
+  { slug: 'features/dashboard-reports', title: 'Dashboard & Reports', section: 'features', order: 10 },
+  { slug: 'features/team-roles-permissions', title: 'Team Roles & Permissions', section: 'features', order: 11 },
+  { slug: 'features/exporting-data', title: 'Exporting Data', section: 'features', order: 12 },
 
   // M&E Concepts
   { slug: 'concepts/what-is-me', title: 'What is M&E?', section: 'concepts', order: 0 },
