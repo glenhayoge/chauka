@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useMemo } from 'react'
 import { useParams } from 'react-router-dom'
 import { useQuery } from '@tanstack/react-query'
 import { useBootstrap } from '../hooks/useBootstrap'
@@ -13,7 +13,7 @@ export default function DisaggregationPage() {
   const { isLoading, error } = useBootstrap(publicId ?? "")
   const data = useLogframeStore((s) => s.data)
 
-  const categories = data?.disaggregationCategories ?? []
+  const categories = useMemo(() => data?.disaggregationCategories ?? [], [data?.disaggregationCategories])
   const columns = data?.columns ?? []
 
   const [categoryId, setCategoryId] = useState<number | null>(null)

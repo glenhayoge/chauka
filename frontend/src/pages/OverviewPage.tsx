@@ -129,14 +129,20 @@ export default function OverviewPage() {
     )
   }, [data, filters.dateFrom, filters.dateTo, filters.leadId, hasActiveFilters])
 
+  const resultCodes = useMemo(
+    () => buildResultCodeMap(data?.results ?? []),
+    [data?.results],
+  )
+  const activityCodes = useMemo(
+    () => buildActivityCodeMap(data?.activities ?? [], resultCodes),
+    [data?.activities, resultCodes],
+  )
+
   if (resolving) return <p className="text-muted-foreground">Loading&hellip;</p>
   if (notFound) return <p className="text-destructive">Logframe not found.</p>
   if (isLoading) return <p className="text-muted-foreground">Loading&hellip;</p>
   if (error) return <p className="text-destructive">Failed to load data.</p>
   if (!data) return null
-
-  const resultCodes = useMemo(() => buildResultCodeMap(data.results), [data.results])
-  const activityCodes = useMemo(() => buildActivityCodeMap(data.activities, resultCodes), [data.activities, resultCodes])
 
   const topLevelResults = data.results
     .filter((r) => r.parent_id === null)

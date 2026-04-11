@@ -1,7 +1,7 @@
 import { useEffect, useId, useState } from 'react'
 import { useQueryClient } from '@tanstack/react-query'
 import FocusTrap from 'focus-trap-react'
-import { useLibraryIndicator } from '../../api/indicatorLibrary'
+import { applyLibraryIndicator } from '../../api/indicatorLibrary'
 import type { LibraryIndicator } from '../../api/types'
 import IndicatorLibrarySearch from './IndicatorLibrarySearch'
 import IndicatorLibraryDetail from './IndicatorLibraryDetail'
@@ -35,7 +35,7 @@ export default function UseFromLibraryDialog({ logframePublicId, resultId, organ
     setSaving(true)
     setError('')
     try {
-      await useLibraryIndicator(selected.id, {
+      await applyLibraryIndicator(selected.id, {
         logframe_public_id: logframePublicId,
         result_id: resultId,
       })

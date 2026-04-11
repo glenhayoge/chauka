@@ -30,6 +30,11 @@ export default function ResultDesignPage() {
   const [confirmDelete, setConfirmDelete] = useState(false)
   const [libraryDialogOpen, setLibraryDialogOpen] = useState(false)
 
+  const resultCodes = useMemo(
+    () => buildResultCodeMap(data?.results ?? []),
+    [data?.results],
+  )
+
   if (resolving) return <p className="text-muted-foreground">Loading…</p>
   if (notFound) return <p className="text-destructive">Logframe not found.</p>
   if (isLoading) return <p className="text-muted-foreground">Loading…</p>
@@ -42,7 +47,6 @@ export default function ResultDesignPage() {
 
   const result = filterResultId ? results[0] : null
   const canEdit = data.canEdit
-  const resultCodes = useMemo(() => buildResultCodeMap(data.results), [data.results])
 
   // Single-result editor view
   if (result) {

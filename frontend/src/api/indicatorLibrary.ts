@@ -46,7 +46,7 @@ export async function deleteLibraryIndicator(id: number): Promise<void> {
   await apiClient.delete(`/indicator-library/${id}`)
 }
 
-export async function useLibraryIndicator(
+export async function applyLibraryIndicator(
   id: number,
   body: { logframe_public_id: string; result_id: number },
 ): Promise<Indicator> {
