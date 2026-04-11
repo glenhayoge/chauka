@@ -4,18 +4,19 @@ import sys
 from contextlib import asynccontextmanager
 from pathlib import Path
 
-from fastapi import FastAPI
+from fastapi import Depends, FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import FileResponse, JSONResponse
 from fastapi.staticfiles import StaticFiles
 from sqlalchemy import text
 from sqlalchemy.exc import IntegrityError
+from sqlalchemy.ext.asyncio import AsyncSession
 from starlette.middleware.gzip import GZipMiddleware
 
 from app.auth.router import router as auth_router
 from app.exceptions import integrity_error_handler, unhandled_exception_handler
 from app.config import settings
-from app.database import create_tables
+from app.database import create_tables, get_db
 import app.models  # noqa: F401 - ensure models registered before create_tables
 from app.routers.activities import router as activities_router
 from app.routers.assumptions import router as assumptions_router
@@ -158,11 +159,9 @@ app.include_router(indicator_library_router)
 
 
 @app.get("/health")
-async def health():
-    from app.database import engine
+async def health(db: AsyncSession = Depends(get_db)):
     try:
-        async with engine.connect() as conn:
-            await conn.execute(text("SELECT 1"))
+        await db.execute(text("SELECT 1"))
         return {"status": "ok"}
     except Exception:
         return JSONResponse(
