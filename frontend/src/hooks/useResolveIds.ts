@@ -1,7 +1,6 @@
 import { useQuery } from '@tanstack/react-query'
 import { getLogframes } from '../api/logframes'
-import { apiClient } from '../api/client'
-import type { Organisation } from '../api/types'
+import { getOrganisations } from '../api/organisations'
 
 /**
  * Resolve a logframe public_id (UUID from URL) to its internal integer id.
@@ -29,10 +28,7 @@ export function useResolveLogframeId(publicId: string | undefined) {
 export function useResolveOrgId(publicId: string | undefined) {
   const { data: orgs, isLoading } = useQuery({
     queryKey: ['organisations'],
-    queryFn: async () => {
-      const { data } = await apiClient.get<Organisation[]>('/organisations/')
-      return data
-    },
+    queryFn: getOrganisations,
     enabled: !!publicId,
   })
 

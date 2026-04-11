@@ -14,6 +14,7 @@ import EditableSelect from '../components/ui/EditableSelect'
 import EditableNumber from '../components/ui/EditableNumber'
 import RichTextEditor from '../components/ui/RichTextEditor'
 import AddButton from '../components/ui/AddButton'
+import EmptyState from '../components/ui/EmptyState'
 import UseFromLibraryDialog from '../components/library/UseFromLibraryDialog'
 import { buildResultCodeMap } from '../utils/resultCodes'
 
@@ -218,34 +219,58 @@ export default function ResultDesignPage() {
     )
   }
 
+  // Filtered to a specific result that no longer exists (e.g., bad query param or deleted)
+  if (filterResultId && !result) {
+    return (
+      <div>
+        <TabNav />
+        <EmptyState
+          title="Result not found"
+          description="The result you're looking for doesn't exist or has been deleted. Head back to all results or define a new one in the Overview."
+          actionLabel="Back to all results"
+          onAction={() => navigate(`/app/logframes/${publicId}/design`)}
+        />
+      </div>
+    )
+  }
+
   // All-results list view (no ?result= param)
   return (
     <div>
       <TabNav />
       <h2 className="text-lg font-semibold mb-4">Result Design</h2>
-      {results.map((r) => {
-        const indicators = data.indicators.filter((i) => i.result_id === r.id)
-        const levelLabel = r.level ? data.levels[String(r.level)] : ''
-        const code = resultCodes.get(r.id) ?? ''
-        return (
-          <div key={r.id} className="mb-4 border rounded-lg p-3 bg-card hover:border-primary/30 transition-colors">
-            <div className="flex items-center gap-2">
-              {levelLabel && (
-                <span className="text-xs bg-muted text-muted-foreground rounded px-2 py-0.5 font-medium">
-                  {code && <span className="mr-1">{code}</span>}{levelLabel}
-                </span>
-              )}
-              <Link
-                to={`/app/logframes/${publicId}/design?result=${r.id}`}
-                className="font-medium text-primary hover:text-primary/80"
-              >
-                {r.name || '(unnamed result)'}
-              </Link>
-              <span className="text-xs text-muted-foreground">{indicators.length} indicator{indicators.length !== 1 ? 's' : ''}</span>
+      {results.length === 0 ? (
+        <EmptyState
+          title="No logframe results yet"
+          description="Start by defining your logframe results (Impact, Outcomes, Outputs) in the Overview tab. Once results are in place, you can come back here to design their indicators, targets, and assumptions."
+          actionLabel="Go to Overview"
+          onAction={() => navigate(`/app/logframes/${publicId}/overview`)}
+        />
+      ) : (
+        results.map((r) => {
+          const indicators = data.indicators.filter((i) => i.result_id === r.id)
+          const levelLabel = r.level ? data.levels[String(r.level)] : ''
+          const code = resultCodes.get(r.id) ?? ''
+          return (
+            <div key={r.id} className="mb-4 border rounded-lg p-3 bg-card hover:border-primary/30 transition-colors">
+              <div className="flex items-center gap-2">
+                {levelLabel && (
+                  <span className="text-xs bg-muted text-muted-foreground rounded px-2 py-0.5 font-medium">
+                    {code && <span className="mr-1">{code}</span>}{levelLabel}
+                  </span>
+                )}
+                <Link
+                  to={`/app/logframes/${publicId}/design?result=${r.id}`}
+                  className="font-medium text-primary hover:text-primary/80"
+                >
+                  {r.name || '(unnamed result)'}
+                </Link>
+                <span className="text-xs text-muted-foreground">{indicators.length} indicator{indicators.length !== 1 ? 's' : ''}</span>
+              </div>
             </div>
-          </div>
-        )
-      })}
+          )
+        })
+      )}
     </div>
   )
 }

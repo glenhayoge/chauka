@@ -41,7 +41,7 @@ export default function ContributionTree({ scores, results }: Props) {
             <div className="px-4 py-3 bg-secondary/20 flex items-center justify-between">
               <div>
                 <p className="text-sm font-medium">{parentResult.name}</p>
-                <p className="text-xs text-muted">Level {parentResult.level} result</p>
+                <p className="text-xs text-muted-foreground">Level {parentResult.level} result</p>
               </div>
               <div className={`px-3 py-1.5 rounded-md text-sm font-semibold border ${getColorClass(score.score)}`}>
                 {score.score}%
@@ -67,7 +67,7 @@ export default function ContributionTree({ scores, results }: Props) {
                     <div className="flex-1 min-w-0">
                       <p className="truncate text-foreground/80">{childResult?.name || child.name}</p>
                     </div>
-                    <span className="text-xs text-muted flex-shrink-0 w-16 text-right">
+                    <span className="text-xs text-muted-foreground flex-shrink-0 w-16 text-right">
                       Weight: {child.weight}
                     </span>
                     <div className="w-24 bg-secondary/30 rounded-full h-1.5 flex-shrink-0">

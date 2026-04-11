@@ -10,7 +10,7 @@ export default function ContributionPage() {
   const { isLoading, error } = useBootstrap(publicId ?? "")
   const data = useLogframeStore((s) => s.data)
 
-  if (resolving || isLoading) return <p className="text-sm text-muted">Loading...</p>
+  if (resolving || isLoading) return <p className="text-sm text-muted-foreground">Loading...</p>
   if (notFound) return <p className="text-sm text-destructive">Logframe not found.</p>
   if (error) return <p className="text-sm text-destructive">Failed to load data.</p>
   if (!data) return null

@@ -12,7 +12,7 @@ export default function ContributionSummaryCard({ scores, results }: Props) {
 
   return (
     <div className="border border-border rounded-lg p-4">
-      <h3 className="text-xs text-muted uppercase tracking-wider mb-3">Outcome Progress</h3>
+      <h3 className="text-xs text-muted-foreground uppercase tracking-wider mb-3">Outcome Progress</h3>
       <div className="space-y-3">
         {scores.map((score) => {
           const result = resultLookup[score.result_id]

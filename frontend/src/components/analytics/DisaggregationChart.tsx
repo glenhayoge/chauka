@@ -54,7 +54,7 @@ export default function DisaggregationChart({ category, groups, metric = 'total'
       {/* Summary table */}
       <table className="w-full text-sm border border-border rounded-lg overflow-hidden">
         <thead>
-          <tr className="border-b border-border bg-secondary/30 text-left text-muted">
+          <tr className="border-b border-border bg-secondary/30 text-left text-muted-foreground">
             <th className="px-4 py-2 font-medium">{category}</th>
             <th className="px-4 py-2 font-medium text-right">Total</th>
             <th className="px-4 py-2 font-medium text-right">Count</th>

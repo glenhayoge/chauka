@@ -24,7 +24,7 @@ export default function AdminUsersPage() {
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-xl font-semibold">User Management</h1>
-          <p className="text-sm text-muted mt-1">
+          <p className="text-sm text-muted-foreground mt-1">
             {data ? `${data.total} users` : 'Loading...'}
           </p>
         </div>
@@ -64,7 +64,7 @@ export default function AdminUsersPage() {
       <div className="border border-border rounded-lg overflow-hidden">
         <table className="w-full text-sm">
           <thead>
-            <tr className="border-b border-border bg-secondary/30 text-left text-muted">
+            <tr className="border-b border-border bg-secondary/30 text-left text-muted-foreground">
               <th className="px-4 py-2.5 font-medium">Username</th>
               <th className="px-4 py-2.5 font-medium">Name</th>
               <th className="px-4 py-2.5 font-medium">Email</th>
@@ -76,7 +76,7 @@ export default function AdminUsersPage() {
           </thead>
           <tbody className="divide-y divide-border">
             {isLoading && (
-              <tr><td colSpan={7} className="px-4 py-6 text-center text-muted">Loading...</td></tr>
+              <tr><td colSpan={7} className="px-4 py-6 text-center text-muted-foreground">Loading...</td></tr>
             )}
             {data?.items.map((user) => (
               <tr
@@ -106,13 +106,13 @@ export default function AdminUsersPage() {
                   )}
                 </td>
                 <td className="px-4 py-2.5 text-center">{user.org_count}</td>
-                <td className="px-4 py-2.5 text-muted text-xs">
+                <td className="px-4 py-2.5 text-muted-foreground text-xs">
                   {user.last_login ? new Date(user.last_login).toLocaleDateString() : 'Never'}
                 </td>
               </tr>
             ))}
             {data && data.items.length === 0 && (
-              <tr><td colSpan={7} className="px-4 py-6 text-center text-muted">No users found.</td></tr>
+              <tr><td colSpan={7} className="px-4 py-6 text-center text-muted-foreground">No users found.</td></tr>
             )}
           </tbody>
         </table>
@@ -121,7 +121,7 @@ export default function AdminUsersPage() {
       {/* Pagination */}
       {totalPages > 1 && (
         <div className="flex items-center justify-between">
-          <p className="text-xs text-muted">
+          <p className="text-xs text-muted-foreground">
             Page {page} of {totalPages}
           </p>
           <div className="flex gap-2">

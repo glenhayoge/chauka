@@ -49,13 +49,13 @@ export default function UserCreateForm({ onClose }: Props) {
       <div className="bg-background border border-border rounded-lg shadow-lg w-full max-w-md mx-4">
         <div className="px-5 py-4 border-b border-border flex justify-between items-center">
           <h3 className="text-sm font-semibold">Create User</h3>
-          <button onClick={onClose} className="text-muted hover:text-foreground text-lg">&times;</button>
+          <button onClick={onClose} className="text-muted-foreground hover:text-foreground text-lg">&times;</button>
         </div>
         <form onSubmit={handleSubmit} className="p-5 space-y-4">
           {error && <p className="text-sm text-red-500">{error}</p>}
           <div className="grid grid-cols-2 gap-3">
             <label className="block">
-              <span className="text-xs text-muted">First Name</span>
+              <span className="text-xs text-muted-foreground">First Name</span>
               <input
                 type="text"
                 value={form.first_name}
@@ -64,7 +64,7 @@ export default function UserCreateForm({ onClose }: Props) {
               />
             </label>
             <label className="block">
-              <span className="text-xs text-muted">Last Name</span>
+              <span className="text-xs text-muted-foreground">Last Name</span>
               <input
                 type="text"
                 value={form.last_name}
@@ -74,7 +74,7 @@ export default function UserCreateForm({ onClose }: Props) {
             </label>
           </div>
           <label className="block">
-            <span className="text-xs text-muted">Username *</span>
+            <span className="text-xs text-muted-foreground">Username *</span>
             <input
               type="text"
               value={form.username}
@@ -84,7 +84,7 @@ export default function UserCreateForm({ onClose }: Props) {
             />
           </label>
           <label className="block">
-            <span className="text-xs text-muted">Email *</span>
+            <span className="text-xs text-muted-foreground">Email *</span>
             <input
               type="email"
               value={form.email}
@@ -94,7 +94,7 @@ export default function UserCreateForm({ onClose }: Props) {
             />
           </label>
           <label className="block">
-            <span className="text-xs text-muted">Password *</span>
+            <span className="text-xs text-muted-foreground">Password *</span>
             <input
               type="password"
               value={form.password}

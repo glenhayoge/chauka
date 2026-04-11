@@ -35,16 +35,19 @@ export default function MembersPanel({ canEdit: _canEdit, userRole, orgId: orgId
     queryKey: ['project-org-context', projectId],
     queryFn: async () => {
       if (!projectId) return null
-      const { data: orgs } = await (await import('../../api/client')).apiClient.get('/organisations/')
-      for (const org of orgs) {
-        const { data: programs } = await (await import('../../api/client')).apiClient.get(
-          `/organisations/${org.id}/programs/`
+      const { apiClient } = await import('../../api/client')
+      const { data: orgsResp } = await apiClient.get<{ items: { id: number }[] }>(
+        '/organisations/', { params: { page_size: 100 } }
+      )
+      for (const org of orgsResp.items) {
+        const { data: programsResp } = await apiClient.get<{ items: { id: number }[] }>(
+          `/organisations/${org.id}/programs/`, { params: { page_size: 100 } }
         )
-        for (const prog of programs) {
-          const { data: projects } = await (await import('../../api/client')).apiClient.get(
+        for (const prog of programsResp.items) {
+          const { data: projects } = await apiClient.get<{ id: number }[]>(
             `/organisations/${org.id}/programs/${prog.id}/projects/`
           )
-          const found = projects.find((p: { id: number }) => p.id === projectId)
+          const found = projects.find((p) => p.id === projectId)
           if (found) {
             return { orgId: org.id, programId: prog.id, projectId: found.id }
           }

@@ -46,12 +46,13 @@ export default function IndicatorLibraryPage() {
             <Link to={`/organisations/${publicId}/dashboard`} className="text-sm opacity-50 hover:opacity-80 truncate">{org.name}</Link>
             <span className="opacity-30">/</span>
             <span className="text-sm opacity-80">Indicator Library</span>
+
           </div>
           <UserMenu />
         </header>
       </div>
 
-      <main className="flex-1 p-3 sm:p-6 max-w-5xl mx-auto w-full">
+      <main className="flex-1 p-3 sm:p-6 max-w-7xl mx-auto w-full">
         <div className="flex items-center gap-4 mb-4">
           <Link to={`/organisations/${publicId}/dashboard`} className="text-sm text-muted-foreground hover:underline">
             &larr; Back to dashboard
@@ -93,7 +94,6 @@ export default function IndicatorLibraryPage() {
             />
           </div>
         )}
-
         <IndicatorLibrarySearch organisationId={resolvedOrgId} />
       </main>
     </div>

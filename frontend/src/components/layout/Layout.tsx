@@ -27,12 +27,13 @@ export default function Layout() {
   const currentLogframeId = logframeId ?? null
   const logframeName = currentData?.logframe?.name
     ?? logframes?.find((lf) => lf.public_id === currentLogframeId)?.name
+  const currentOrgPublicId = currentData?.orgContext?.organisation?.public_id ?? null
 
   return (
     <div className="min-h-screen text-foreground ">
       {/* Top header bar */}
 
-      <header className="text-foreground bg-muted px-4">
+      <header className="text-foreground bg-muted py-1 px-4">
         <div className='max-w-7xl mx-auto'>
           <div className="flex justify-between items-center">
             <div className="flex items-center gap-4 sm:gap-6 min-w-0">
@@ -139,6 +140,26 @@ export default function Layout() {
                   >
                     Settings
                   </MobileNavLink>
+
+                  {currentOrgPublicId && (
+                    <>
+                      <div className="my-2 border-t border-border" />
+                      <MobileNavLink
+                        to={`/organisations/${currentOrgPublicId}/dashboard`}
+                        active={pathname === `/organisations/${currentOrgPublicId}/dashboard`}
+                        onClick={() => setMobileMenuOpen(false)}
+                      >
+                        Organisation
+                      </MobileNavLink>
+                      <MobileNavLink
+                        to={`/organisations/${currentOrgPublicId}/indicator-library`}
+                        active={pathname === `/organisations/${currentOrgPublicId}/indicator-library`}
+                        onClick={() => setMobileMenuOpen(false)}
+                      >
+                        Indicator library
+                      </MobileNavLink>
+                    </>
+                  )}
                 </div>
               )}
 
@@ -183,6 +204,23 @@ export default function Layout() {
               >
                 Settings
               </PrimaryNavLink>
+
+              {currentOrgPublicId && (
+                <div className="ml-auto flex items-center gap-1">
+                  <PrimaryNavLink
+                    to={`/organisations/${currentOrgPublicId}/dashboard`}
+                    active={pathname === `/organisations/${currentOrgPublicId}/dashboard`}
+                  >
+                    Organisation
+                  </PrimaryNavLink>
+                  <PrimaryNavLink
+                    to={`/organisations/${currentOrgPublicId}/indicator-library`}
+                    active={pathname === `/organisations/${currentOrgPublicId}/indicator-library`}
+                  >
+                    Indicator library
+                  </PrimaryNavLink>
+                </div>
+              )}
             </nav>
           )}
         </div>

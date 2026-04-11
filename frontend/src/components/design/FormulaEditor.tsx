@@ -20,7 +20,7 @@ export default function FormulaEditor({ formulaConfig, indicatorId, onChange }: 
   return (
     <div className="mt-2 p-3 border border-dashed border-border rounded-md space-y-3 bg-secondary/10">
       <div className="flex items-center gap-2">
-        <span className="text-xs text-muted font-medium">Formula Type</span>
+        <span className="text-xs text-muted-foreground font-medium">Formula Type</span>
         <select
           value={config.type}
           onChange={(e) => onChange({ type: e.target.value as FormulaConfig['type'] })}
@@ -36,7 +36,7 @@ export default function FormulaEditor({ formulaConfig, indicatorId, onChange }: 
       {config.type === 'percentage' && (
         <div className="space-y-2">
           <label className="block">
-            <span className="text-xs text-muted">Numerator indicator</span>
+            <span className="text-xs text-muted-foreground">Numerator indicator</span>
             <select
               value={config.numerator_indicator_id ?? ''}
               onChange={(e) => updateField('numerator_indicator_id', Number(e.target.value) || undefined)}
@@ -49,7 +49,7 @@ export default function FormulaEditor({ formulaConfig, indicatorId, onChange }: 
             </select>
           </label>
           <label className="block">
-            <span className="text-xs text-muted">Denominator indicator</span>
+            <span className="text-xs text-muted-foreground">Denominator indicator</span>
             <select
               value={config.denominator_indicator_id ?? ''}
               onChange={(e) => updateField('denominator_indicator_id', Number(e.target.value) || undefined)}
@@ -65,14 +65,14 @@ export default function FormulaEditor({ formulaConfig, indicatorId, onChange }: 
       )}
 
       {config.type === 'progress' && (
-        <p className="text-xs text-muted">
+        <p className="text-xs text-muted-foreground">
           Computes (actual value / target value) x 100 for each sub-indicator and measurement column.
         </p>
       )}
 
       {(config.type === 'aggregation' || config.type === 'cross_aggregation') && (
         <label className="block">
-          <span className="text-xs text-muted">Aggregation method</span>
+          <span className="text-xs text-muted-foreground">Aggregation method</span>
           <select
             value={config.method ?? 'sum'}
             onChange={(e) => updateField('method', e.target.value)}
@@ -88,7 +88,7 @@ export default function FormulaEditor({ formulaConfig, indicatorId, onChange }: 
 
       {config.type === 'cross_aggregation' && (
         <div>
-          <span className="text-xs text-muted">Source indicators</span>
+          <span className="text-xs text-muted-foreground">Source indicators</span>
           <div className="mt-1 space-y-1 max-h-32 overflow-y-auto">
             {otherIndicators.map((i) => (
               <label key={i.id} className="flex items-center gap-2 text-xs">

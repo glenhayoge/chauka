@@ -78,15 +78,15 @@ export default function AdminSidebar() {
   return (
     <nav className="w-56 flex-shrink-0 border-r border-border bg-background min-h-0 overflow-y-auto">
       <div className="p-4">
-        <h2 className="text-xs font-semibold text-muted uppercase tracking-wider mb-3">Admin Portal</h2>
+        <h2 className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-3">Admin Portal</h2>
         <ul className="space-y-1">
           {NAV_ITEMS.map((item) => (
             <li key={item.to}>
               {item.disabled ? (
-                <span className="flex items-center gap-3 px-3 py-2 text-sm text-muted/50 cursor-not-allowed rounded-md">
+                <span className="flex items-center gap-3 px-3 py-2 text-sm text-muted-foreground/50 cursor-not-allowed rounded-md">
                   {item.icon}
                   <span>{item.label}</span>
-                  <span className="ml-auto text-[10px] bg-muted/20 text-muted/60 px-1.5 py-0.5 rounded">Soon</span>
+                  <span className="ml-auto text-[10px] bg-muted/20 text-muted-foreground/60 px-1.5 py-0.5 rounded">Soon</span>
                 </span>
               ) : (
                 <Link

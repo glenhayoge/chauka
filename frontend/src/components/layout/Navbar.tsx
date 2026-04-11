@@ -6,7 +6,7 @@ export default function Navbar() {
 
   return (
     <nav className="border-b border-border sticky top-0 bg-muted z-10">
-      <div className="max-w-7xl mx-auto  flex items-center justify-between">
+      <div className="max-w-7xl mx-auto py-1 flex items-center justify-between">
         <div className="flex items-center gap-6">
           <Link to="/" className="text-lg font-medium text-foreground py-3">
             Chauka

@@ -17,7 +17,7 @@ export default function AdminOrgsPage() {
     <div className="space-y-4 max-w-6xl">
       <div>
         <h1 className="text-xl font-semibold">Organisation Management</h1>
-        <p className="text-sm text-muted mt-1">
+        <p className="text-sm text-muted-foreground mt-1">
           {data ? `${data.total} organisations` : 'Loading...'}
         </p>
       </div>
@@ -37,7 +37,7 @@ export default function AdminOrgsPage() {
       <div className="border border-border rounded-lg overflow-hidden">
         <table className="w-full text-sm">
           <thead>
-            <tr className="border-b border-border bg-secondary/30 text-left text-muted">
+            <tr className="border-b border-border bg-secondary/30 text-left text-muted-foreground">
               <th className="px-4 py-2.5 font-medium">Name</th>
               <th className="px-4 py-2.5 font-medium">Slug</th>
               <th className="px-4 py-2.5 font-medium">Owner</th>
@@ -49,23 +49,23 @@ export default function AdminOrgsPage() {
           </thead>
           <tbody className="divide-y divide-border">
             {isLoading && (
-              <tr><td colSpan={7} className="px-4 py-6 text-center text-muted">Loading...</td></tr>
+              <tr><td colSpan={7} className="px-4 py-6 text-center text-muted-foreground">Loading...</td></tr>
             )}
             {data?.items.map((org) => (
               <tr key={org.id} className="hover:bg-secondary/20 transition-colors">
                 <td className="px-4 py-2.5 font-medium">{org.name}</td>
-                <td className="px-4 py-2.5 text-muted">{org.slug}</td>
+                <td className="px-4 py-2.5 text-muted-foreground">{org.slug}</td>
                 <td className="px-4 py-2.5 text-foreground/80">{org.owner_username || `#${org.owner_id}`}</td>
                 <td className="px-4 py-2.5 text-center">{org.member_count}</td>
                 <td className="px-4 py-2.5 text-center">{org.logframe_count}</td>
-                <td className="px-4 py-2.5 text-muted">{org.country || '-'}</td>
-                <td className="px-4 py-2.5 text-muted text-xs">
+                <td className="px-4 py-2.5 text-muted-foreground">{org.country || '-'}</td>
+                <td className="px-4 py-2.5 text-muted-foreground text-xs">
                   {org.created_at ? new Date(org.created_at).toLocaleDateString() : '-'}
                 </td>
               </tr>
             ))}
             {data && data.items.length === 0 && (
-              <tr><td colSpan={7} className="px-4 py-6 text-center text-muted">No organisations found.</td></tr>
+              <tr><td colSpan={7} className="px-4 py-6 text-center text-muted-foreground">No organisations found.</td></tr>
             )}
           </tbody>
         </table>
@@ -74,7 +74,7 @@ export default function AdminOrgsPage() {
       {/* Pagination */}
       {totalPages > 1 && (
         <div className="flex items-center justify-between">
-          <p className="text-xs text-muted">Page {page} of {totalPages}</p>
+          <p className="text-xs text-muted-foreground">Page {page} of {totalPages}</p>
           <div className="flex gap-2">
             <button
               onClick={() => setPage(Math.max(1, page - 1))}

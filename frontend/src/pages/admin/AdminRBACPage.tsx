@@ -73,7 +73,7 @@ export default function AdminRBACPage() {
     <div className="space-y-6 max-w-5xl">
       <div>
         <h1 className="text-xl font-semibold">Roles & Permissions</h1>
-        <p className="text-sm text-muted mt-1">
+        <p className="text-sm text-muted-foreground mt-1">
           Configure what each role can do. Permissions enhance the existing RBAC system.
         </p>
       </div>
@@ -81,7 +81,7 @@ export default function AdminRBACPage() {
       <div className="flex gap-6">
         {/* Left: Role list */}
         <div className="w-48 flex-shrink-0 space-y-1">
-          <h2 className="text-xs font-semibold text-muted uppercase tracking-wider mb-2">Roles</h2>
+          <h2 className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-2">Roles</h2>
           {Object.entries(ROLE_LABELS).map(([role, label]) => (
             <button
               key={role}
@@ -113,19 +113,19 @@ export default function AdminRBACPage() {
           </div>
 
           {(rolesLoading || permsLoading) && (
-            <p className="text-sm text-muted">Loading...</p>
+            <p className="text-sm text-muted-foreground">Loading...</p>
           )}
 
           {permissions && permissions.length === 0 && (
             <div className="border border-dashed border-border rounded-lg p-6 text-center">
-              <p className="text-sm text-muted">No permissions defined yet.</p>
-              <p className="text-xs text-muted/60 mt-1">Add permissions to start configuring role-based access.</p>
+              <p className="text-sm text-muted-foreground">No permissions defined yet.</p>
+              <p className="text-xs text-muted-foreground/60 mt-1">Add permissions to start configuring role-based access.</p>
             </div>
           )}
 
           {Object.entries(grouped).map(([category, perms]) => (
             <div key={category} className="mb-4">
-              <h3 className="text-xs font-semibold text-muted uppercase tracking-wider mb-2">{category}</h3>
+              <h3 className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-2">{category}</h3>
               <div className="space-y-1">
                 {perms!.map((perm) => (
                   <label
@@ -141,9 +141,9 @@ export default function AdminRBACPage() {
                     />
                     <div>
                       <span className="text-sm font-medium">{perm.name}</span>
-                      <span className="text-xs text-muted ml-2">({perm.codename})</span>
+                      <span className="text-xs text-muted-foreground ml-2">({perm.codename})</span>
                       {perm.description && (
-                        <p className="text-xs text-muted">{perm.description}</p>
+                        <p className="text-xs text-muted-foreground">{perm.description}</p>
                       )}
                     </div>
                   </label>
@@ -160,7 +160,7 @@ export default function AdminRBACPage() {
           <div className="bg-background border border-border rounded-lg shadow-lg w-full max-w-md mx-4">
             <div className="px-5 py-4 border-b border-border flex justify-between items-center">
               <h3 className="text-sm font-semibold">Add Permission</h3>
-              <button onClick={() => setShowAddPerm(false)} className="text-muted hover:text-foreground text-lg">&times;</button>
+              <button onClick={() => setShowAddPerm(false)} className="text-muted-foreground hover:text-foreground text-lg">&times;</button>
             </div>
             <form
               onSubmit={(e) => { e.preventDefault(); createMutation.mutate() }}
@@ -168,7 +168,7 @@ export default function AdminRBACPage() {
             >
               {error && <p className="text-sm text-red-500">{error}</p>}
               <label className="block">
-                <span className="text-xs text-muted">Codename *</span>
+                <span className="text-xs text-muted-foreground">Codename *</span>
                 <input
                   type="text"
                   value={newPerm.codename}
@@ -179,7 +179,7 @@ export default function AdminRBACPage() {
                 />
               </label>
               <label className="block">
-                <span className="text-xs text-muted">Display Name *</span>
+                <span className="text-xs text-muted-foreground">Display Name *</span>
                 <input
                   type="text"
                   value={newPerm.name}
@@ -190,7 +190,7 @@ export default function AdminRBACPage() {
                 />
               </label>
               <label className="block">
-                <span className="text-xs text-muted">Description</span>
+                <span className="text-xs text-muted-foreground">Description</span>
                 <input
                   type="text"
                   value={newPerm.description}
@@ -199,7 +199,7 @@ export default function AdminRBACPage() {
                 />
               </label>
               <label className="block">
-                <span className="text-xs text-muted">Category</span>
+                <span className="text-xs text-muted-foreground">Category</span>
                 <input
                   type="text"
                   value={newPerm.category}

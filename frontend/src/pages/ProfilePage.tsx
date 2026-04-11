@@ -1,6 +1,8 @@
 import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { changePassword, getProfile, updateProfile, type UserProfile } from '../api/auth'
+import { getOrganisations } from '../api/organisations'
+import type { Organisation } from '../api/types'
 
 const inputClass =
   'w-full border border-border rounded-[var(--radius)] px-3 py-2 text-sm bg-background text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-1 focus:ring-ring focus:border-ring'
@@ -10,6 +12,9 @@ const labelClass = 'block text-sm text-muted-foreground mb-1'
 export default function ProfilePage() {
   const [profile, setProfile] = useState<UserProfile | null>(null)
   const [loading, setLoading] = useState(true)
+  const [organisations, setOrganisations] = useState<Organisation[]>([])
+  const [orgsLoading, setOrgsLoading] = useState(true)
+  const [orgsError, setOrgsError] = useState('')
 
   const [firstName, setFirstName] = useState('')
   const [lastName, setLastName] = useState('')
@@ -35,6 +40,13 @@ export default function ProfilePage() {
       })
       .catch(() => setProfileError('Failed to load profile'))
       .finally(() => setLoading(false))
+  }, [])
+
+  useEffect(() => {
+    getOrganisations()
+      .then(setOrganisations)
+      .catch(() => setOrgsError('Failed to load organisations'))
+      .finally(() => setOrgsLoading(false))
   }, [])
 
   async function handleProfileSubmit(e: React.FormEvent) {
@@ -156,6 +168,60 @@ export default function ProfilePage() {
           </form>
         </div>
 
+      </div>
+
+      {/* Organisations */}
+      <div className="border border-border rounded-[var(--radius)] p-5 flex flex-col gap-4">
+        <div className="flex items-center justify-between">
+          <p className="text-sm font-medium text-foreground">Organisations</p>
+          <span className="text-xs text-muted-foreground">
+            {organisations.length} {organisations.length === 1 ? 'membership' : 'memberships'}
+          </span>
+        </div>
+
+        {orgsLoading ? (
+          <p className="text-sm text-muted-foreground">Loading...</p>
+        ) : orgsError ? (
+          <p className="text-sm text-destructive">{orgsError}</p>
+        ) : organisations.length === 0 ? (
+          <p className="text-sm text-muted-foreground">
+            You are not yet a member of any organisation.{' '}
+            <Link to="/app" className="text-foreground hover:underline">Create or join one</Link>.
+          </p>
+        ) : (
+          <ul className="flex flex-col gap-3">
+            {organisations.map((org) => {
+              const isOwner = profile.id === org.owner_id
+              const meta = [org.org_type, org.sector, org.country].filter(Boolean)
+              return (
+                <li
+                  key={org.id}
+                  className="border border-border rounded-[var(--radius)] px-4 py-3 flex flex-col gap-1"
+                >
+                  <div className="flex items-center justify-between gap-3">
+                    <Link
+                      to={`/organisations/${org.public_id}/dashboard`}
+                      className="text-sm font-medium text-foreground hover:underline"
+                    >
+                      {org.name}
+                    </Link>
+                    {isOwner && (
+                      <span className="text-xs px-2 py-0.5 rounded-full border border-border text-muted-foreground">
+                        Owner
+                      </span>
+                    )}
+                  </div>
+                  {org.description && (
+                    <p className="text-xs text-muted-foreground line-clamp-2">{org.description}</p>
+                  )}
+                  {meta.length > 0 && (
+                    <p className="text-xs text-muted-foreground">{meta.join(' · ')}</p>
+                  )}
+                </li>
+              )
+            })}
+          </ul>
+        )}
       </div>
 
       <p className="text-xs text-muted-foreground">Signed in as {profile.username}</p>
